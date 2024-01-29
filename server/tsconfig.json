@@ -1,0 +1,24 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+
+    "module": "CommonJS",
+    "target": "ES2022",
+    "moduleResolution": "Node",
+
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "outDir": "dist",
+
+    "types": ["jest", "node"],
+    "paths": {
+      "@server/*": ["./src/*"],
+      "@tests/*": ["./tests/*"]
+    }
+  }
+}
