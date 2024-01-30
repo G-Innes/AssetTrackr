@@ -64,6 +64,8 @@ You can interact with the API using tools like Insomnia or Postman. Here are som
 # Testing
 Tests interact with the Test_AssetTracker database and should be run in isolation:
 
-npm test src/modules/assets/userController.spec.ts
-npm test src/modules/assets/userAuth.spec.ts
-npm test src/modules/assets/userProfile.spec.ts
+`npm test src/modules/assets/userController.spec.ts`
+
+`npm test src/modules/assets/userAuth.spec.ts`
+
+`npm test src/modules/assets/userProfile.spec.ts`
