@@ -1,38 +1,69 @@
-Users Table:
-user_id (P key)
-username
-email
-password (hashed & salted with bcrypt)
+# AssetTrackr Portfolio Manager
 
-Assets Table:
-asset_id (P key)
-name (Bitcoin, Ethereum, XRP)
-symbol (BTC, ETH, XRP)
+AssetTrackr is a portfolio manager that allows users to manage their asset portfolios. The current MVP version provides basic functionality for user authentication, profile creation, and adding assets to a user's portfolio.
 
-Transaction Table:
-transaction_id (P key)
-user_id (foreign key ref users table)
-asset_id (foreign key ref assets table)
-transaction_type (Buy/Sell)
-amount (amount of asset bought/sold)
-price (price per unit of asset bought/sold)
-transaction_date( date & time)
+## Overview
 
-Portfolio Summary Table:
-portfolio_summary_id (P key)
-user_id (foreign key ref users table)
-total_value (total value of users portfolio)
-last_updated (date & time summary was last updated)
+The primary features of AssetTrackr include:
 
-Hisorical Data Table:
-historical_data_id (P key)
-asset_id (foreign key ref assets table)
-price (price of asset at time of transaction/specific timestamp)
-timestamp ( timestamp indicating when price was recorded)
+- User signup and login
+- Managing user profiles
+- Adding assets to a user's portfolio
+- Updating portfolio holdings
+- Viewing portfolio holdings
+- Recording transactions (buying or selling assets)
 
-Relationships:
-One User to Many Transactions(OneToMany)
-One Asset to Many Transactions(OneToMany)
-One User to One Portfolio Summary(OneToOne)
-One Asset to many Historical Data(OneToMany)
+The application is currently in active development, with a focus on backend functionality for portfolio management.
 
+Future enhancements will include performance tracking of individual holdings and overall portfolio, providing users with insights into their investment performance over time.
+
+## Getting Started
+
+Follow these steps to set up the project locally:
+
+1. Clone the repository
+2. Run `npm install` in the root directory
+3. Navigate to the server directory with `cd server`
+4. Run `npm install` again in the server directory
+5. Create two Postgres databases: `AssetTracker` and `Test_AssetTracker`
+6. Start the server with `npm start`
+
+## API Usage
+
+You can interact with the API using tools like Insomnia or Postman. Here are some example requests:
+
+- Signup: `POST http://localhost:3000/user` with JSON body:
+```json
+  {
+    "username": "VeryFirstUser",
+    "email": "firstuser@gmail.com",
+    "password": "Password123"
+  }
+```
+
+- Login: `POST http://localhost:3000/user/login` with JSON body:
+```json
+  {
+    "usernameOrEmail": "VeryFirstUser",
+    "password": "Password123"
+  }
+```
+
+- User Profile: `GET http://localhost:3000/user/user/1`
+
+- Update User: `PUT http://localhost:3000/user/user/2` with JSON body:
+```json
+  {
+    "username": "VeryFirstUser(UPDATED)",
+    "email": "Updatedfirstuser@gmail.com"
+  }
+```
+
+- Delete User: `DELETE http://localhost:3000/user/user/1`
+
+# Testing
+Tests interact with the Test_AssetTracker database and should be run in isolation:
+
+npm test src/modules/assets/userController.spec.ts
+npm test src/modules/assets/userAuth.spec.ts
+npm test src/modules/assets/userProfile.spec.ts
