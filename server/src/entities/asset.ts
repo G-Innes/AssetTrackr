@@ -19,7 +19,9 @@ export class Asset {
   @OneToMany(() => HistoricalData, (historicalData) => historicalData.asset)
   historicalData: HistoricalData[]
 
-  @OneToMany(() => UserAssets, (userAssets) => userAssets.asset)
+  @OneToMany(() => UserAssets, (userAssets) => userAssets.asset, {
+    cascade: true,
+  })
   userAssets: UserAssets[]
 }
 

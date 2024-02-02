@@ -27,7 +27,9 @@ export class User {
   @OneToMany(() => Transaction, (transaction) => transaction.user)
   transactions?: Transaction[]
 
-  @OneToMany(() => UserAssets, (userAssets) => userAssets.user)
+  @OneToMany(() => UserAssets, (userAssets) => userAssets.user, {
+    cascade: true,
+  })
   userAssets?: UserAssets[]
 }
 

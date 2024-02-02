@@ -11,7 +11,6 @@ The primary features of AssetTrackr include:
 - Adding assets to a user's portfolio
 - Updating portfolio holdings
 - Viewing portfolio holdings
-- Recording transactions (buying or selling assets)
 
 The application is currently in active development, with a focus on backend functionality for portfolio management.
 
@@ -61,6 +60,34 @@ You can interact with the API using tools like Insomnia or Postman. Here are som
 
 - Delete User: `DELETE http://localhost:3000/user/user/1`
 
+- Create New User Asset: `POST http://localhost:3000/user/1/assets` with JSON body:
+```json
+  {
+    "userId": 1,
+    "assetId": 1,
+    "quantity": 300,
+    "name": "Some Asset Name",
+    "ticker": "SAN",
+    "current_price": 100
+  }
+```
+
+- Get All User Assets: `GET http://localhost:3000/user/1/assets`
+
+- Update User Asset: `http://localhost:3000/user/1/assets/1` with JSON body:
+```json
+  {
+    "userId": 1,
+    "assetId": 1,
+    "quantity": 500,
+    "name": "Some Updated Asset name",
+    "ticker": "SUAN",
+    "current_price": 250
+  }
+  ```
+
+- Delete User Asset: `DELETE http://localhost:3000/user/1/assets/1`
+
 # Testing
 Tests interact with the Test_AssetTracker database and should be run in isolation:
 
@@ -68,4 +95,3 @@ Tests interact with the Test_AssetTracker database and should be run in isolatio
 
 `npm test src/modules/assets/userAuth.spec.ts`
 
-`npm test src/modules/assets/userProfile.spec.ts`

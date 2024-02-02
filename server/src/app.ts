@@ -1,5 +1,5 @@
 import cors from 'cors'
-import express, { Request, Response } from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import { appRouter } from './modules'
 
 export default function createApp() {
@@ -16,9 +16,10 @@ export default function createApp() {
   app.use(appRouter)
 
   // Error handling middleware
-  app.use((err: any, req: Request, res: Response) => {
+  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack)
     res.status(500).send('Something went wrong')
+    next(err)
   })
 
   return app

@@ -25,6 +25,7 @@ export default async function seedTestDatabase() {
 
     // Create and save a new user
     const user = new User();
+    user.id = 1;
     user.username = 'Test User';
     user.email = 'test@example.com';
     user.password = 'password';
@@ -32,8 +33,9 @@ export default async function seedTestDatabase() {
 
     // Create and save a new asset
     const asset = new Asset();
-    asset.name = 'Test Asset';
-    asset.ticker = 'TST';
+    asset.id = 1;
+    asset.name = 'Bitcoin';
+    asset.ticker = 'BTC';
     asset.current_price = 100;
     await assetRepository.save(asset);
 
@@ -41,7 +43,7 @@ export default async function seedTestDatabase() {
     const userAssets = new UserAssets();
     userAssets.user = user;
     userAssets.asset = asset;
-    userAssets.quantity = 10;
+    userAssets.quantity = 500;
     await userAssetsRepository.save(userAssets);
 
     // Create and save a new transaction
