@@ -23,6 +23,7 @@ Follow these steps to set up the project locally:
 1. Clone the repository
 2. Run `npm install` in the root directory
 3. Navigate to the server directory with `cd server`
+4. add username and password to .env.example & remove '.example' from the file name
 5. Create two Postgres databases: `AssetTracker` and `Test_AssetTracker`
 6. Start the server with `npm start`
 
