@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm'
 import { z } from 'zod'
+import { NumericTransformer } from '../utils/generalUtils'
 import { User, Asset } from './index'
 
 @Entity()
@@ -13,13 +14,19 @@ export class UserAssets {
   @ManyToOne(() => Asset, (asset) => asset.userAssets)
   asset: Asset
 
-  @Column('decimal')
+  @Column({
+    type: 'decimal', // Change the type to '
+    precision: 10, // Adjust precision
+    scale: 2, // Adjust scale
+    transformer: new NumericTransformer(),
+    default: 0,
+  })
   quantity: number
 }
 
 export const userAssetsSchema = z.object({
   id: z.number().int().positive(),
-  quantity: z.number().int().positive(),
+  quantity: z.number().positive(),
 })
 
 export type UserAssetInsert = Omit<UserAssets, 'id'>

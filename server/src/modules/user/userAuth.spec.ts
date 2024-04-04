@@ -1,35 +1,26 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import { createConnection, getConnection } from 'typeorm'
+import { getConnection } from 'typeorm'
 import request from 'supertest'
-import testConfig from '../../../tests/testConfig'
-import cleanTestDatabase from '../../../tests/cleanTestDatabase'
-import seedTestDatabase from '../../../tests/seedTestDatabase'
-import UserAuthController from './userAuthController'
+import { createTestUser } from '../../utils/testUtils'
+import { appRouter } from '../index'
 
 jest.mock('jsonwebtoken', () => ({
   sign: () => 'mockToken',
 }))
 
 describe('UserAuthController', () => {
-  const mockSave = jest.fn((user) => {
-    console.log('mockSave called with', user)
-    return Promise.resolve(user)
-  })
   let app: express.Express
 
   beforeAll(async () => {
-    await createConnection(testConfig)
+    await getConnection()
   })
 
   beforeEach(async () => {
-    await cleanTestDatabase()
-    await seedTestDatabase()
-
+    await getConnection().synchronize(true)
     app = express()
     app.use(bodyParser.json())
-    app.post('/', UserAuthController.signup)
-    app.post('/login', UserAuthController.login)
+    app.use(appRouter)
   })
 
   afterEach(() => {
@@ -38,20 +29,12 @@ describe('UserAuthController', () => {
 
   afterAll(async () => {
     await getConnection().close()
-    await cleanTestDatabase()
   })
 
   // tests for signup functionality
   describe('signup', () => {
     it('should create a new user and return a JWT', async () => {
-      mockSave.mockResolvedValue({
-        id: 1,
-        username: 'Test User',
-        email: 'testuser@example.com',
-        password: 'password',
-      })
-
-      const res = await request(app).post('/').send({
+      const res = await request(app).post('/user').send({
         username: 'Test User',
         email: 'testuser@example.com',
         password: 'password',
@@ -67,7 +50,7 @@ describe('UserAuthController', () => {
     })
 
     it('should require a valid email', async () => {
-      const res = await request(app).post('/').send({
+      const res = await request(app).post('/user').send({
         username: 'Test User',
         email: 'invalid-email',
         password: 'password',
@@ -79,7 +62,7 @@ describe('UserAuthController', () => {
     })
 
     it('should require a password with at least 8 characters', async () => {
-      const res = await request(app).post('/').send({
+      const res = await request(app).post('/user').send({
         username: 'Test User',
         email: 'user2@domain.com',
         password: 'pas.123',
@@ -93,54 +76,68 @@ describe('UserAuthController', () => {
     })
 
     it('should store email in lowercase and trim whitespace', async () => {
-      console.log('mockSave about to be called')
-      mockSave.mockImplementation((user) => {
-        console.log('mockSave called with', user)
-        // Ensure the email is stored in lowercase and whitespace is trimmed
-        expect(user.email).toBe('testuser2@example.com')
-        return Promise.resolve(user)
-      })
-
-      const res = await request(app).post('/').send({
-        username: 'Test User 2',
+      const res = await request(app).post('/user').send({
+        username: 'Test User',
         email: '  TESTUSER2@EXAMPLE.COM  ',
         password: 'password',
       })
       expect(res.body).toEqual({
-        id: 2,
-        username: 'Test User 2',
+        id: 1,
+        username: 'Test User',
         email: 'testuser2@example.com',
         token: 'mockToken',
       })
+    })
+
+    it('should require username, email, and password for signup', async () => {
+      const res = await request(app).post('/user').send({
+        username: '',
+        email: '',
+        password: '',
+      })
+
+      expect(res.status).toBe(400)
+      expect(res.body).toHaveProperty(
+        'message',
+        'Username, email, and password are required'
+      )
+    })
+
+    it('should not allow duplicate emails', async () => {
+      const user = await createTestUser()
+
+      const res = await request(app).post('/user').send({
+        username: 'Test User 2',
+        email: user.email,
+        password: 'password',
+      })
+
+      expect(res.status).toBe(400)
+      expect(res.body).toHaveProperty('message', 'Email already in use')
     })
   })
 
   // Tests for login functionality
   describe('login', () => {
     it('should login a user and return a JWT', async () => {
-      mockSave.mockResolvedValue({
-        id: 1,
-        username: 'Test User',
-        email: 'testuser@example.com',
-        password: 'password',
-      })
+      const user = await createTestUser()
 
-      const res = await request(app).post('/login').send({
-        usernameOrEmail: 'testuser@example.com',
+      const res = await request(app).post('/user/login').send({
+        usernameOrEmail: user.email,
         password: 'password',
       })
 
       expect(res.status).toBe(200)
       expect(res.body).toEqual({
-        id: 1,
-        username: 'Test User',
-        email: 'testuser@example.com',
+        id: user.id,
+        username: user.username,
+        email: user.email,
         token: 'mockToken',
       })
     })
 
     it('should throw an error for non-existent user', async () => {
-      const res = await request(app).post('/login').send({
+      const res = await request(app).post('/user/login').send({
         usernameOrEmail: 'nonexisting@user.com',
         password: 'password',
       })
@@ -149,8 +146,10 @@ describe('UserAuthController', () => {
     })
 
     it('should throw an error for incorrect password', async () => {
-      const res = await request(app).post('/login').send({
-        usernameOrEmail: 'testuser@example.com',
+      const user = await createTestUser()
+
+      const res = await request(app).post('/user/login').send({
+        usernameOrEmail: user.email,
         password: 'wrongpassword',
       })
 
@@ -159,7 +158,7 @@ describe('UserAuthController', () => {
     })
 
     it('should throw an error for a short password', async () => {
-      const res = await request(app).post('/login').send({
+      const res = await request(app).post('/user/login').send({
         usernameOrEmail: 'testuser@example.com',
         password: 'short',
       })
@@ -172,19 +171,26 @@ describe('UserAuthController', () => {
     })
 
     it('should allow logging in with different email case', async () => {
-      const res = await request(app).post('/login').send({
-        usernameOrEmail: 'TESTUSER@EXAMPLE.COM',
+      const user = await createTestUser()
+
+      const res = await request(app).post('/user/login').send({
+        usernameOrEmail: user.email.toUpperCase(),
         password: 'password',
       })
-
+      expect(res.status).toBe(200)
       expect(res.body.token).toBeDefined()
     })
 
     it('should allow logging in with surrounding white space', async () => {
-      const res = await request(app).post('/login').send({
-        usernameOrEmail: ' testuser@example.com ',
-        password: 'password',
-      })
+      const user = await createTestUser()
+
+      const res = await request(app)
+        .post('/user/login')
+        .send({
+          usernameOrEmail: `  ${user.email}    `,
+          password: 'password',
+        })
+      expect(res.status).toBe(200)
       expect(res.body).toHaveProperty('token')
     })
   })

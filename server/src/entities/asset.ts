@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
 import { z } from 'zod'
-import { UserAssets, userAssetsSchema, HistoricalData } from './index'
+import { UserAssets, userAssetsSchema } from './index'
 
 @Entity()
 export class Asset {
@@ -15,9 +15,6 @@ export class Asset {
 
   @Column('decimal')
   current_price: number
-
-  @OneToMany(() => HistoricalData, (historicalData) => historicalData.asset)
-  historicalData: HistoricalData[]
 
   @OneToMany(() => UserAssets, (userAssets) => userAssets.asset, {
     cascade: true,

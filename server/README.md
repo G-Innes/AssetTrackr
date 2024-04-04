@@ -9,10 +9,10 @@ The primary features of AssetTrackr include:
 - User signup and login
 - Managing user profiles
 - Adding assets to a user's portfolio
-- Updating portfolio holdings
+- Update portfolio holdings with buy/sell transactions
 - Viewing portfolio holdings
 
-The application is currently in active development, with a focus on backend functionality for portfolio management.
+The application is currently in active development, with a focus on backend functionality for portfolio management of asset transactions.
 
 Future enhancements will include performance tracking of individual holdings and overall portfolio, providing users with insights into their investment performance over time.
 
@@ -24,7 +24,7 @@ Follow these steps to set up the project locally:
 2. Run `npm install` in the root directory
 3. Navigate to the server directory with `cd server`
 4. add username and password to .env.example & remove '.example' from the file name
-5. Create two Postgres databases: `AssetTracker` and `Test_AssetTracker`
+5. Create Postgres database: `AssetTrackr`
 6. Start the server with `npm start`
 
 ## API Usage
@@ -60,7 +60,7 @@ You can interact with the API using tools like Insomnia or Postman. Here are som
 
 - Delete User: `DELETE http://localhost:3000/user/user/1`
 
-- Create New User Asset: `POST http://localhost:3000/user/1/assets` with JSON body:
+- Create New User Asset if does not exist, same endpoint is used for buy and sell transactions (buys add to quantity, to sell enter a negative number): `POST http://localhost:3000/user/1/assets` with JSON body:
 ```json
   {
     "userId": 1,
@@ -74,24 +74,14 @@ You can interact with the API using tools like Insomnia or Postman. Here are som
 
 - Get All User Assets: `GET http://localhost:3000/user/1/assets`
 
-- Update User Asset: `http://localhost:3000/user/1/assets/1` with JSON body:
-```json
-  {
-    "userId": 1,
-    "assetId": 1,
-    "quantity": 500,
-    "name": "Some Updated Asset name",
-    "ticker": "SUAN",
-    "current_price": 250
-  }
-  ```
 
 - Delete User Asset: `DELETE http://localhost:3000/user/1/assets/1`
 
 # Testing
-Tests interact with the Test_AssetTracker database and should be run in isolation:
 
-`npm test src/modules/assets/userController.spec.ts`
 
-`npm test src/modules/assets/userAuth.spec.ts`
+`npm run test`
+
+
+
 

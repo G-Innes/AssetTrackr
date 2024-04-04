@@ -6,8 +6,13 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import { z } from 'zod'
-import { User } from './user'
-import { Asset } from './asset'
+import { NumericTransformer } from '../utils/generalUtils'
+import { User, Asset } from './index'
+
+export enum TransactionType {
+  BUY = 'buy',
+  SELL = 'sell',
+}
 
 @Entity()
 export class Transaction {
@@ -22,10 +27,19 @@ export class Transaction {
   @JoinColumn({ name: 'asset_id' })
   asset: Asset
 
-  @Column('text')
-  transaction_type: string
+  @Column({
+    type: 'enum',
+    enum: TransactionType,
+  })
+  transactionType: TransactionType
 
-  @Column('decimal')
+  @Column({
+    type: 'decimal',
+    precision: 10, // Adjust precision
+    scale: 2, // Adjust scale
+    transformer: new NumericTransformer(),
+    default: 0,
+  })
   quantity: number
 
   @Column('decimal')
@@ -40,7 +54,7 @@ export const transactionSchema = z.object({
   user_id: z.number().int().positive(),
   asset_id: z.number().int().positive(),
   transaction_type: z.string().min(3).max(20),
-  quantity: z.number().int().positive(),
+  quantity: z.number(),
   price: z.number().int().positive(),
   transaction_date: z.date(),
 })

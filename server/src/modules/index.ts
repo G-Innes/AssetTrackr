@@ -2,6 +2,7 @@ import { Router } from 'express'
 import userController from './user/userController'
 import assetController from './assets/assetController'
 import userAuthController from './user/userAuthController'
+// import transactionController from './transactions/transactionController'
 
 export const appRouter = Router()
 
@@ -18,10 +19,7 @@ user.delete('/user/:userId', userController.deleteUser)
 // Routes for the assets module
 asset.post('/', assetController.createAssetHoldingsForUser)
 asset.get('/', assetController.getAllAssetHoldingsForUser)
-asset.put('/:assetId', assetController.updateAssetHoldingsForUser)
 asset.delete('/:assetId', assetController.deleteAssetHoldingsForUser)
-// app.put('/assets/:assetId', assetController.updateAssetPrice);
-// app.get('/assets/:assetId', assetController.getAssetPrice);
 
 appRouter.use('/user', user).use('/user/:userId/assets', asset)
 

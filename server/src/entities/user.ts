@@ -21,9 +21,6 @@ export class User {
   @Column('text')
   password: string
 
-  // @Column() // possibly add this in the future
-  // portfolioId: string
-
   @OneToMany(() => Transaction, (transaction) => transaction.user)
   transactions?: Transaction[]
 

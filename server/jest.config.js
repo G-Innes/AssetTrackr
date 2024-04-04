@@ -1,5 +1,7 @@
 module.exports = {
   roots: ['<rootDir>/src'],
+  setupFilesAfterEnv: ['./tests/jest.setup.ts'],
+  maxWorkers: 1, // Run tests serially
   testMatch: ['**/__tests__/**/*.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',

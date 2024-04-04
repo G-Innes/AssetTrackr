@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>15/15</span>
+                <span class='fraction'>16/16</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>15/15</span>
+                <span class='fraction'>16/16</span>
             </div>
         
             
@@ -86,60 +86,87 @@
 <a name='L21'></a><a href='#L21'>21</a>
 <a name='L22'></a><a href='#L22'>22</a>
 <a name='L23'></a><a href='#L23'>23</a>
-<a name='L24'></a><a href='#L24'>24</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Router } from 'express';
-import userController from './user/userController';
-import assetController from './assets/assetController';
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Router } from 'express'
+import userController from './user/userController'
+import assetController from './assets/assetController'
+import userAuthController from './user/userAuthController'
+// import transactionController from './transactions/transactionController'
 &nbsp;
-export const appRouter = Router();
+export const appRouter = Router()
 &nbsp;
-const user = Router();
-const asset = Router(); // create a router for the assets module
+const user = Router()
+const asset = Router({ mergeParams: true }) // Preserve the req.params values from the parent router
+// const transaction = Router({ mergeParams: true }) // Preserve the req.params values from the parent router
 &nbsp;
-user.post('/signup', userController.signup);
-user.post('/login', userController.login);
-user.get('/profile', userController.getUserProfile);
-user.put('/profile', userController.updateUserProfile);
-user.delete('/profile', userController.deleteUser);
+// Routes for the user module
+user.post('/', userAuthController.signup)
+user.post('/login', userAuthController.login)
+user.get('/user/:userId', userController.getUserProfile)
+user.put('/user/:userId', userController.updateUserProfile)
+user.delete('/user/:userId', userController.deleteUser)
 &nbsp;
-// define the routes for the assets module
-asset.post('/assets', assetController.createAssetHoldingsForUser);
-asset.get('/users/:userId/assets', assetController.getAllAssetHoldingsForUser);
-asset.put('/assets', assetController.updateAssetHoldingsForUser);
+// Routes for the assets module
+asset.post('/', assetController.createAssetHoldingsForUser)
+asset.get('/', assetController.getAllAssetHoldingsForUser)
+asset.delete('/:assetId', assetController.deleteAssetHoldingsForUser)
 &nbsp;
-appRouter.use('/user', user)
-    .use('/asset', asset); // use the asset router
+// // Routes for the transactions module
+// transaction.get('/user/:userId', transactionController.getAllTransactionsForUser);
+// transaction.get('/user/:userId/asset/:assetId', transactionController.getAllTransactionsForAsset);
+// transaction.get('/user/:userId/type/:type', transactionController.getTransactionsByType);
 &nbsp;
-export type AppRouter = typeof appRouter;</pre></td></tr></table></pre>
+appRouter.use('/user', user).use('/user/:userId/assets', asset)
+&nbsp;
+export type AppRouter = typeof appRouter
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-01-28T18:46:44.068Z
+                at 2024-04-04T06:56:10.578Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

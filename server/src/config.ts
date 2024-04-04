@@ -19,10 +19,16 @@ const isTestEnvironment = process.env.NODE_ENV === 'test'
 // Database connection details
 const config: MyConnectionOptions = {
   type: 'postgres',
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
+  host: isTestEnvironment ? process.env.TEST_DB_HOST : process.env.DB_HOST,
+  port: Number(
+    isTestEnvironment ? process.env.TEST_DB_PORT : process.env.DB_PORT
+  ),
+  username: isTestEnvironment
+    ? process.env.TEST_DB_USERNAME
+    : process.env.DB_USERNAME,
+  password: isTestEnvironment
+    ? process.env.TEST_DB_PASSWORD
+    : process.env.DB_PASSWORD,
   database: isTestEnvironment
     ? process.env.TEST_DB_DATABASE
     : process.env.DB_DATABASE,

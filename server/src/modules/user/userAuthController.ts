@@ -1,10 +1,10 @@
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
-import { QueryFailedError, getRepository } from 'typeorm'
+import { getRepository } from 'typeorm'
 import { z } from 'zod'
-
 import config from '../../config'
+import { handleError } from '../../utils/errorHandlingUtils'
 import { User, UserInsert, userInsertSchema } from '../../entities/user'
 
 // Schema for the JWT token payload
@@ -30,44 +30,13 @@ async function generateToken(user: User) {
   return token
 }
 
-// Function to handle errors and return appropriate status code and message
-async function handleError(error: Error) {
-  // Default
-  let statusCode = 500
-  let message = 'An unexpected error occurred'
-  // If the error is a Zod validation error return a 400 status and the error message
-  if (error instanceof z.ZodError) {
-    statusCode = 400
-
-    // Find if the error is related to email or password
-    const emailError = error.errors.find((subError) =>
-      subError.path.includes('email')
-    )
-    const passwordError = error.errors.find((subError) =>
-      subError.path.includes('password')
-    )
-    // Set appropriate error messages based on the type of validation error
-    if (emailError) {
-      message = 'Invalid email format'
-    } else if (passwordError) {
-      message = 'Password must be at least 8 characters'
-    }
-  } else if (error instanceof QueryFailedError) {
-    // If it's a database error, use the error message from the database
-    message = error.message
-  }
-
-  return { statusCode, message }
-}
-
 export default {
   // function to create a new user
   async signup(req: Request, res: Response) {
-    // Destructure username, email, and password from request body
-    const { username, email, password } = req.body
-    console.log('signup req.body:', req.body)
-
     try {
+      // Destructure username, email, and password from request body
+      const { username, email, password } = req.body
+
       // Ensure username, email, and password are defined
       if (!username || !email || !password) {
         return res.status(400).json({
@@ -86,6 +55,17 @@ export default {
         userInsert.password!,
         config.auth!.passwordCost
       )
+
+      // Check for duplicate emails
+      const existingUser = await getRepository(User).findOne({
+        where: { email: email.toLowerCase().trim() },
+      })
+      if (existingUser) {
+        return res.status(400).json({
+          message: 'Email already in use',
+        })
+      }
+
       // Save the new user to the database
       const user = await getRepository(User).save({
         ...userInsert,
@@ -93,7 +73,6 @@ export default {
         userAssets: [],
         password: hash,
       })
-      console.log('signup user:', user)
 
       // Generate a JWT token for the user
       const token = await generateToken(user)
@@ -119,12 +98,12 @@ export default {
 
   // function to login a user
   async login(req: Request, res: Response) {
-    // Define the schema for the login data
+    // schema for the login data
     const loginSchema = z.object({
       usernameOrEmail: z.string().min(1),
       password: z.string().min(8),
     })
-    // Define type for login data
+    // type for login data
     type LoginData = z.infer<typeof loginSchema>
     try {
       // Parse the request body into the login data

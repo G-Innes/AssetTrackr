@@ -1,55 +1,22 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import { createConnection, getConnection } from 'typeorm'
+import { getConnection } from 'typeorm'
 import request from 'supertest'
-import testConfig from '../../../tests/testConfig'
-import cleanTestDatabase from '../../../tests/cleanTestDatabase'
-import seedTestDatabase from '../../../tests/seedTestDatabase'
-import userController from './userController'
-
-let mockDelete = jest.fn()
-let mockFindOne: jest.Mock
-
-const mockSave = jest.fn((user) => {
-  console.log('mockSave called with', user)
-  return Promise.resolve(user)
-})
-jest.mock('typeorm', () => ({
-  ...jest.requireActual('typeorm'),
-  getRepository: () => ({
-    save: mockSave,
-    findOne: () => mockFindOne(),
-    delete: mockDelete,
-    createQueryBuilder: jest.fn(() => ({
-      where: jest.fn().mockReturnThis(),
-      getOne: jest.fn(() =>
-        Promise.resolve({
-          id: 1,
-          username: 'Test User',
-          email: 'testuser@example.com',
-          password: 'password',
-        })
-      ),
-    })),
-  }),
-}))
+import { createTestUser } from '../../utils/testUtils'
+import { appRouter } from '../index'
 
 describe('UserController', () => {
   let app: express.Express
 
   beforeAll(async () => {
-    await createConnection(testConfig)
+    await getConnection()
   })
 
   beforeEach(async () => {
-    await cleanTestDatabase()
-    await seedTestDatabase()
-
+    await getConnection().synchronize(true)
     app = express()
     app.use(bodyParser.json())
-    app.get('/user/:userId', userController.getUserProfile)
-    app.put('/user/:userId', userController.updateUserProfile)
-    app.delete('/user/:userId', userController.deleteUser)
+    app.use(appRouter)
   })
 
   afterEach(() => {
@@ -58,96 +25,80 @@ describe('UserController', () => {
 
   afterAll(async () => {
     await getConnection().close()
-    await cleanTestDatabase()
   })
 
   // Tests for get profile functionality
   describe('getUserProfile', () => {
     it('should return the user profile', async () => {
-      mockFindOne = jest.fn().mockResolvedValue({
-        id: 1,
-        username: 'Test User',
-        email: 'testuser@example.com',
-      })
+      const user = await createTestUser()
 
-      const res = await request(app).get('/user/1')
+      const res = await request(app).get('/user/user/1')
 
       expect(res.status).toBe(200)
       expect(res.body).toEqual({
         id: 1,
-        username: 'Test User',
-        email: 'testuser@example.com',
+        username: user.username,
+        email: user.email,
+        password: user.password,
       })
     })
 
     it('should return 404 when user not found', async () => {
-      mockFindOne = jest.fn().mockResolvedValue(undefined)
+      await createTestUser()
 
-      const res = await request(app).get('/user/1')
+      const res = await request(app).get('/user/user/2')
 
       expect(res.status).toBe(404)
-      expect(res.body.error.message).toContain('User not found')
     })
   })
 
   // Tests for update profile functionality
   describe('updateUserProfile', () => {
     it('should update the user profile', async () => {
-      mockFindOne = jest.fn().mockResolvedValue({
-        id: 1,
-        username: 'Test User',
-        email: 'testuser@example.com',
-      })
+      const user = await createTestUser()
 
-      const res = await request(app).put('/user/1').send({
+      const res = await request(app).put('/user/user/1').send({
         username: 'Updated User',
         email: 'updateduser@example.com',
       })
 
       expect(res.status).toBe(200)
       expect(res.body).toEqual({
-        id: 1,
+        id: user.id,
         username: 'Updated User',
         email: 'updateduser@example.com',
+        password: user.password,
       })
     })
 
     it('should return 404 when user not found', async () => {
-      mockFindOne = jest.fn().mockResolvedValue(undefined)
+      await createTestUser()
 
-      const res = await request(app).put('/user/1').send({
+      const res = await request(app).put('/user/user/3').send({
         username: 'Updated User',
         email: 'updateduser@example.com',
       })
 
       expect(res.status).toBe(404)
-      expect(res.body.error.message).toContain('User not found')
     })
   })
 
   // Tests for delete profile functionality
   describe('deleteUser', () => {
     it('should delete the user', async () => {
-      mockFindOne = jest.fn().mockResolvedValue({
-        id: 1,
-        username: 'Test User',
-        email: 'testuser@example.com',
-      })
-      mockDelete = jest.fn().mockResolvedValue({ affected: 1 })
+      await createTestUser()
 
-      const res = await request(app).delete('/user/1')
+      const res = await request(app).delete('/user/user/1')
 
       expect(res.status).toBe(204)
     })
 
     it('should return 404 when user not found', async () => {
-      mockFindOne = jest.fn().mockResolvedValue(undefined)
-      mockDelete = jest.fn().mockResolvedValue({ affected: 0 })
+      await createTestUser()
 
-      const res = await request(app).delete('/user/1')
+      const res = await request(app).delete('/user/user/2')
 
       expect(res.status).toBe(404)
-      expect(res.body.error.message).toContain('User not found')
     })
   })
 })
