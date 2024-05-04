@@ -8,6 +8,7 @@ export const appRouter = Router()
 
 const user = Router()
 const asset = Router({ mergeParams: true }) // Preserve the req.params values from the parent router
+// const transaction = Router({ mergeParams: true }) // Preserve the req.params values from the parent router
 
 // Routes for the user module
 user.post('/', userAuthController.signup)
@@ -20,6 +21,11 @@ user.delete('/user/:userId', userController.deleteUser)
 asset.post('/', assetController.createAssetHoldingsForUser)
 asset.get('/', assetController.getAllAssetHoldingsForUser)
 asset.delete('/:assetId', assetController.deleteAssetHoldingsForUser)
+
+// // Routes for the transactions module
+// transaction.get('/user/:userId', transactionController.getAllTransactionsForUser);
+// transaction.get('/user/:userId/asset/:assetId', transactionController.getAllTransactionsForAsset);
+// transaction.get('/user/:userId/type/:type', transactionController.getTransactionsByType);
 
 appRouter.use('/user', user).use('/user/:userId/assets', asset)
 
