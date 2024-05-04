@@ -15,9 +15,9 @@ jobs:
         image: postgres:16.1-alpine
         env:
           # Postgres will create a database with the following credentials
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
+          TEST_DB_USERNAME: postgres
+          TEST_DB_PASSWORD: postgres
+          TEST_DB_DATABASE: test_db
         ports:
           - 5432:5432
     steps:
@@ -64,9 +64,9 @@ jobs:
         env:
           # Pass the same credentials to our server environment variables, just like
           # we would if we had an .env file.
-          DB_USER: postgres
-          DB_PASSWORD: postgres
-          DB_NAME: test_db
+          TEST_DB_USERNAME: postgres
+          TEST_DB_PASSWORD: postgres
+          TEST_DB_DATABASE: test_db
 
           # port to start the server on
           PORT: 3000
