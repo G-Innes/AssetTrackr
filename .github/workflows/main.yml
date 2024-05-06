@@ -42,6 +42,26 @@ jobs:
 
     #   - name: Lint client
     #     run: npm run lint -w=client
+      - name: Print secrets
+        run: |
+          echo "DB_HOST: $DB_HOST"
+          echo "DB_PASSWORD: $DB_PASSWORD"
+          echo "DB_PORT: $DB_PORT"
+          echo "DB_USERNAME: $DB_USERNAME"
+          echo "TEST_DB_HOST: $TEST_DB_HOST"
+          echo "TEST_DB_PASSWORD: $TEST_DB_PASSWORD"
+          echo "TEST_DB_PORT: $TEST_DB_PORT"
+          echo "TEST_DB_USERNAME: $TEST_DB_USERNAME"
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          TEST_DB_HOST: ${{ secrets.TEST_DB_HOST }}
+          TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+          TEST_DB_PORT: ${{ secrets.TEST_DB_PORT }}
+          TEST_DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+
 
       - name: Test server
         run: npm run test -w=server
