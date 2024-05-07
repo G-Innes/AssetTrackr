@@ -15,7 +15,7 @@ export class UserAssets {
   asset: Asset
 
   @Column({
-    type: 'decimal', // Change the type to '
+    type: 'decimal', // Change the type
     precision: 10, // Adjust precision
     scale: 2, // Adjust scale
     transformer: new NumericTransformer(),

@@ -2,13 +2,13 @@ import { Router } from 'express'
 import userController from './user/userController'
 import assetController from './assets/assetController'
 import userAuthController from './user/userAuthController'
-// import transactionController from './transactions/transactionController'
+import transactionController from './transactions/transactionController'
 
 export const appRouter = Router()
 
 const user = Router()
 const asset = Router({ mergeParams: true }) // Preserve the req.params values from the parent router
-// const transaction = Router({ mergeParams: true }) // Preserve the req.params values from the parent router
+const transaction = Router({ mergeParams: true }) // Preserve the req.params values from the parent router
 
 // Routes for the user module
 user.post('/', userAuthController.signup)
@@ -22,11 +22,12 @@ asset.post('/', assetController.createAssetHoldingsForUser)
 asset.get('/', assetController.getAllAssetHoldingsForUser)
 asset.delete('/:assetId', assetController.deleteAssetHoldingsForUser)
 
-// // Routes for the transactions module
-// transaction.get('/user/:userId', transactionController.getAllTransactionsForUser);
-// transaction.get('/user/:userId/asset/:assetId', transactionController.getAllTransactionsForAsset);
-// transaction.get('/user/:userId/type/:type', transactionController.getTransactionsByType);
+// Routes for the transactions module
+transaction.get('/', transactionController.getAllTransactionsForUser);
 
-appRouter.use('/user', user).use('/user/:userId/assets', asset)
+
+appRouter.use('/user', user)
+        .use('/user/:userId/assets', asset)
+        .use('/user/:userId/transactions', transaction);
 
 export type AppRouter = typeof appRouter
