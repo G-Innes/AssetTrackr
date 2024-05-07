@@ -79,8 +79,9 @@ You can interact with the API using tools like Insomnia or Postman. Here are som
 
 # Testing
 
+You will need to create a database for testing named 'test_db'
 
-`npm run test`
+`npm run test` from server directory
 
 
 
