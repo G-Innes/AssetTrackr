@@ -149,7 +149,7 @@ describe('assetController', () => {
       const response = await request(app).get('/user/9999/assets')
 
       expect(response.status).toBe(404)
-      expect(response.body.error.message).toContain('User not found')
+      expect(response.body.message).toContain('User not found')
     })
   })
 

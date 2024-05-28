@@ -7,27 +7,14 @@ import {
   Asset,
   User,
 } from '../../entities/index'
+import { handleError } from '../../utils/errorHandlingUtils'
 
-// Error handling function
-async function handleError(error: any, res: Response) {
-  if (error instanceof EntityNotFoundError) {
-    return res.status(404).json({
-      message: error.message,
-      error,
-    })
-  }
 
-  return res.status(500).json({
-    message: 'Something went wrong',
-    error,
-  })
-}
 
-export default {
-  // function to create new asset holdings for user
+// function to create new asset holdings for user
   // If asset does not exist it creates it and logs transaction as a buy
   // If asset exists and negative number is sent in request it logs transaction as sell
-  async createAssetHoldingsForUser(req: Request, res: Response) {
+  export async function createAssetHoldingsForUser(req: Request, res: Response) {
     const {
       userId,
       assetId,
@@ -154,81 +141,6 @@ export default {
       }
     } catch (error: any) {
       // Database errors
-      return handleError(error, res)
+      return handleError(error as Error)
     }
-  },
-
-  // function to get all asset holdings for user
-  async getAllAssetHoldingsForUser(req: Request, res: Response) {
-    try {
-      const userId = Number(req.params.userId)
-
-      // Validate that userId is a valid integer
-      if (Number.isNaN(userId) || !Number.isInteger(userId)) {
-        return res.status(400).json({ message: 'Invalid user ID' })
-      }
-
-      const userRepository = getRepository(User)
-      const user = await userRepository.findOne({
-        where: { id: userId },
-        relations: ['userAssets', 'userAssets.asset'],
-      })
-
-      if (!user) {
-        throw new EntityNotFoundError(User, `User not found with id: ${userId}`)
-      }
-
-      const userAssets = user.userAssets
-        ? user.userAssets.map((userAsset) => ({
-            id: userAsset.id,
-            quantity: userAsset.quantity,
-            assetId: userAsset.asset.id,
-            userId,
-            name: userAsset.asset.name,
-            ticker: userAsset.asset.ticker,
-          }))
-        : []
-
-      return res.json(userAssets)
-    } catch (error) {
-      // Database errors
-      return handleError(error, res)
-    }
-  },
-
-  // function to delete asset holdings for user
-  async deleteAssetHoldingsForUser(req: Request, res: Response) {
-    try {
-      const userId = Number(req.params.userId)
-      const assetId = Number(req.params.assetId)
-
-      const userRepository = getRepository(User)
-      const userAssetsRepository = getRepository(UserAssets)
-      const user = await userRepository.findOne({
-        where: { id: userId },
-        relations: ['userAssets', 'userAssets.asset'],
-      })
-
-      if (!user) {
-        throw new EntityNotFoundError(User, `User not found with id: ${userId}`)
-      }
-
-      const userAssetToDelete = (user.userAssets || []).find(
-        (userAsset) => userAsset.asset.id === assetId
-      )
-
-      if (!userAssetToDelete) {
-        throw new EntityNotFoundError(
-          Asset,
-          `Asset not found with id: ${assetId}`
-        )
-      }
-
-      await userAssetsRepository.remove(userAssetToDelete)
-
-      return res.status(204).send()
-    } catch (error) {
-      return handleError(error, res)
-    }
-  },
-}
+  }
