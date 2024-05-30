@@ -32,11 +32,12 @@ async function generateToken(user: User) {
 
 export async function signup(req: Request, res: Response) {
   try {
+    console.log(req.body);
     // Destructure username, email, and password from request body
-    const { username, email, password, confirmPassword } = req.body
+    const { email, userName,  password, confirmPassword } = req.body
 
     // Ensure username, email, and password are defined
-    if (!username || !email || !password || !confirmPassword) {
+    if (!email || !userName || !password || !confirmPassword) {
       return res.status(400).json({
         message: 'Username, email, and password & confirmation are required',
       })
@@ -73,6 +74,7 @@ export async function signup(req: Request, res: Response) {
     // Save the new user to the database
     const user = await getRepository(User).save({
       ...userInsert,
+      username: userName,
       transactions: [],
       userAssets: [],
       password: hash,

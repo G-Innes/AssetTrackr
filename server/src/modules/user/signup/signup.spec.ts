@@ -35,8 +35,8 @@ describe('UserAuthController', () => {
   describe('signup', () => {
     it('should create a new user and return a JWT', async () => {
       const res = await request(app).post('/user').send({
-        username: 'Test User',
         email: 'testuser@example.com',
+        userName: 'Test User',
         password: 'password',
         confirmPassword: 'password',
       })
@@ -52,8 +52,8 @@ describe('UserAuthController', () => {
 
     it('should require a valid email', async () => {
       const res = await request(app).post('/user').send({
-        username: 'Test User',
         email: 'invalid-email',
+        userName: 'Test User',
         password: 'password',
         confirmPassword: 'password',
       })
@@ -65,8 +65,8 @@ describe('UserAuthController', () => {
 
     it('should require a password with at least 8 characters', async () => {
       const res = await request(app).post('/user').send({
-        username: 'Test User',
         email: 'user2@domain.com',
+        userName: 'Test User',
         password: 'pas.123',
         confirmPassword: 'pas.123',
       })
@@ -80,8 +80,8 @@ describe('UserAuthController', () => {
 
     it('Passwords should match', async () => {
       const res = await request(app).post('/user').send({
-        username: 'Test User',
         email: 'user2@domain.com',
+        userName: 'Test User',
         password: 'pas.123',
         confirmPassword: 'pas.1234',
       })
@@ -95,8 +95,8 @@ describe('UserAuthController', () => {
 
     it('should store email in lowercase and trim whitespace', async () => {
       const res = await request(app).post('/user').send({
-        username: 'Test User',
         email: '  TESTUSER2@EXAMPLE.COM  ',
+        userName: 'Test User',
         password: 'password',
         confirmPassword: 'password',
       })
@@ -110,8 +110,8 @@ describe('UserAuthController', () => {
 
     it('should require username, email, and password for signup', async () => {
       const res = await request(app).post('/user').send({
-        username: '',
         email: '',
+        userName: '',
         password: '',
         confirmPassword: '',
       })
@@ -127,8 +127,8 @@ describe('UserAuthController', () => {
       const user = await createTestUser()
 
       const res = await request(app).post('/user').send({
-        username: 'Test User 2',
         email: user.email,
+        userName: 'Test User 2',
         password: 'password',
         confirmPassword: 'password',
       })
