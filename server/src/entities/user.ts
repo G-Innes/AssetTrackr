@@ -10,16 +10,16 @@ import {
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('increment')
-  id: number
+  id!: number
 
   @Column('text', { unique: true })
-  username: string
+  username!: string
 
   @Column('text', { unique: true })
-  email: string
+  email!: string
 
   @Column('text')
-  password: string
+  password!: string
 
   @OneToMany(() => Transaction, (transaction) => transaction.user)
   transactions?: Transaction[]

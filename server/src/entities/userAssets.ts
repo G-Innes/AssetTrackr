@@ -6,13 +6,13 @@ import { User, Asset } from './index'
 @Entity()
 export class UserAssets {
   @PrimaryGeneratedColumn('increment')
-  id: number
+  id!: number
 
   @ManyToOne(() => User, (user) => user.userAssets)
-  user: User
+  user!: User
 
   @ManyToOne(() => Asset, (asset) => asset.userAssets)
-  asset: Asset
+  asset!: Asset
 
   @Column({
     type: 'decimal', // Change the type
@@ -21,7 +21,7 @@ export class UserAssets {
     transformer: new NumericTransformer(),
     default: 0,
   })
-  quantity: number
+  quantity!: number
 }
 
 export const userAssetsSchema = z.object({

@@ -17,21 +17,21 @@ export enum TransactionType {
 @Entity()
 export class Transaction {
   @PrimaryGeneratedColumn('increment')
-  id: number
+  id!: number
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user: User
+  user!: User
 
   @ManyToOne(() => Asset)
   @JoinColumn({ name: 'asset_id' })
-  asset: Asset
+  asset!: Asset
 
   @Column({
     type: 'enum',
     enum: TransactionType,
   })
-  transactionType: TransactionType
+  transactionType!: TransactionType
 
   @Column({
     type: 'decimal',
@@ -40,13 +40,13 @@ export class Transaction {
     transformer: new NumericTransformer(),
     default: 0,
   })
-  quantity: number
+  quantity!: number
 
   @Column('decimal')
-  price: number
+  price!: number
 
   @Column('date')
-  transaction_date: Date
+  transaction_date!: Date
 }
 
 export const transactionSchema = z.object({

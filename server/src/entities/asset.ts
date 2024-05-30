@@ -5,21 +5,21 @@ import { UserAssets, userAssetsSchema } from './index'
 @Entity()
 export class Asset {
   @PrimaryGeneratedColumn('increment')
-  id: number
+  id!: number
 
   @Column('text')
-  name: string
+  name!: string
 
   @Column('text')
-  ticker: string
+  ticker!: string
 
   @Column('decimal')
-  current_price: number
+  current_price!: number
 
   @OneToMany(() => UserAssets, (userAssets) => userAssets.asset, {
     cascade: true,
   })
-  userAssets: UserAssets[]
+  userAssets!: UserAssets[]
 }
 
 export const assetSchema = z.object({
@@ -27,7 +27,7 @@ export const assetSchema = z.object({
   name: z.string().min(3).max(20),
   ticker: z.string().min(3).max(6),
   userAssets: z.array(userAssetsSchema),
-  current_price: z.number().int().positive(),
+  current_price: z.number().positive(),
 })
 
 export type AssetInsert = Omit<Asset, 'id'>
