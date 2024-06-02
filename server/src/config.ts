@@ -17,7 +17,7 @@ type MyConnectionOptions = ConnectionOptions & {
 const isTestEnvironment = process.env.NODE_ENV === 'test'
 
 // Database connection details
-const config: MyConnectionOptions = {
+const baseConfig: Partial<MyConnectionOptions> = {
   type: 'postgres',
   host: isTestEnvironment ? process.env.TEST_DB_HOST : process.env.DB_HOST,
   port: Number(
@@ -34,14 +34,18 @@ const config: MyConnectionOptions = {
     : process.env.DB_DATABASE,
   entities: [path.join(__dirname, '/entities/*.ts')],
   synchronize: true,
-  ssl: {
-    rejectUnauthorized: false,  // for self-signed certificates
-  },
   auth: {
     passwordCost: 10,
     jwtSecret: 'secret-sauce',
     jwtExpiresIn: '1d',
   },
 }
+
+// Conditionally add SSL configuration for non-test environments
+const config: MyConnectionOptions = {
+  ...baseConfig,
+  ssl: !isTestEnvironment ? { rejectUnauthorized: false } : undefined,
+} as MyConnectionOptions
+
 
 export default config
