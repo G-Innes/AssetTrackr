@@ -7,6 +7,9 @@ export async function login(req: Request, res: Response) {
     // Parse the request body into the login data
     const { usernameOrEmail, password } = req.body;
 
+    // Debug log to check the value of usernameOrEmail
+    console.log('Received usernameOrEmail:', usernameOrEmail);
+
     // Call authentication service
     const result = await loginUser(usernameOrEmail, password);
 

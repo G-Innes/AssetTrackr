@@ -17,7 +17,7 @@ export default function createApp() {
 
   // Error handling middleware
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.log(`Request URL: ${req.originalUrl}`)
+    console.log(`Request Method: ${req.method} | Request URL: ${req.originalUrl}`)
     console.error(err.stack)
     res.status(500).send('Something went wrong')
     next(err)

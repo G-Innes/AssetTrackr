@@ -30,7 +30,8 @@ async function generateToken(user: User) {
 
 export async function loginUser(usernameOrEmail: string, password: string) {
   // Convert to lowercase and trim whitespace
-  const normalizedUsernameOrEmail = usernameOrEmail.toLowerCase().trim();
+  const normalizedUsernameOrEmail = usernameOrEmail ? usernameOrEmail.toLowerCase().trim() : '';
+  console.log("Normalized username/email:", normalizedUsernameOrEmail);
 
   // Look up the user by username or email
   const user = await getRepository(User)
@@ -40,7 +41,7 @@ export async function loginUser(usernameOrEmail: string, password: string) {
       { usernameOrEmail: normalizedUsernameOrEmail }
     )
     .getOne();
-
+    console.log("Found user:", user);
   // If the user is not found, throw an error
   if (!user) {
     throw new Error('Invalid username or email');

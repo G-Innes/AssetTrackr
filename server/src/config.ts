@@ -34,6 +34,9 @@ const config: MyConnectionOptions = {
     : process.env.DB_DATABASE,
   entities: [path.join(__dirname, '/entities/*.ts')],
   synchronize: true,
+  ssl: {
+    rejectUnauthorized: false,  // for self-signed certificates
+  },
   auth: {
     passwordCost: 10,
     jwtSecret: 'secret-sauce',

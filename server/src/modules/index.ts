@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import userRoutes from './user/routes'; // Import user routes
-import assetRoutes from './assets/routes'; // Import asset routes
-import transactionRoutes from './transactions/routes'; // Import transaction routes
+import userRoutes from './user/routes';
+import assetRoutes from './assets/routes';
+import transactionRoutes from './transactions/routes';
 
 export const appRouter = Router();
 
