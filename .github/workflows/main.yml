@@ -34,14 +34,14 @@ jobs:
       - name: Type check server
         run: npm run typecheck -w=server
 
-    #   - name: Type check client
-    #     run: npm run typecheck -w=client
+      - name: Type check client
+        run: npm run typecheck -w=client
 
       - name: Lint server
         run: npm run lint -w=server
 
-    #   - name: Lint client
-    #     run: npm run lint -w=client
+      - name: Lint client
+        run: npm run lint -w=client
 
       - name: Test server
         run: npm run test -w=server
@@ -51,6 +51,7 @@ jobs:
           TEST_DB_DATABASE: test_db
           TEST_DB_HOST: localhost
           TEST_DB_PORT: 5432
+
     #   - name: Test client (unit)
     #     run: npm run test:unit -w=client
 
@@ -62,6 +63,7 @@ jobs:
     #   # We must start the server first. & at the end of the command
     #   # makes it run in the background. While it is starting up,
     #   # we will continue with other steps.
+
     #   - name: Start server for E2E tests
     #     run: npm run start -w=server &
     #     env:
