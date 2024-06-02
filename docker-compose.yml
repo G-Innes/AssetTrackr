@@ -14,18 +14,29 @@ services:
 
   server:
     build: ./server
+    mem_limit: 512m
+    cpu_quota: 50000
     ports:
       - "3000:3000"
     environment:
       DB_TYPE: postgres
-      DB_HOST: localhost
+      DB_HOST: ep-long-poetry-a5f8ruz7.us-east-2.aws.neon.tech
       DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      DB_USERNAME: AssetTrackr_owner
+      DB_PASSWORD: imjQhFg48GzC
       DB_DATABASE: AssetTrackr
       NODE_ENV: development
     depends_on:
       - db
+
+  client:
+    build: ./client
+    mem_limit: 256m
+    cpu_quota: 25000
+    ports:
+      - "80:80"
+    depends_on:
+      - server
 
 volumes:
   pgdata:
