@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,vue}\"",
+    "lint": "eslint \"src/**/*.{ts,tsx,js,jsx,vue}\"",
+    "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.16",
