@@ -9,13 +9,11 @@ import { FwbButton } from 'flowbite-vue'
       <div class="items-center lg:flex">
         <div class="lg:w-1/2">
           <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100">
-            A better way to track bugs
+            Asset purpose text
           </h2>
 
           <p class="mt-4 text-gray-500 dark:text-gray-400 lg:max-w-md">
-            Designed for developers, testers, and project managers alike,
-            <strong>Ladybug</strong> ensures your projects stay on course and maintain the highest
-            quality standards.
+            Application description text
           </p>
 
           <div class="mt-6 flex items-center gap-2">
