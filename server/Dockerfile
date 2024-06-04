@@ -29,4 +29,4 @@ COPY --from=builder /app/server .
 EXPOSE 3000
 
 # Command to run your application
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:prod"]

@@ -1,16 +1,16 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: AssetTrackr
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+  # db:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_USER: ${PROD_DB_USER:-postgres}
+  #     POSTGRES_PASSWORD: ${PROD_DB_PASSWORD:-postgres}
+  #     POSTGRES_DB: ${PROD_DB_DATABASE:-AssetTrackr}
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
 
   server:
     build: ./server
@@ -19,15 +19,15 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DB_TYPE: postgres
-      DB_HOST: ep-long-poetry-a5f8ruz7.us-east-2.aws.neon.tech
-      DB_PORT: 5432
-      DB_USERNAME: AssetTrackr_owner
-      DB_PASSWORD: imjQhFg48GzC
-      DB_DATABASE: AssetTrackr
-      NODE_ENV: development
-    depends_on:
-      - db
+      PROD_DB_TYPE: postgres
+      PROD_DB_HOST: ep-long-poetry-a5f8ruz7.us-east-2.aws.neon.tech
+      PROD_DB_PORT: 5432
+      PROD_DB_USERNAME: AssetTrackr_owner
+      PROD_DB_PASSWORD: imjQhFg48GzC
+      PROD_DB_DATABASE: AssetTrackr
+      NODE_ENV: production
+    # depends_on:
+    #   - db
 
   client:
     build: ./client
@@ -35,6 +35,8 @@ services:
     cpu_quota: 25000
     ports:
       - "80:80"
+    environment:
+      VUE_APP_BASE_URL: ${PROD_VUE_APP_BASE_URL}
     depends_on:
       - server
 

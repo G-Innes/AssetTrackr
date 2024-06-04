@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import 'dotenv/config'
 import path from 'path'
 import { ConnectionOptions } from 'typeorm'
@@ -15,23 +16,38 @@ type MyConnectionOptions = ConnectionOptions & {
 
 // Checks if the application is running in a test environment.
 const isTestEnvironment = process.env.NODE_ENV === 'test'
+const isProductionEnvironment = process.env.NODE_ENV === 'production'
 
 // Database connection details
 const baseConfig: Partial<MyConnectionOptions> = {
   type: 'postgres',
-  host: isTestEnvironment ? process.env.TEST_DB_HOST : process.env.DB_HOST,
+  host: isTestEnvironment
+    ? process.env.TEST_DB_HOST
+    : isProductionEnvironment
+    ? process.env.PROD_DB_HOST
+    : process.env.DEV_DB_HOST,
   port: Number(
-    isTestEnvironment ? process.env.TEST_DB_PORT : process.env.DB_PORT
+    isTestEnvironment
+      ? process.env.TEST_DB_PORT
+      : isProductionEnvironment
+      ? process.env.PROD_DB_PORT
+      : process.env.DEV_DB_PORT
   ),
   username: isTestEnvironment
     ? process.env.TEST_DB_USERNAME
-    : process.env.DB_USERNAME,
+    : isProductionEnvironment
+    ? process.env.PROD_DB_USERNAME
+    : process.env.DEV_DB_USERNAME,
   password: isTestEnvironment
     ? process.env.TEST_DB_PASSWORD
-    : process.env.DB_PASSWORD,
+    : isProductionEnvironment
+    ? process.env.PROD_DB_PASSWORD
+    : process.env.DEV_DB_PASSWORD,
   database: isTestEnvironment
     ? process.env.TEST_DB_DATABASE
-    : process.env.DB_DATABASE,
+    : isProductionEnvironment
+    ? process.env.PROD_DB_DATABASE
+    : process.env.DEV_DB_DATABASE,
   entities: [path.join(__dirname, '/entities/*.ts')],
   synchronize: true,
   auth: {
@@ -44,7 +60,7 @@ const baseConfig: Partial<MyConnectionOptions> = {
 // Conditionally add SSL configuration for non-test environments
 const config: MyConnectionOptions = {
   ...baseConfig,
-  ssl: !isTestEnvironment ? { rejectUnauthorized: false } : undefined,
+  ssl: isProductionEnvironment ? { rejectUnauthorized: false } : undefined,
 } as MyConnectionOptions
 
 
