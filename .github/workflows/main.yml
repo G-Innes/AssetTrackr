@@ -148,6 +148,7 @@ jobs:
           docker build
           -t $SERVER_IMAGE_TAG
           -f ./server/Dockerfile .
+        working-directory: ./server
 
       - name: Build client image
         run: >-
@@ -156,6 +157,7 @@ jobs:
           --build-arg VITE_API_ORIGIN=$API_ORIGIN
           --build-arg VITE_API_PATH=$API_PATH
           -f ./client/Dockerfile .
+        working-directory: ./client
 
 
       - name: Push server image
