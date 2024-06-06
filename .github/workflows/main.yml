@@ -205,10 +205,10 @@ jobs:
                 "NODE_ENV": "production",
                 "DB_SSL": "true",
                 "DB_SYNC": "true",
-                "PROD_DB_HOST": "${{ secrets.PROD_DB_HOST }}",
-                "PROD_DB_DATABASE": "${{ secrets.PROD_DB_DATABASE }}",
-                "PROD_DB_USERNAME": "${{ secrets.PROD_DB_USERNAME }}",
-                "PROD_DB_PASSWORD": "${{ secrets.PROD_DB_PASSWORD }}"
+                "DB_HOST": "${{ secrets.PROD_DB_HOST }}",
+                "DB_NAME": "${{ secrets.PROD_DB_DATABASE }}",
+                "DB_USER": "${{ secrets.PROD_DB_USERNAME }}",
+                "DB_PASSWORD": "${{ secrets.PROD_DB_PASSWORD }}"
               }
             }
           }' > containers.json
