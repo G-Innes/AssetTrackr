@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Build the server (if applicable)
-RUN npm run build
+# RUN npm run build
 
 # Start from a new, smaller image
 FROM node:18.19.0-alpine3.18
