@@ -139,7 +139,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: eu-central-1
+          aws-region: ${{ vars.AWS_REGION }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -148,6 +148,7 @@ jobs:
           docker build
           -t $SERVER_IMAGE_TAG
           -f ./server/Dockerfile .
+          --debug
 
       - name: Build client image
         run: >-
@@ -156,6 +157,7 @@ jobs:
           --build-arg VITE_API_ORIGIN=$API_ORIGIN
           --build-arg VITE_API_PATH=$API_PATH
           -f ./client/Dockerfile .
+          --debug
 
       - name: Push server image
         run: >-
@@ -164,6 +166,7 @@ jobs:
           --label $SERVER_IMAGE_TAG
           --image $SERVER_IMAGE_TAG
           --output yaml
+          --debug
 
       - name: Push client image
         run: >-
@@ -172,6 +175,7 @@ jobs:
           --label $CLIENT_IMAGE_TAG
           --image $CLIENT_IMAGE_TAG
           --output yaml
+          --debug
 
       - name: Get Lightsail image tag
         run: |
