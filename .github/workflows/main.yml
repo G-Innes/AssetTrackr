@@ -140,8 +140,8 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: eu-central-1
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: AKIAW3MEDBFYG3A7MGVS
+          aws-secret-access-key: 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
 
       - name: Build server image
         run: >-
@@ -162,7 +162,7 @@ jobs:
       - name: Push server image
         run: >-
           aws lightsail push-container-image
-          --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }}
+          --service-name assettrackr
           --label $SERVER_IMAGE_TAG
           --image $SERVER_IMAGE_TAG
           --output yaml
@@ -171,7 +171,7 @@ jobs:
       - name: Push client image
         run: >-
           aws lightsail push-container-image
-          --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }}
+          --service-name assettrackr
           --label $CLIENT_IMAGE_TAG
           --image $CLIENT_IMAGE_TAG
           --output yaml
@@ -179,9 +179,9 @@ jobs:
 
       - name: Get Lightsail image tag
         run: |
-          aws lightsail get-container-images --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) | .image'
-          echo "LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) | .image')" >> $GITHUB_ENV
-          echo "LIGHTSAIL_CLIENT_IMAGE=$(aws lightsail get-container-images --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} | jq -r '.containerImages[] | select(.image | contains(".'$CLIENT_IMAGE_TAG'")) | .image')" >> $GITHUB_ENV
+          aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) | .image'
+          echo "LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) | .image')" >> $GITHUB_ENV
+          echo "LIGHTSAIL_CLIENT_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | contains(".'$CLIENT_IMAGE_TAG'")) | .image')" >> $GITHUB_ENV
 
       - name: Create containers.json
         run: |
@@ -205,10 +205,10 @@ jobs:
                 "NODE_ENV": "production",
                 "DB_SSL": "true",
                 "DB_SYNC": "true",
-                "DB_HOST": "${{ secrets.PROD_DB_HOST }}",
-                "DB_NAME": "${{ secrets.PROD_DB_DATABASE }}",
-                "DB_USER": "${{ secrets.PROD_DB_USERNAME }}",
-                "DB_PASSWORD": "${{ secrets.PROD_DB_PASSWORD }}"
+                "DB_HOST": "ep-long-poetry-a5f8ruz7.us-east-2.aws.neon.tech",
+                "DB_NAME": "AssetTrackr",
+                "DB_USER": "AssetTrackr_owner",
+                "DB_PASSWORD": "imjQhFg48GzC"
               }
             }
           }' > containers.json
@@ -227,7 +227,7 @@ jobs:
       - name: Deploy to AWS Lightsail
         run: |
           aws lightsail create-container-service-deployment \
-          --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} \
+          --service-name assettrackr \
           --containers file://containers.json \
           --public-endpoint file://public-endpoint.json
 
