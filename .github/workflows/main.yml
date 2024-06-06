@@ -147,7 +147,7 @@ jobs:
         run: >-
           docker build
           -t $SERVER_IMAGE_TAG
-          -f ./server/Dockerfile .
+          -f /Users/grantinnes/Desktop/Dev-Stuff/Turing-College/module-3-BE/capstone/ginnes-BE.3.5/server/Dockerfile .
         working-directory: ./server
 
       - name: Build client image
@@ -156,7 +156,7 @@ jobs:
           -t $CLIENT_IMAGE_TAG
           --build-arg VITE_API_ORIGIN=$API_ORIGIN
           --build-arg VITE_API_PATH=$API_PATH
-          -f ./client/Dockerfile .
+          -f /Users/grantinnes/Desktop/Dev-Stuff/Turing-College/module-3-BE/capstone/ginnes-BE.3.5/client/Dockerfile .
         working-directory: ./client
 
 
