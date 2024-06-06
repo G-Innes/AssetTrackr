@@ -18,6 +18,9 @@ type MyConnectionOptions = ConnectionOptions & {
 const isTestEnvironment = process.env.NODE_ENV === 'test'
 const isProductionEnvironment = process.env.NODE_ENV === 'production'
 
+console.log('Environment:', process.env.NODE_ENV)
+console.log('Database Host:', process.env.PROD_DB_HOST)
+
 // Database connection details
 const baseConfig: Partial<MyConnectionOptions> = {
   type: 'postgres',
@@ -62,6 +65,9 @@ const config: MyConnectionOptions = {
   ...baseConfig,
   ssl: isProductionEnvironment ? { rejectUnauthorized: false } : undefined,
 } as MyConnectionOptions
+
+// Logging database configuration
+console.log('Database Configuration:', config);
 
 
 export default config

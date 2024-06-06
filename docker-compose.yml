@@ -36,7 +36,7 @@ services:
     ports:
       - "80:80"
     environment:
-      VUE_APP_BASE_URL: ${PROD_VUE_APP_BASE_URL}
+      VUE_APP_BASE_URL: https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com
     depends_on:
       - server
 

@@ -3,11 +3,11 @@ import axios from 'axios';
 
 import { getStoredAccessToken, clearStoredAccessToken, storeAccessToken } from '../utils/auth';
 
-// const baseURL = process.env.NODE_ENV === 'production' ? process.env.PROD_VUE_APP_BASE_URL : process.env.DEV_VUE_APP_BASE_URL;
+const baseURL = process.env.NODE_ENV === 'production' ? process.env.PROD_VUE_APP_BASE_URL : process.env.DEV_VUE_APP_BASE_URL;
 
 
 const apiClient = axios.create({
-  baseURL: 'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com',
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
