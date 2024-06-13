@@ -63,7 +63,7 @@ const baseConfig: Partial<MyConnectionOptions> = {
 // Conditionally add SSL configuration for non-test environments
 const config: MyConnectionOptions = {
   ...baseConfig,
-  ssl: isProductionEnvironment ? { rejectUnauthorized: false } : { rejectUnauthorized: false },
+  ssl: isProductionEnvironment ? { rejectUnauthorized: false } : isTestEnvironment ? false : { rejectUnauthorized: false },
 } as MyConnectionOptions
 
 // Logging database configuration
