@@ -160,12 +160,12 @@ jobs:
       - name: Get Lightsail image tag
         id: get_image_tag
         run: |
-          # Retrieve the latest server image based on creation date
-          LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages | sort_by(.createdAt; 1) |.[0].image')
+
+          LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name assettrackr --query 'containerImages[?contains(image, `:assetrackr.server-\`)].createdAt' --output text | sort -V | tail -n 1 | awk '{print $NF}')
           echo "LIGHTSAIL_SERVER_IMAGE=$LIGHTSAIL_SERVER_IMAGE" >> $GITHUB_ENV
           
-          # Retrieve the latest client image based on creation date
-          LIGHTSAIL_CLIENT_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages | sort_by(.createdAt; 1) |.[0].image')
+
+          LIGHTSAIL_CLIENT_IMAGE=$(aws lightsail get-container-images --service-name assettrackr --query 'containerImages[?contains(image, `:assetrackr.client-\`)].createdAt' --output text | sort -V | tail -n 1 | awk '{print $NF}')
           echo "LIGHTSAIL_CLIENT_IMAGE=$LIGHTSAIL_CLIENT_IMAGE" >> $GITHUB_ENV
 
 
