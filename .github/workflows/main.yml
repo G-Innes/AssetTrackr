@@ -158,10 +158,12 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Get Lightsail image tag
+        id: get_image_tag
         run: |
-          LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | startswith(":assettrackr.server-") and (.image | split("-")[1] | tonumber >= ($SERVER_IMAGE_TAG | tonumber)) ) |.image')
+          LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | startswith(":assettrackr.server-") and (.image | split("-")[1] | tonumber >= ("${{ env.SERVER_IMAGE_TAG }}" | tonumber)) ) |.image')
           echo "LIGHTSAIL_SERVER_IMAGE=$LIGHTSAIL_SERVER_IMAGE" >> $GITHUB_ENV
-          echo "LIGHTSAIL_CLIENT_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | startswith(":assettrackr.client-") and (.image | split("-")[1] | tonumber >= ($CLIENT_IMAGE_TAG | tonumber)) ) |.image')" >> $GITHUB_ENV
+          LIGHTSAIL_CLIENT_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | startswith(":assettrackr.client-") and (.image | split("-")[1] | tonumber >= ("${{ env.CLIENT_IMAGE_TAG }}" | tonumber)) ) |.image')
+          echo "LIGHTSAIL_CLIENT_IMAGE=$LIGHTSAIL_CLIENT_IMAGE" >> $GITHUB_ENV
 
       - name: Debug AWS Lightsail Image Retrieval
         run: |
