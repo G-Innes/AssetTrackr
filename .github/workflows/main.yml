@@ -166,7 +166,7 @@ jobs:
       - name: Debug AWS Lightsail Image Retrieval
         run: |
           echo "Retrieving server image..."
-          aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) |.image'
+          aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[].image'
           echo "DEBUG: LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) |.image')"
 
       - name: Create containers.json
