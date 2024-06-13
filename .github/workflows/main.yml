@@ -160,22 +160,27 @@ jobs:
       - name: Get Lightsail image tag
         id: get_image_tag
         run: |
-          LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | startswith(":assettrackr.server-") and (.image | split("-")[1] | tonumber >= ("${{ env.SERVER_IMAGE_TAG }}" | tonumber)) ) |.image')
+          # Retrieve the latest server image based on creation date
+          LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages | sort_by(.createdAt; 1) |.[0].image')
           echo "LIGHTSAIL_SERVER_IMAGE=$LIGHTSAIL_SERVER_IMAGE" >> $GITHUB_ENV
-          LIGHTSAIL_CLIENT_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | startswith(":assettrackr.client-") and (.image | split("-")[1] | tonumber >= ("${{ env.CLIENT_IMAGE_TAG }}" | tonumber)) ) |.image')
+          
+          # Retrieve the latest client image based on creation date
+          LIGHTSAIL_CLIENT_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages | sort_by(.createdAt; 1) |.[0].image')
           echo "LIGHTSAIL_CLIENT_IMAGE=$LIGHTSAIL_CLIENT_IMAGE" >> $GITHUB_ENV
+
 
       - name: Debug AWS Lightsail Image Retrieval
         run: |
-          echo "Retrieving server image..."
-          aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[].image'
-          echo "DEBUG: LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) |.image')"
+          echo "Latest Server Image:"
+          echo "$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages | sort_by(.createdAt; 1) |.[0].image')"
+          echo "Latest Client Image:"
+          echo "$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages | sort_by(.createdAt; 1) |.[0].image')"
 
       - name: Create containers.json
         run: |
           echo '{
             "client": {
-              "image": "${{ env.LIGHTSAIL_CLIENT_IMAGE }}",
+              "image": "'"$LIGHTSAIL_CLIENT_IMAGE"'",
               "command": [],
               "ports": {
                 "80": "HTTP"
@@ -185,7 +190,7 @@ jobs:
               }
             },
             "server": {
-              "image": "${{ env.LIGHTSAIL_SERVER_IMAGE }}",
+              "image": "'"$LIGHTSAIL_SERVER_IMAGE"'",
               "ports": {
                 "3000": "HTTP"
               },
