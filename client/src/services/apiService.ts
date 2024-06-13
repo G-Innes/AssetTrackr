@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import { getStoredAccessToken, clearStoredAccessToken, storeAccessToken } from '../utils/auth';
 
-const baseURL = process.env.NODE_ENV === 'production' ? process.env.PROD_VUE_APP_BASE_URL : process.env.DEV_VUE_APP_BASE_URL;
+const baseURL = process.env.NODE_ENV === 'production' ? 'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com' : 'http://localhost:3000';
 
 
 const apiClient = axios.create({
@@ -23,7 +23,7 @@ apiClient.interceptors.request.use(config => {
 });
 
 export function signup(userData: { email: string, userName: string, password: string, confirmPassword: string }) {
-  return apiClient.post('/user', userData);
+  return apiClient.post('/api/user', userData);
 }
 
 // Adjust the type definition for the login payload
@@ -31,7 +31,7 @@ type LoginPayload = { usernameOrEmail: string; password: string };
 
 // Accept either an email or a username
 export async function login(userData: LoginPayload) {
-  const response = await apiClient.post('/user/login', userData); // may need adjusted
+  const response = await apiClient.post('/api/user/login', userData); // may need adjusted
   const token = response.data.token;
   storeAccessToken(localStorage, token);
   return response;
@@ -68,7 +68,7 @@ export function createAsset(payload: AssetPayload) {
   }
   
   // Include the user ID in the endpoint
-  const endpoint = `/user/${userId}/assets`;
+  const endpoint = `/api/user/${userId}/assets`;
   
   // Make the API request
   return apiClient.post(endpoint, payload);

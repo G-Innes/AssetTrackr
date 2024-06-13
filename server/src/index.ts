@@ -1,16 +1,19 @@
 /* eslint-disable no-console */
+import pino from 'pino'
 import createApp from './app'
 import { createDatabase } from './database'
+
+const logger = pino()
 
 console.log('Attempting to create database connection...');
 createDatabase()
   .then(() => {
-    console.log('Database connection established successfully.');
+    logger.info('Database connection established successfully.');
     const app = createApp()
 
     const port = 3000
     app.listen(port, '0.0.0.0', () => {
-      console.log(`Server is running at port: ${port}`)
+      logger.info(`Server is running at port: ${port}`)
     })
   })
   .catch((error) => {
