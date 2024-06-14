@@ -160,15 +160,21 @@ jobs:
       - name: Get Latest Image Versions
         run: |
           CLIENT_IMAGES=$(aws lightsail get-container-images --service-name assettrackr --query 'containerImages[?contains(@.image, `:assettrackr.client-`)].image' --output text)
-          CLIENT_VERSIONS=($(echo "$CLIENT_IMAGES" | grep ':assettrackr.client-' | cut -d '-' -f 2 | tr -dc '0-9.' | sort -V))
+          echo "CLIENT_IMAGES: $CLIENT_IMAGES"
+          CLIENT_VERSIONS=($(echo "$CLIENT_IMAGES" | grep ':assettrackr.client-' | sed 's/.*:assettrackr.client-\([0-9]*\.[0-9]*\).*/\1/' | sort -V))
+          echo "CLIENT_VERSIONS: ${CLIENT_VERSIONS[@]}"
           LATEST_CLIENT_VERSION=${CLIENT_VERSIONS[-1]}
 
           SERVER_IMAGES=$(aws lightsail get-container-images --service-name assettrackr --query 'containerImages[?contains(@.image, `:assettrackr.server-`)].image' --output text)
-          SERVER_VERSIONS=($(echo "$SERVER_IMAGES" | grep ':assettrackr.server-' | cut -d '-' -f 2 | tr -dc '0-9.' | sort -V))
+          echo "SERVER_IMAGES: $SERVER_IMAGES"
+          SERVER_VERSIONS=($(echo "$SERVER_IMAGES" | grep ':assettrackr.server-' | sed 's/.*:assettrackr.server-\([0-9]*\.[0-9]*\).*/\1/' | sort -V))
+          echo "SERVER_VERSIONS: ${SERVER_VERSIONS[@]}"
           LATEST_SERVER_VERSION=${SERVER_VERSIONS[-1]}
 
           echo "LATEST_CLIENT_VERSION=$LATEST_CLIENT_VERSION" >> $GITHUB_ENV
           echo "LATEST_SERVER_VERSION=$LATEST_SERVER_VERSION" >> $GITHUB_ENV
+          echo "LIGHTSAIL_CLIENT_IMAGE=assettrackr.client:$LATEST_CLIENT_VERSION" >> $GITHUB_ENV
+          echo "LIGHTSAIL_SERVER_IMAGE=assettrackr.server:$LATEST_SERVER_VERSION" >> $GITHUB_ENV
 
 
 
