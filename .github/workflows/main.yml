@@ -174,10 +174,8 @@ jobs:
 
       - name: Debug AWS Lightsail Image Retrieval
         run: |
-          echo "Latest Server Image:"
-          echo "$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages | sort_by(.createdAt) |.[0].image')"
-          echo "Latest Client Image:"
-          echo "$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages | sort_by(.createdAt) |.[0].image')"
+          echo "Latest Server Image: $LIGHTSAIL_SERVER_IMAGE"
+          echo "Latest Client Image: $LIGHTSAIL_CLIENT_IMAGE"
 
       - name: Create containers.json
         run: |
