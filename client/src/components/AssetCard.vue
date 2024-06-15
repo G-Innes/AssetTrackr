@@ -6,7 +6,8 @@ export interface Asset {
     name: string;
     ticker: string;
     quantity: number;
-    current_price: number;
+    current_price: number | null;
+    total_value: number | null;
 }
 
 export default defineComponent({
@@ -17,6 +18,14 @@ export default defineComponent({
       required: true,
     },
   },
+  computed: {
+    formattedTotalValue(): string {
+        if (this.asset.total_value !== null) {
+            return this.asset.total_value.toFixed(2);
+        }
+        return 'N/A';
+    }
+  }
 });
 </script>
 
@@ -31,6 +40,9 @@ export default defineComponent({
       </p>
       <p class="text-gray-700 text-base">
         Current Price: ${{ asset.current_price }}
+      </p>
+      <p class="text-gray-700 text-base">
+        Value: ${{ formattedTotalValue }}
       </p>
     </div>
   </template>

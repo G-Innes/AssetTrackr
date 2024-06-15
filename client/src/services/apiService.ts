@@ -1,8 +1,8 @@
 import axios from 'axios';
-
-
 import { getStoredAccessToken, clearStoredAccessToken, storeAccessToken } from '../utils/auth';
 import { getCurrentUserId } from '@/utils/user';
+import { getLivePrice } from '@/utils/getLivePrice';
+import type { Asset } from '@/components/AssetCard.vue';
 
 const baseURL = process.env.NODE_ENV === 'production' ? 'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com' : 'http://localhost:3000';
 
@@ -49,7 +49,6 @@ export function isLoggedIn(): boolean {
   return !!token;
 }
 
-// New function to create an asset
 type AssetPayload = {
   userId: number;
   assetId: number;
@@ -74,7 +73,7 @@ export function createAsset(payload: AssetPayload) {
   return apiClient.post(endpoint, payload);
 }
 
-export async function getAllAssetHoldingsForUser() {
+export async function getAllAssetHoldingsForUser(): Promise<Asset[]>  {
 
   const userId = getCurrentUserId();
 
@@ -84,11 +83,35 @@ export async function getAllAssetHoldingsForUser() {
 
   const endpoint = `/api/user/${userId}/assets`;
 
+
   try {
     const response = await apiClient.get(endpoint);
-    return response.data;
+    const assets: AssetPayload[] = response.data;
+
+    // Fetch live prices for each asset
+    const promises = assets.map(async (asset:any) => {
+      try {
+        const livePrice = await getLivePrice(asset.ticker);
+        if (livePrice !== null) {
+          asset.current_price = livePrice;
+          asset.total_value = livePrice * asset.quantity; // Calculate total value
+        } else {
+          asset.current_price = null;
+          asset.total_value = null; // Null if price fetch fails
+        }
+        return asset as Asset;
+      } catch (error) {
+        console.error(`Error fetching live price for ${asset.ticker}:`, error);
+        asset.current_price = null;
+        asset.total_value = null; // Handle error by setting total_value to null
+        return asset as Asset;
+      }
+      });
+
+    // Wait for promises to resolve
+    return Promise.all(promises);
   } catch (error) {
-    console.error('Error fuser assetse', error);
+    console.error('Error fetching user assets', error);
     throw error;
   }
   

@@ -55,7 +55,7 @@ const handleSubmit = () => {
           <div>
             <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
             <div class="mt-1">
-              <input v-model="quantity" type="number" id="quantity" name="quantity" autocomplete="quantity" required
+              <input v-model="quantity" type="number" step="any" id="quantity" name="quantity" autocomplete="quantity" required
                 class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
             </div>
           </div>
