@@ -2,6 +2,7 @@ import axios from 'axios';
 
 
 import { getStoredAccessToken, clearStoredAccessToken, storeAccessToken } from '../utils/auth';
+import { getCurrentUserId } from '@/utils/user';
 
 const baseURL = process.env.NODE_ENV === 'production' ? 'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com' : 'http://localhost:3000';
 
@@ -60,57 +61,36 @@ type AssetPayload = {
 
 export function createAsset(payload: AssetPayload) {
   // Get the current user ID
-  const userId = getCurrentUserId(); // You need to implement this function to retrieve the current user ID
-  
-  // Check if the user ID is valid
+  const userId = getCurrentUserId();
+
   if (!userId) {
     throw new Error('User ID not found');
   }
-  
+
   // Include the user ID in the endpoint
   const endpoint = `/api/user/${userId}/assets`;
-  
+
   // Make the API request
   return apiClient.post(endpoint, payload);
 }
 
-function getCurrentUserId(): number | null {
-  // Retrieve the token from local storage
-  const token = getStoredAccessToken(localStorage);
+export async function getAllAssetHoldingsForUser() {
 
-  // Log the retrieved token
-  console.log("Retrieved token:", token);
+  const userId = getCurrentUserId();
 
-  // Check if token exists
-  if (!token) {
-    console.log("Token not found, returning null");
-    return null;
+  if (!userId) {
+    throw new Error('User ID not found');
   }
+
+  const endpoint = `/api/user/${userId}/assets`;
 
   try {
-    // Split the token by '.' to extract the payload
-    const [, payloadBase64] = token.split(".");
-    
-    // Decode the base64-encoded payload
-    const decodedPayload = atob(payloadBase64);
-
-    // Parse the JSON payload to access its properties
-    const payload = JSON.parse(decodedPayload);
-
-    // Log the decoded payload
-    console.log("Decoded payload:", payload);
-
-    // Extract the user ID from the payload
-    const userId = payload.user.id;
-
-    // Log the extracted user ID
-    console.log("Extracted user ID:", userId);
-
-    return userId;
+    const response = await apiClient.get(endpoint);
+    return response.data;
   } catch (error) {
-    // Log any errors that occur during decoding
-    console.error("Error decoding token:", error);
-    return null;
+    console.error('Error fuser assetse', error);
+    throw error;
   }
+  
 }
 

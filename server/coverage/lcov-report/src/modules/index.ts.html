@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>16/16</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>16/16</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -76,89 +76,32 @@
 <a name='L11'></a><a href='#L11'>11</a>
 <a name='L12'></a><a href='#L12'>12</a>
 <a name='L13'></a><a href='#L13'>13</a>
-<a name='L14'></a><a href='#L14'>14</a>
-<a name='L15'></a><a href='#L15'>15</a>
-<a name='L16'></a><a href='#L16'>16</a>
-<a name='L17'></a><a href='#L17'>17</a>
-<a name='L18'></a><a href='#L18'>18</a>
-<a name='L19'></a><a href='#L19'>19</a>
-<a name='L20'></a><a href='#L20'>20</a>
-<a name='L21'></a><a href='#L21'>21</a>
-<a name='L22'></a><a href='#L22'>22</a>
-<a name='L23'></a><a href='#L23'>23</a>
-<a name='L24'></a><a href='#L24'>24</a>
-<a name='L25'></a><a href='#L25'>25</a>
-<a name='L26'></a><a href='#L26'>26</a>
-<a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a>
-<a name='L29'></a><a href='#L29'>29</a>
-<a name='L30'></a><a href='#L30'>30</a>
-<a name='L31'></a><a href='#L31'>31</a>
-<a name='L32'></a><a href='#L32'>32</a>
-<a name='L33'></a><a href='#L33'>33</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<a name='L14'></a><a href='#L14'>14</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Router } from 'express'
-import userController from './user/userController'
-import assetController from './assets/assetController'
-import userAuthController from './user/userAuthController'
-// import transactionController from './transactions/transactionController'
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Router } from 'express';
+import userRoutes from './user/routes';
+import assetRoutes from './assets/routes';
+import transactionRoutes from './transactions/routes';
 &nbsp;
-export const appRouter = Router()
+export const appRouter = Router();
 &nbsp;
-const user = Router()
-const asset = Router({ mergeParams: true }) // Preserve the req.params values from the parent router
-// const transaction = Router({ mergeParams: true }) // Preserve the req.params values from the parent router
+// Use the imported route files to define routes
+appRouter.use('/user', userRoutes);
+appRouter.use('/user/:userId/assets', assetRoutes);
+appRouter.use('/user/:userId/transactions', transactionRoutes);
 &nbsp;
-// Routes for the user module
-user.post('/', userAuthController.signup)
-user.post('/login', userAuthController.login)
-user.get('/user/:userId', userController.getUserProfile)
-user.put('/user/:userId', userController.updateUserProfile)
-user.delete('/user/:userId', userController.deleteUser)
-&nbsp;
-// Routes for the assets module
-asset.post('/', assetController.createAssetHoldingsForUser)
-asset.get('/', assetController.getAllAssetHoldingsForUser)
-asset.delete('/:assetId', assetController.deleteAssetHoldingsForUser)
-&nbsp;
-// // Routes for the transactions module
-// transaction.get('/user/:userId', transactionController.getAllTransactionsForUser);
-// transaction.get('/user/:userId/asset/:assetId', transactionController.getAllTransactionsForAsset);
-// transaction.get('/user/:userId/type/:type', transactionController.getTransactionsByType);
-&nbsp;
-appRouter.use('/user', user).use('/user/:userId/assets', asset)
-&nbsp;
-export type AppRouter = typeof appRouter
+export type AppRouter = typeof appRouter;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -166,7 +109,7 @@ export type AppRouter = typeof appRouter
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-05-04T19:01:18.835Z
+                at 2024-06-13T11:50:13.801Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

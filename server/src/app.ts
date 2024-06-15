@@ -17,7 +17,7 @@ export default function createApp() {
 
 // Enable CORS middleware with custom options
   app.use((req, res, next) => {
-    console.log('Request Origin:', req.headers.origin);
+
     next();
   },cors({
     origin: frontendURLs,

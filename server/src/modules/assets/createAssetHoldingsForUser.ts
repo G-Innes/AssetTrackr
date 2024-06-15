@@ -26,10 +26,10 @@ import { handleError } from '../../utils/errorHandlingUtils'
 
     // Explicitly convert quantity to a number
     const quantity = Number(quantityString)
-
-
     const currentPrice = Number(currentPriceString)
+
     console.log('Converted Current Price:', currentPrice)
+
     // validation checks on quantity and currentPrice
     if (Number.isNaN(quantity) || Number.isNaN(currentPrice)) {
       return res.status(400).json({ message: 'Invalid numeric value' })
@@ -80,7 +80,7 @@ import { handleError } from '../../utils/errorHandlingUtils'
         transaction.user = user
         transaction.asset = asset
         transaction.quantity = Number(quantity) // Use the initial quantity
-        transaction.price = asset.current_price
+        transaction.price = currentPrice
         transaction.transactionType = TransactionType.BUY // Always log the first transaction as a BUY
         transaction.transaction_date = new Date()
         console.log('first transaction logged quantity:', quantity)
@@ -114,7 +114,7 @@ import { handleError } from '../../utils/errorHandlingUtils'
         transaction.user = user
         transaction.asset = asset
         transaction.quantity = Math.abs(quantityDifference)
-        transaction.price = asset.current_price
+        transaction.price = currentPrice
         transaction.transactionType = transactionType
         transaction.transaction_date = new Date()
         await transactionRepository.save(transaction)
@@ -134,6 +134,7 @@ import { handleError } from '../../utils/errorHandlingUtils'
           userId: userAsset.user.id,
           assetId: userAsset.asset.id,
           quantity: userAsset.quantity,
+          current_price: asset.current_price,
         })
         // eslint-disable-next-line no-else-return
       } else {
