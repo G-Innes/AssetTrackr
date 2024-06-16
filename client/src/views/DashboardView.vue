@@ -1,20 +1,32 @@
 <script lang="ts" setup>
 
 import { ref, onMounted } from 'vue';
-import { FwbAlert, FwbButton } from 'flowbite-vue'
+import { FwbAlert } from 'flowbite-vue'
 import AssetCard from '../components/AssetCard.vue';
 import { getAllAssetHoldingsForUser } from '@/services/apiService';
 import type { Asset } from '@/components/AssetCard.vue';
+import { getUserProfile } from '@/services/apiService';
 
 
 
 const assets = ref<Asset[]>([]);
+const username = ref<string>('');
+const totalPortfolioValue = ref<number>(0);
 
 // Fetch assets on component mount
 onMounted(async () => {
   try {
+    const userProfile = await getUserProfile();
+    username.value = userProfile.username;
+
     const userAssets: Asset[] = await getAllAssetHoldingsForUser();
     assets.value = userAssets;
+
+    totalPortfolioValue.value = userAssets.reduce((total, asset) => {
+      const currentPrice = asset.current_price ?? 0;
+      return total + (asset.quantity * currentPrice);
+    }, 0);
+  
   } catch (error) {
     console.error('Error fetching assets:', error);
   }
@@ -24,6 +36,13 @@ onMounted(async () => {
 
 <template>
   <div class="DashboardView p-4">
+
+    <div class="mb-4 text-center">
+      <h1 class="text-3xl font-bold">Welcome, {{ username }}</h1>
+      <p class="text-xl mt-2">Your total portfolio value today is: <span class="font-semibold">${{ totalPortfolioValue.toFixed(2) }}</span></p>
+    </div>
+
+  
     <div v-if="assets.length === 0">
       <FwbAlert>No assets yet!</FwbAlert>
     </div>
@@ -33,17 +52,6 @@ onMounted(async () => {
     </div>
 
     <div class="mt-4">
-
-      <!-- prettier-ignore -->
-      <FwbButton
-        component="RouterLink"
-        tag="router-link"
-        :href="{ name: 'AssetManage' }"
-        data-testid="createAsset"
-        size="xl"
-      >
-        Add a new asset
-      </FwbButton>
     </div>
   </div>
 </template>

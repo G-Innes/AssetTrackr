@@ -32,6 +32,7 @@ const navigation = computed(() =>
           :link="({ name: link.name } as any)"
           link-attr="to"
           component="RouterLink"
+          :class="{ 'text-blue-500': link.isActive, 'text-gray-700 hover:text-blue-500': !link.isActive }"
         >
           {{ link.label }}
         </FwbNavbarLink>

@@ -6,7 +6,10 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const links = [{ label: 'Dashboard', name: 'Dashboard' }]
+const links = [
+  { label: 'Dashboard', name: 'Dashboard' },
+  { label: 'Buy or Sell', name: 'AssetManage' }
+]
 
 function logoutUser() {
   console.log('log out clicked')

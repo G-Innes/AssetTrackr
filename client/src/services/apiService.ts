@@ -114,6 +114,23 @@ export async function getAllAssetHoldingsForUser(): Promise<Asset[]>  {
     console.error('Error fetching user assets', error);
     throw error;
   }
-  
+}
+
+export async function getUserProfile(): Promise<{ id: number; username: string; email: string }> {
+  const userId = getCurrentUserId();
+
+  if (!userId) {
+    throw new Error('User ID not found');
+  }
+
+  const endpoint = `/api/user/user/${userId}`;
+
+  try {
+    const response = await apiClient.get(endpoint);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user profile', error);
+    throw error;
+  }
 }
 

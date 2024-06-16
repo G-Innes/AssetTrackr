@@ -25,6 +25,31 @@ const ticker = ref('');
 const currentPrice = ref<number | null>(null);
 const tickers = ref<string[]>([]);
 
+const errors = ref({
+  quantity: '',
+  name: '',
+  ticker: ''
+});
+
+const validateFields = () => {
+  errors.value = {
+    quantity: '',
+    name: '',
+    ticker: ''
+  };
+
+  if (!quantity.value) {
+    errors.value.quantity = 'Quantity is required and must be a number';
+  }
+  if (!name.value) {
+    errors.value.name = 'Asset name is required';
+  }
+  if (!ticker.value) {
+    errors.value.ticker = 'Ticker symbol is required';
+  }
+
+  return !errors.value.quantity && !errors.value.name && !errors.value.ticker;
+};
 
 // Populate the userId using the getCurrentUserId function
 onMounted( async () => {
@@ -39,6 +64,9 @@ const fetchCurrentPrice = async () => {
 };
 
 const handleSubmit = async (action: 'buy' | 'sell') => {
+  if (!validateFields()) {
+    return;
+  }
   if (!quantity.value) {
     return;
   }
@@ -55,6 +83,13 @@ const handleSubmit = async (action: 'buy' | 'sell') => {
   };
   // Emit the payload to the parent component
   emit('submit', payload);
+
+  // Reset form fields after submission
+  quantity.value = null;
+  name.value = '';
+  ticker.value = '';
+  currentPrice.value = null;
+  assetId.value = null;
 };
 
 const handleTickerInput = (event: Event) => {
@@ -62,8 +97,7 @@ const handleTickerInput = (event: Event) => {
   if (input) {
     tickers.value = assets
     .filter((asset: Asset) => asset.ticker.startsWith(input))
-    .map((asset: Asset) => asset.ticker)
-    .slice(0, 8);
+    .map((asset: Asset) => asset.ticker);
   } else {
     tickers.value = [];
   }
@@ -88,21 +122,15 @@ const selectTicker = async (selectedTicker: string) => {
         <h2 class="mt-6 text-3xl font-extrabold text-center text-gray-900">Create Asset</h2>
         <form class="mt-8 space-y-6" @submit.prevent>
 
-          <!-- Hidden userId field automatically populated -->
+          <!-- Hidden userId field & assetId field are automatically populated -->
         <input v-model="userId" type="hidden" id="userId" name="userId">
-
-          <div>
-            <label for="assetId" class="block text-sm font-medium text-gray-700">Asset ID</label>
-            <div class="mt-1">
-              <input v-model="assetId" type="number" id="assetId" name="assetId" autocomplete="assetId" required
-                class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-          </div>
+        <input v-model="assetId" type="hidden" id="assetId" name="assetId">
           <div>
             <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
             <div class="mt-1">
               <input v-model="quantity" type="number" step="any" id="quantity" name="quantity" autocomplete="quantity" required
                 class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <span v-if="errors.quantity" class="text-red-600 text-sm">{{ errors.quantity }}</span>
             </div>
           </div>
           <div>
@@ -110,6 +138,7 @@ const selectTicker = async (selectedTicker: string) => {
             <div class="mt-1">
               <input v-model="name" type="text" id="name" name="name" autocomplete="name" required
                 class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <span v-if="errors.name" class="text-red-600 text-sm">{{ errors.name }}</span>
             </div>
           </div>
           <div>
@@ -117,21 +146,22 @@ const selectTicker = async (selectedTicker: string) => {
             <div class="mt-1" relative>
               <input v-model="ticker" @input="handleTickerInput" type="text" id="ticker" name="ticker" autocomplete="off"
               required class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-              <ul v-if="tickers.length > 0" class="absolute z-10 w-32 max-h-32 overflow-y-auto mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+              <ul v-if="tickers.length > 0" class="absolute z-10 w-32 max-h-48 overflow-y-auto mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
               <li v-for="(item, index) in tickers" :key="index" @click="selectTicker(item)" class="px-3 py-1 cursor-pointer hover:bg-gray-100">
                 {{ item }}
               </li>
             </ul>
+            <span v-if="errors.ticker" class="text-red-600 text-sm">{{ errors.ticker }}</span>
             </div>
           </div>
           <div>
-            <label for="currentPrice" class="block text-sm font-medium text-gray-700">Current Price</label>
-            <div class="mt-1">
-              <input v-model="currentPrice" type="number" id="currentPrice" name="currentPrice"
-                autocomplete="currentPrice" required
-                class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
+          <label for="currentPrice" class="block text-sm font-medium text-gray-700">Current Price</label>
+          <div class="mt-1">
+            <p class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-gray-100">
+              {{ currentPrice !== null ? currentPrice : 'N/A' }}
+            </p>
           </div>
+        </div>
           <div class="flex justify-between">
           <button type="button" @click="handleSubmit('buy')"
             class="flex justify-center w-full px-4 py-2 mr-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">

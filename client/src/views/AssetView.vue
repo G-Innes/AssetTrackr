@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import AssetForm from '../components/AssetForm.vue';
-import { FwbAlert, FwbButton } from 'flowbite-vue';
+import { FwbButton } from 'flowbite-vue';
 import { createAsset } from '../services/apiService';
 
 const router = useRouter();
@@ -20,12 +20,16 @@ const handleSubmit = async (payload: {
   try {
     await createAsset(payload);
     showAlert.value = true;
-    alertMessage.value = 'Asset form submitted successfully!';
+    alertMessage.value = 'Transaction Completed!';
   } catch (error) {
-    showAlert.value = true;
-    alertMessage.value = 'Failed to submit asset form. Please try again.';
+    alertMessage.value = 'Failed to submit transaction. Please try again.';
     console.error('Error submitting asset form:', error);
   }
+  showAlert.value = true;
+  // Hide the alert after 3 seconds
+  setTimeout(() => {
+    showAlert.value = false;
+  }, 3000);
 };
 
 const goToDashboard = () => {
@@ -35,9 +39,11 @@ const goToDashboard = () => {
 
 <template>
   <div class="AssetView">
-    <FwbAlert v-model:show="showAlert" variant="success">
-      {{ alertMessage }}
-    </FwbAlert>
+    <transition name="fade">
+      <div v-if="showAlert" class="fixed top-0 left-0 w-full p-4 text-white bg-green-600 text-center text-2xl">
+        {{ alertMessage }}
+      </div>
+    </transition>
 
     <AssetForm @submit="handleSubmit" />
 
@@ -46,3 +52,12 @@ const goToDashboard = () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+</style>
