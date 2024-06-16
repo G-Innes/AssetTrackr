@@ -54,7 +54,7 @@ describe('assetController', () => {
         quantity,
         name: 'Test Asset',
         ticker: 'TST',
-        current_price: 100,
+        current_price: asset!.current_price,
         price: 100,
       })
 
@@ -66,6 +66,7 @@ describe('assetController', () => {
       console.log(response.body)
       expect(response.body).toEqual({
         userId: user.id,
+        current_price: '100',
         assetId: asset!.id,
         quantity: 10,
       })
