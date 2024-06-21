@@ -71,7 +71,7 @@ const handleSubmit = async (action: 'buy' | 'sell') => {
     return;
   }
   await fetchCurrentPrice();
-  const finalQuantity = action === 'sell' ? -Math.abs(quantity.value) : Math.abs(quantity.value);
+  const finalQuantity = action === 'sell' ? -quantity.value : quantity.value;
 
   const payload = {
     userId: Number(userId.value),
@@ -79,9 +79,10 @@ const handleSubmit = async (action: 'buy' | 'sell') => {
     quantity: finalQuantity,
     name: name.value,
     ticker: ticker.value,
-    current_price: Number(currentPrice.value)
+    current_price: Number(currentPrice.value),
   };
   // Emit the payload to the parent component
+  console.log("Emitting payload:", payload);
   emit('submit', payload);
 
   // Reset form fields after submission
@@ -118,8 +119,8 @@ const selectTicker = async (selectedTicker: string) => {
 
 <template>
     <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 class="mt-6 text-3xl font-extrabold text-center text-gray-900">Create Asset</h2>
+      <div class="memphis-card sm:mx-auto sm:w-full sm:max-w-sm">
+        <h2 class="mt-6 text-3xl font-extrabold text-center text-gray-900">Buy or Sell an Asset</h2>
         <form class="mt-8 space-y-6" @submit.prevent>
 
           <!-- Hidden userId field & assetId field are automatically populated -->
@@ -129,7 +130,7 @@ const selectTicker = async (selectedTicker: string) => {
             <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
             <div class="mt-1">
               <input v-model="quantity" type="number" step="any" id="quantity" name="quantity" autocomplete="quantity" required
-                class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-black-500 focus:border-black-500">
                 <span v-if="errors.quantity" class="text-red-600 text-sm">{{ errors.quantity }}</span>
             </div>
           </div>
@@ -137,7 +138,7 @@ const selectTicker = async (selectedTicker: string) => {
             <label for="name" class="block text-sm font-medium text-gray-700">Asset Name</label>
             <div class="mt-1">
               <input v-model="name" type="text" id="name" name="name" autocomplete="name" required
-                class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-black-500 focus:border-black-500">
                 <span v-if="errors.name" class="text-red-600 text-sm">{{ errors.name }}</span>
             </div>
           </div>
@@ -145,7 +146,7 @@ const selectTicker = async (selectedTicker: string) => {
             <label for="ticker" class="block text-sm font-medium text-gray-700">Ticker Symbol</label>
             <div class="mt-1" relative>
               <input v-model="ticker" @input="handleTickerInput" type="text" id="ticker" name="ticker" autocomplete="off"
-              required class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+              required class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-black-500 focus:border-black-500">
               <ul v-if="tickers.length > 0" class="absolute z-10 w-32 max-h-48 overflow-y-auto mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
               <li v-for="(item, index) in tickers" :key="index" @click="selectTicker(item)" class="px-3 py-1 cursor-pointer hover:bg-gray-100">
                 {{ item }}
@@ -157,18 +158,18 @@ const selectTicker = async (selectedTicker: string) => {
           <div>
           <label for="currentPrice" class="block text-sm font-medium text-gray-700">Current Price</label>
           <div class="mt-1">
-            <p class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-gray-100">
+            <p class="block w-full px-3 py-2 mt-1 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-black-500 focus:border-black-500 bg-gray-100">
               {{ currentPrice !== null ? currentPrice : 'N/A' }}
             </p>
           </div>
         </div>
           <div class="flex justify-between">
           <button type="button" @click="handleSubmit('buy')"
-            class="flex justify-center w-full px-4 py-2 mr-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+            class="flex justify-center w-60 px-4 py-2 mr-2 memphis-button buy border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
             Buy
           </button>
           <button type="button" @click="handleSubmit('sell')"
-            class="flex justify-center w-full px-4 py-2 ml-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+            class="lex justify-center w-60 px-4 py-2 mr-2 memphis-button sell border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
             Sell
           </button>
         </div>
@@ -176,3 +177,36 @@ const selectTicker = async (selectedTicker: string) => {
       </div>
     </div>
   </template>
+<style scoped>
+
+.memphis-card {
+  background-color: #CCCCCC;
+  color: #121212;
+  box-shadow: 10px 10px 0 #121212;
+  border-radius: 10px;
+  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+.sell {
+  background-color: #FFB2A5;
+}
+.buy {
+  background-color: #B2F7B1;
+}
+.memphis-button {
+  color: #121212;
+  box-shadow: 10px 10px 0 #121212;
+  border-radius: 10px;
+  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+.memphis-button:hover {
+  transform: translate(-5px, -5px);
+}
+
+
+</style>

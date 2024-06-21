@@ -23,11 +23,11 @@ const router = createRouter({
           name: 'AssetManage',
           component: () => import('../views/AssetView.vue'),
         },
-        // {
-        //   path: 'project/:id',
-        //   name: 'Project',
-        //   component: () => import('../views/ProjectView.vue'),
-        // },
+        {
+          path: 'transactions',
+          name: 'Transactions',
+          component: () => import('../views/TransactionsView.vue'),
+        },
       ],
     },
     {
@@ -41,7 +41,7 @@ const router = createRouter({
       component: () => import('../views/SignupView.vue'),
     },
     {
-      path: '',
+      path: '/',
       component: HomeLayout,
       children: [
         {

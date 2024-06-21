@@ -53,28 +53,25 @@ async function submitSignup() {
   }
 }
 
-
-
-
 </script>
 
 <template>
   <PageForm heading="Sign up for an account" formLabel="Signup" @submit="submitSignup">
     <template #default>
-      <FwbInput label="Email" type="email" v-model="userForm.email" :required="true" />
+      <FwbInput class="focus:ring-black-500 focus:border-black-500" label="Email" type="email" v-model="userForm.email" :required="true" />
 
-      <FwbInput label="Username" type="text" v-model="userForm.userName" :required="true" />
+      <FwbInput class="focus:ring-black-500 focus:border-black-500" label="Username" type="text" v-model="userForm.userName" :required="true" />
 
-      <FwbInput label="Password" type="password" v-model="userForm.password" :required="true" />
+      <FwbInput class="focus:ring-black-500 focus:border-black-500" label="Password" type="password" v-model="userForm.password" :required="true" />
 
-      <FwbInput label="Confirm Password" type="password" v-model="userForm.confirmPassword" :required="true" />
+      <FwbInput class="focus:ring-black-500 focus:border-black-500" label="Confirm Password" type="password" v-model="userForm.confirmPassword" :required="true" />
 
 
       <FwbAlert v-if="hasSucceeded" data-testid="successMessage" type="success">
-        You have successfully signed up! You will be redirected to the login page.
+        You have successfully signed up!
         <RouterLink
           :to="{ name: 'Login' }"
-          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+          class="font-semibold leading-6 text-black hover:text-white"
           >Go to the login page</RouterLink
         >
       </FwbAlert>
@@ -83,7 +80,7 @@ async function submitSignup() {
       </AlertError>
 
       <div class="grid">
-        <FwbButton color="default" type="submit" size="xl">Sign up</FwbButton>
+        <FwbButton class="bg-black text-white hover:bg-white hover:text-black" type="submit" size="xl">Sign up</FwbButton>
       </div>
     </template>
 
@@ -93,7 +90,7 @@ async function submitSignup() {
         {{ ' ' }}
         <RouterLink
           :to="{ name: 'Login' }"
-          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+          class="font-semibold leading-6 text-black hover:text-white"
           >Log in</RouterLink
         >
       </FwbAlert>

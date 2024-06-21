@@ -7,8 +7,9 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const links = [
-  { label: 'Dashboard', name: 'Dashboard' },
-  { label: 'Buy or Sell', name: 'AssetManage' }
+{ label: 'Dashboard', name: 'Dashboard', to: '/dashboard' },
+  { label: 'Buy or Sell', name: 'AssetManage', to: '/dashboard/asset-manage' },
+  { label: 'My Transactions', name: 'Transactions', to: '/dashboard/transactions' }
 ]
 
 function logoutUser() {
@@ -16,7 +17,7 @@ function logoutUser() {
   logout()
   console.log('logged out navigate to login')
   router.push({ name: 'Login' })
-  location.reload(); // temporary fix to force refresh
+  location.reload();
 }
 </script>
 

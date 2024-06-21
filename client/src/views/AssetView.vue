@@ -20,7 +20,7 @@ const handleSubmit = async (payload: {
   try {
     await createAsset(payload);
     showAlert.value = true;
-    alertMessage.value = 'Transaction Completed!';
+    alertMessage.value = 'Transaction Complete!';
   } catch (error) {
     alertMessage.value = 'Failed to submit transaction. Please try again.';
     console.error('Error submitting asset form:', error);
@@ -29,7 +29,7 @@ const handleSubmit = async (payload: {
   // Hide the alert after 3 seconds
   setTimeout(() => {
     showAlert.value = false;
-  }, 3000);
+  }, 1500);
 };
 
 const goToDashboard = () => {
@@ -47,8 +47,8 @@ const goToDashboard = () => {
 
     <AssetForm @submit="handleSubmit" />
 
-    <div class="mt-4">
-      <FwbButton @click="goToDashboard">Go back to Dashboard</FwbButton>
+    <div class="mt-4 flex justify-center">
+      <FwbButton class="bg-black text-white hover:bg-white hover:text-black" @click="goToDashboard">Go back to Dashboard</FwbButton>
     </div>
   </div>
 </template>

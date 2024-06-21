@@ -46,7 +46,7 @@ import { handleError } from '../../utils/errorHandlingUtils'
       const transactionRepository = getRepository(Transaction)
 
       const user = await userRepository.findOne({ where: { id: userId } })
-      let asset = await assetRepository.findOne({ where: { id: assetId } })
+      let asset = await assetRepository.findOne({ where: { assetId } })
 
       if (!user) {
         throw new EntityNotFoundError(User, `User not found with id: ${userId}`)
@@ -55,7 +55,7 @@ import { handleError } from '../../utils/errorHandlingUtils'
       // If asset does not exist, create a new one
       if (!asset) {
         asset = assetRepository.create({
-          id: assetId,
+          assetId,
           name,
           ticker,
           current_price: currentPrice,
@@ -78,6 +78,7 @@ import { handleError } from '../../utils/errorHandlingUtils'
         // Log the first transaction as a BUY
         const transaction = new Transaction()
         transaction.user = user
+        transaction.assetId = assetId;
         transaction.asset = asset
         transaction.quantity = Number(quantity) // Use the initial quantity
         transaction.price = currentPrice
@@ -112,6 +113,7 @@ import { handleError } from '../../utils/errorHandlingUtils'
         // Log the transaction with the appropriate type and quantity
         const transaction = new Transaction()
         transaction.user = user
+        transaction.assetId = assetId;
         transaction.asset = asset
         transaction.quantity = Math.abs(quantityDifference)
         transaction.price = currentPrice

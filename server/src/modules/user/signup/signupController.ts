@@ -32,7 +32,6 @@ async function generateToken(user: User) {
 
 export async function signup(req: Request, res: Response) {
   try {
-    console.log(req.body);
     // Destructure username, email, and password from request body
     const { email, userName,  password, confirmPassword } = req.body
 

@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#app {
+    background-image: url(./blockchain.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+/* <!-- Turquoise: #00C7B7
+Neon Pink: #FF6EC7
+Yellow: #FFD166
+Purple: #A300D6
+Orange: #FF8C42
+Dark Blue: #2B3A67
+Light Blue: #6CC3D5
+Dark Green: #1A5138
+Light Green: #7ED321
+Gold: #D4AF37
+Red: #FF5733 
+
+Turquoise: #00C7B7 (Bright turquoise)
+Neon Pink: #FF6EC7 (Vibrant neon pink)
+Yellow: #FFD166 (Bright yellow)
+Purple: #A300D6 (Bold purple)
+Orange: #FF8C42 (Vivid orange)
+Dark Blue: #2B3A67 (Deep dark blue)
+Light Blue: #6CC3D5 (Soft light blue)
+Dark Green: #1A5138 (Rich dark green)
+Light Green: #7ED321 (Fresh light green)
+Gold: #D4AF37 (Warm gold)
+Red: #FF5733 (Intense red)
+Black: #121212 (Deep black)
+Dark Grey: #333333 (Dark grey)
+Medium Grey: #666666 (Medium grey)
+Light Grey: #CCCCCC (Light grey)
+White: #F5F5F5 (Off-white)--> */

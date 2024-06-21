@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { FwbNavbar, FwbNavbarCollapse, FwbNavbarLink } from 'flowbite-vue'
+import { FwbNavbar, FwbNavbarCollapse } from 'flowbite-vue'
 
 const { links } = defineProps<{
   links: {
     label: string
     name: string
+    to: string
   }[]
 }>()
 
@@ -21,21 +22,19 @@ const navigation = computed(() =>
 </script>
 
 <template>
-  <FwbNavbar>
+  <FwbNavbar class="memphis-header">
     <template #default="{ isShowMenu }">
       <FwbNavbar-collapse :isShowMenu="isShowMenu">
         <!-- prettier-ignore -->
-        <FwbNavbarLink
-          v-for="link in navigation"
+        <router-link
+          v-for="link in links"
           :key="link.name"
-          :is-active="link.isActive"
-          :link="({ name: link.name } as any)"
-          link-attr="to"
-          component="RouterLink"
-          :class="{ 'text-blue-500': link.isActive, 'text-gray-700 hover:text-blue-500': !link.isActive }"
+          :to="link.to"
+          :exact="true"
+          class="nav-link"
         >
           {{ link.label }}
-        </FwbNavbarLink>
+        </router-link>
         <slot name="menu" />
       </FwbNavbar-collapse>
     </template>
@@ -47,3 +46,26 @@ const navigation = computed(() =>
     </div>
   </main>
 </template>
+
+<style scoped>
+
+.memphis-header {
+  background-color: #CCCCCC;
+
+  box-shadow: 0 4px 0 #121212;
+  padding: 0.5rem 1rem;
+}
+
+.memphis-header .fwb-navbar-link {
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+}
+
+.memphis-header .fwb-navbar-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+  color: #1A5138;
+}
+
+</style>

@@ -61,7 +61,7 @@ async function submitLogin() {
 <template>
   <PageForm heading="Log in to your account" formLabel="Login" @submit="submitLogin">
     <template #default>
-      <FwbInput label="Username or Email" type="text" v-model="userForm.usernameOrEmail" :required="true" />
+      <FwbInput class="focus:ring-black-500 focus:border-black-500"  label="Username or Email" type="text" v-model="userForm.usernameOrEmail" :required="true" />
 
       <FwbInput
         label="Password"
@@ -71,12 +71,13 @@ async function submitLogin() {
         autocomplete="current-password"
         v-model="userForm.password"
         :required="true"
+        class="focus:ring-black-500 focus:border-black-500" 
       />
       <FwbAlert v-if="hasSucceeded" data-testid="successMessage" type="success">
-        You have successfully signed up! You will be redirected to the login page.
+        You have successfully logged in.
         <RouterLink
           :to="{ name: 'Dashboard' }"
-          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+          class="font-semibold leading-6 text-black hover:white"
           >Go to the Dashboard</RouterLink
         >
       </FwbAlert>
@@ -85,7 +86,7 @@ async function submitLogin() {
       </FwbAlert>
 
       <div class="grid">
-        <FwbButton color="default" type="submit" size="xl">Log in</FwbButton>
+        <FwbButton class="bg-black text-white hover:bg-white hover:text-black" type="submit" size="xl">Log in</FwbButton>
       </div>
     </template>
 
@@ -95,7 +96,7 @@ async function submitLogin() {
         {{ ' ' }}
         <RouterLink
           :to="{ name: 'Signup' }"
-          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+          class="font-semibold leading-6 text-black hover:text-white"
           >Sign up</RouterLink
         >
       </FwbAlert>

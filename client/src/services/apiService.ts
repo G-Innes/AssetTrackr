@@ -3,6 +3,8 @@ import { getStoredAccessToken, clearStoredAccessToken, storeAccessToken } from '
 import { getCurrentUserId } from '@/utils/user';
 import { getLivePrice } from '@/utils/getLivePrice';
 import type { Asset } from '@/components/AssetCard.vue';
+import type { Transaction } from '../components/TransactionCard.vue';
+import { assets } from '../assets/assets'
 
 const baseURL = process.env.NODE_ENV === 'production' ? 'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com' : 'http://localhost:3000';
 
@@ -59,18 +61,17 @@ type AssetPayload = {
 };
 
 export function createAsset(payload: AssetPayload) {
-  // Get the current user ID
   const userId = getCurrentUserId();
 
   if (!userId) {
     throw new Error('User ID not found');
   }
 
-  // Include the user ID in the endpoint
   const endpoint = `/api/user/${userId}/assets`;
 
-  // Make the API request
+  console.log("Sending payload:", payload);
   return apiClient.post(endpoint, payload);
+
 }
 
 export async function getAllAssetHoldingsForUser(): Promise<Asset[]>  {
@@ -112,6 +113,48 @@ export async function getAllAssetHoldingsForUser(): Promise<Asset[]>  {
     return Promise.all(promises);
   } catch (error) {
     console.error('Error fetching user assets', error);
+    throw error;
+  }
+}
+
+export async function getAllUserAssets(): Promise<Asset[]> {
+  const userId = getCurrentUserId();
+  const response = await apiClient.get(`/api/user/${userId}/assets`);
+
+  return response.data;
+  
+}
+
+export async function getAllTransactionsForUser() {
+  const userId = getCurrentUserId();
+
+  if (!userId) {
+    throw new Error('User ID not found');
+  }
+
+  try {
+    const transactionsResponse = await apiClient.get(`/api/user/${userId}/transactions`);
+    const transactions = transactionsResponse.data;
+
+    // Create a mapping of asset IDs to tickers
+    const assetsMap: Record<number, string> = {};
+    assets.forEach(asset => {
+      assetsMap[asset.assetId] = asset.ticker;
+    });
+
+
+    const enrichedTransactions = transactions.map((transaction: Transaction) => {
+      // Use the assetId from the transaction to find the ticker
+      const assetTicker = assetsMap[transaction.assetId] || 'N/A'; // Default to 'N/A' if not found
+      return {
+       ...transaction,
+        assetTicker, // Attach the asset ticker to the transaction
+      };
+    });
+
+    return enrichedTransactions;
+  } catch (error) {
+    console.error('Error fetching transactions or assets', error);
     throw error;
   }
 }

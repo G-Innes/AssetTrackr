@@ -7,6 +7,9 @@ export class Asset {
   @PrimaryGeneratedColumn('increment')
   id!: number
 
+  @Column({ type: 'integer', nullable: true })
+  assetId!: number;
+
   @Column('text')
   name!: string
 
@@ -24,6 +27,7 @@ export class Asset {
 
 export const assetSchema = z.object({
   id: z.number().int().positive(),
+  assetId: z.number().int().positive(),
   name: z.string().min(3).max(20),
   ticker: z.string().min(3).max(6),
   userAssets: z.array(userAssetsSchema),

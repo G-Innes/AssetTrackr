@@ -4,6 +4,7 @@ import {
   ManyToOne,
   JoinColumn,
   PrimaryGeneratedColumn,
+  ManyToMany,
 } from 'typeorm'
 import { z } from 'zod'
 import { NumericTransformer } from '../utils/generalUtils'
@@ -23,10 +24,12 @@ export class Transaction {
   @JoinColumn({ name: 'user_id' })
   user!: User
 
-  @ManyToOne(() => Asset)
-  @JoinColumn({ name: 'asset_id' })
+  @ManyToMany(() => Asset)
   asset!: Asset
 
+  @Column({ type: 'integer', nullable: true })
+  assetId!: number;
+  
   @Column({
     type: 'enum',
     enum: TransactionType,
@@ -52,7 +55,7 @@ export class Transaction {
 export const transactionSchema = z.object({
   id: z.number().int().positive(),
   user_id: z.number().int().positive(),
-  asset_id: z.number().int().positive(),
+  assetId: z.number().int().positive(),
   transaction_type: z.string().min(3).max(20),
   quantity: z.number(),
   price: z.number().int().positive(),

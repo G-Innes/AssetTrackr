@@ -1,5 +1,7 @@
 export { User, UserInsert, userSchema, userInsertSchema } from './user'
 
+export { Asset, AssetInsert, assetSchema, assetInsertSchema } from './asset' 
+
 export {
   Transaction,
   TransactionInsert,
@@ -8,7 +10,7 @@ export {
   TransactionType,
 } from './transaction'
 
-export { Asset, AssetInsert, assetSchema, assetInsertSchema } from './asset'
+
 
 export {
   UserAssets,

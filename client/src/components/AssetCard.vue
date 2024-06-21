@@ -17,6 +17,10 @@ export default defineComponent({
       type: Object as PropType<Asset>,
       required: true,
     },
+    cardColor: {
+      type: String as PropType<string>,
+      required: true,
+    },
   },
   computed: {
     formattedTotalValue(): string {
@@ -30,19 +34,37 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="max-w-sm rounded overflow-hidden shadow-lg p-4 bg-white">
+    <div :style="{ backgroundColor: cardColor }" class="memphis-card">
       <div class="font-bold text-xl mb-2">{{ asset.name }}</div>
-      <p class="text-gray-700 text-base">
+      <p class="text text-base">
         Ticker: {{ asset.ticker }}
       </p>
-      <p class="text-gray-700 text-base">
+      <p class="text text-base">
         Quantity: {{ asset.quantity }}
       </p>
-      <p class="text-gray-700 text-base">
+      <p class="text text-base">
         Current Price: ${{ asset.current_price }}
       </p>
-      <p class="text-gray-700 text-base">
+      <p class="text text-base">
         Value: ${{ formattedTotalValue }}
       </p>
     </div>
   </template>
+
+<style scoped>
+
+.memphis-card {
+  background-color: #CCCCCC;
+  color: #121212;
+  box-shadow: 10px 10px 0 #121212;
+  border-radius: 10px;
+  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+.text {
+  color: #121212;
+}
+
+</style>
