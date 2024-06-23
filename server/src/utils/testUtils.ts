@@ -22,6 +22,7 @@ export async function createTestUser() {
 export async function createTestAsset() {
   const assetRepository = getRepository(Asset)
   const asset = new Asset()
+  asset.assetId = 1
   asset.name = 'Test Asset'
   asset.ticker = 'TST'
   asset.current_price = 100
@@ -43,11 +44,17 @@ export async function createTestUserAsset(
   return userAsset
 }
 
-export async function createTestTransaction(user: User, asset: Asset, type: TransactionType) {
+export async function createTestTransaction(
+  user: User,
+  asset: Asset,
+  assetId: number,
+  type: TransactionType
+) {
   const transactionRepository = getRepository(Transaction);
   const transaction = new Transaction();
 
   transaction.user = user;
+  transaction.assetId = asset.assetId;
   transaction.asset = asset;
   transaction.transactionType = type;
   transaction.quantity = 10;

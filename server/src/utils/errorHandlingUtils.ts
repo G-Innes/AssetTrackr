@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 // Function to handle errors and return appropriate status code and message
 export async function handleError(error: Error) {
-  console.error('Error:', error);
+  // console.error('Error:', error);
   // Default error response
   let statusCode = 500;
   let message = 'An unexpected error occurred';
