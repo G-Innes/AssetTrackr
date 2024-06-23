@@ -89,33 +89,18 @@ import { handleError } from '../../utils/errorHandlingUtils'
         await transactionRepository.save(transaction)
       } else {
         // If userAsset does exist, update the quantity
-        // If the new quantity is positive, add it to the existing quantity
-        // If the new quantity is negative, subtract it from the existing quantity
-        // Store the previous quantity before updating it
-        const previousQuantity = Number(userAsset.quantity)
-        // Update the quantity based on the new quantity value
-        userAsset.quantity += Number(quantity)
-        await userAssetsRepository.save(userAsset)
+      userAsset.quantity += quantity;
+      await userAssetsRepository.save(userAsset);
 
-        // Calculate the quantity difference
-        const quantityDifference =
-          Number(userAsset.quantity) - Number(previousQuantity)
-
-        // Determine the transaction type based on the quantity difference
-        let transactionType =
-          quantityDifference > 0 ? TransactionType.BUY : TransactionType.SELL
-
-        // If this is the first transaction for the asset, explicitly set the transaction type to BUY
-        if (quantityDifference === Number(userAsset.quantity)) {
-          transactionType = TransactionType.BUY
-        }
+      // Determine the transaction type based on the quantity
+      const transactionType = quantity > 0 ? TransactionType.BUY : TransactionType.SELL;
 
         // Log the transaction with the appropriate type and quantity
         const transaction = new Transaction()
         transaction.user = user
         transaction.assetId = assetId;
         transaction.asset = asset
-        transaction.quantity = Math.abs(quantityDifference)
+        transaction.quantity = Math.abs(quantity)
         transaction.price = currentPrice
         transaction.transactionType = transactionType
         transaction.transaction_date = new Date()
