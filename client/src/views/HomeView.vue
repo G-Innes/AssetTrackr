@@ -3,10 +3,15 @@ import { FwbButton } from 'flowbite-vue'
 </script>
 
 <template>
-  <div class="memphis-bg min-h-screen flex flex-col items-center justify-center">
+  <div style="background-color: #A0C4FF;" class="memphis-card m-auto p-8 text-center w-8/12">
+      <h1 class="text-5xl font-bold">AssetTrackr App</h1>
+      <p class="text-xl mt-2">Your to</p>
+    </div>
+
+  <div class="container1 align-center w-full min-h-screen flex flex-col items-center justify-center">
     
     <div class="memphis-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-      <div class="memphis-card memphis-square p-6">
+      <div style="background-color: #C1E1C1;" class="memphis-card memphis-square p-6">
         <h2 class="memphis-title">Welcome to Our App</h2>
         <p class="memphis-text">Discover the amazing features we offer. Join us today!</p>
         <div class="flex space-x-4 mt-4">
@@ -15,27 +20,35 @@ import { FwbButton } from 'flowbite-vue'
         </div>
       </div>
       
-      <div class="memphis-card memphis-rectangle p-6">
+      <div style="background-color: #E6F2FF;" class="memphis-card memphis-rectangle p-6">
         <h2 class="memphis-title">Features</h2>
-        <p class="memphis-text">Explore the diverse set of tools we provide to make your life easier.</p>
+        <p class="memphis-text">Add your portfolio holdings to our platform through transactions.</p>
+        <p class="memphis-text">Keep track of your portfolio value in real time.</p>
+        <p class="memphis-text">View your full transaction history on the platform.</p>
+        
       </div>
       
-      <div class="memphis-card memphis-square p-6">
+      <div style="background-color: #CABBE9;" class="memphis-card memphis-square p-6">
         <h2 class="memphis-title">Community</h2>
-        <p class="memphis-text">Connect with like-minded individuals and share your experiences.</p>
+        <p class="memphis-text">Join our community of like-minded individuals on Discord.</p>
       </div>
     
-      <div class="memphis-card memphis-portrait p-6">
-        <h2 class="memphis-title">About Us</h2>
-        <p class="memphis-text">Learn more about our mission and values.</p>
+      <div style="background-color: #FFFACD;" class="memphis-card memphis-square p-6">
+        <h2 class="memphis-title">About us</h2>
+        <p class="memphis-text">Reach out to us if you have any questions or feedback.</p>
       </div>
-      
-      <div class="memphis-card memphis-rectangle p-6">
+
+      <div style="background-color: #FCE4EC;" class="memphis-card memphis-square p-6">
+        <h2 class="memphis-title">Contact</h2>
+        <p class="memphis-text">Reach out to us if you have any questions or feedback.</p>
+      </div>
+
+      <div style="background-color: #A0E7E5;" class="memphis-card memphis-rectangle p-6">
         <h2 class="memphis-title">FAQ</h2>
         <p class="memphis-text">Find answers to commonly asked questions about our services.</p>
       </div>
       
-      <div class="memphis-card memphis-square p-6">
+      <div style="background-color: #EAD8C3;" class="memphis-card memphis-square p-6">
         <h2 class="memphis-title">Contact</h2>
         <p class="memphis-text">Reach out to us if you have any questions or feedback.</p>
       </div>
@@ -44,13 +57,10 @@ import { FwbButton } from 'flowbite-vue'
 </template>
 
 <style scoped>
-.memphis-bg {
-  background-color: #f5f5f500;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+
+.container1 {
+  margin-top: -2rem;
+
 }
 
 .memphis-container {
@@ -95,15 +105,22 @@ import { FwbButton } from 'flowbite-vue'
   grid-row: span 1;
 }
 
-.memphis-portrait {
-  grid-column: span 1;
-  grid-row: span 2;
-}
 
 @media (max-width: 767px) {
   .memphis-container {
     grid-template-columns: repeat(1, 1fr);
+    
   }
+  .container1 {
+  margin-top: 4rem;
+
+}
+.memphis-rectangle {
+  grid-column: span 1;
+}
+h1 {
+  font-size: 32px;
+}
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {

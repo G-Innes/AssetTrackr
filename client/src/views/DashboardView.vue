@@ -10,11 +10,13 @@ import { getUserProfile } from '@/services/apiService';
 const colors = [
   '#A0E7E5', // Pastel Turquoise
   '#FFB3BA', // Pastel Pink
-  '#FFDFBA', // Pastel Yellow
+  '#FFFACD', // Pastel Lemon
   '#CABBE9', // Pastel Purple
   '#FFDAC1', // Pastel Orange
+  '#DECBE4', // Pastel Raspberry
   '#A0C4FF', // Pastel Blue
   '#C1E1C1', // Pastel Green
+  '#E6F2FF', // Pastel Prussian Blue
   '#B2F2BB', // Pastel Mint
   '#E3D5FF', // Pastel Lavender
   '#FFD1BA'  // Pastel Peach

@@ -210,10 +210,10 @@ jobs:
                 "NODE_ENV": "production",
                 "DB_SSL": "true",
                 "DB_SYNC": "true",
-                "DB_HOST": "ep-long-poetry-a5f8ruz7.us-east-2.aws.neon.tech",
-                "DB_NAME": "AssetTrackr",
-                "DB_USER": "AssetTrackr_owner",
-                "DB_PASSWORD": "imjQhFg48GzC"
+                "PROD_DB_HOST": "ep-long-poetry-a5f8ruz7.us-east-2.aws.neon.tech",
+                "PROD_DB_NAME": "AssetTrackr",
+                "PROD_DB_USER": "AssetTrackr_owner",
+                "PROD_DB_PASSWORD": "imjQhFg48GzC"
               }
             }
           }' > containers.json
