@@ -30,7 +30,7 @@ export async function getAllTransactionsForAsset(req: Request, res: Response) {
         throw new EntityNotFoundError(Asset, `Asset not found with id: ${assetId}`);
       }
   
-      const transactions = await transactionRepository.find({ where: { user, asset } });
+      const transactions = await transactionRepository.find({ where: { user, assetId: assetIdNumber } });
       return res.status(200).json(transactions);
     } catch (error) {
       const { statusCode, message } = await handleError(error as Error);
