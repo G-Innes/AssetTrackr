@@ -2,7 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import request from 'supertest'
 import { getConnection, getRepository } from 'typeorm'
-import { Asset } from '../../entities/asset'
+import { Asset } from '../../entities'
 import {
   createTestUser,
   createTestAsset,
@@ -19,7 +19,6 @@ describe('assetController', () => {
 
   beforeEach(async () => {
     await getConnection().synchronize(true)
-    await createTestAsset()
     app = express()
     app.use(bodyParser.json())
     app.use(appRouter)
@@ -161,13 +160,14 @@ describe('assetController', () => {
 
     const response = await request(app).post(`/user/${user.id}/assets`).send({
       userId: user.id,
-      assetId: asset.id,
+      assetId: asset.assetId,
       quantity: 5,
       name: asset.name,
       ticker: asset.ticker,
       current_price: 100,
       price: 100,
     })
+
 
     expect(response.status).toBe(201)
     expect(response.body.quantity).toBe(15)
@@ -177,17 +177,17 @@ describe('assetController', () => {
     const user = await createTestUser()
     const asset = await createTestAsset()
     await createTestUserAsset(user, asset, 10)
-
+    console.log('Initial quantity:', 10);
     const response = await request(app).post(`/user/${user.id}/assets`).send({
       userId: user.id,
-      assetId: asset.id,
+      assetId: asset.assetId,
       quantity: -5,
       name: asset.name,
       ticker: asset.ticker,
       current_price: 100,
       price: 100,
     })
-
+    console.log('Response:', response.body);
     expect(response.status).toBe(201)
     expect(response.body.quantity).toBe(5)
   })
