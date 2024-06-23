@@ -37,7 +37,7 @@ describe('transactionController', () => {
     async () => {
         const user = await createTestUser()
         const asset = await createTestAsset()
-        await createTestTransaction(user, asset, TransactionType.BUY)
+        await createTestTransaction(user, asset, asset.assetId, TransactionType.BUY)
         
         const response = await request(app).get(`/user/${user.id}/transactions`);
 
@@ -57,7 +57,7 @@ describe('transactionController', () => {
     it('should return 404 if user is not found', async () => {
       const user = await createTestUser()
       const asset = await createTestAsset()
-      await createTestTransaction(user, asset, TransactionType.BUY)
+      await createTestTransaction(user, asset, asset.assetId, TransactionType.BUY)
       
       const nonExistentUserId = user.id + 1
       const response = await request(app).get(`/user/${nonExistentUserId}/transactions`);
@@ -72,7 +72,7 @@ describe('getAllTransactionsForAsset', () => {
   it('should return all transactions for a specific asset', async () => {
     const user = await createTestUser();
     const asset = await createTestAsset();
-    await createTestTransaction(user, asset, TransactionType.BUY);
+    await createTestTransaction(user, asset, asset.assetId, TransactionType.BUY);
 
     const response = await request(app).get(`/user/${user.id}/transactions/${asset.id}`);
 
@@ -115,7 +115,7 @@ describe('getTransactionsByType', () => {
   it('should return all transactions of a specific type for a specific user', async () => {
     const user = await createTestUser();
     const asset = await createTestAsset();
-    await createTestTransaction(user, asset, TransactionType.BUY);
+    await createTestTransaction(user, asset, asset.assetId, TransactionType.BUY);
   
     const response = await request(app).get(`/user/${user.id}/transactions/type/buy`);
   
@@ -146,7 +146,7 @@ it('should return 404 if user is not found', async () => {
 it('should return 400 if invalid transaction type is provided', async () => {
   const user = await createTestUser();
   const asset = await createTestAsset();
-  await createTestTransaction(user, asset, TransactionType.BUY);
+  await createTestTransaction(user, asset, asset.assetId, TransactionType.BUY);
 
   const response = await request(app).get(`/user/${user.id}/transactions/type/invalidType`);
 
