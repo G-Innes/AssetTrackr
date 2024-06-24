@@ -11,6 +11,7 @@ export default function createApp() {
 
   // Define all possible frontend URLs
   const frontendURLs = [
+    'http://localhost',
     'http://localhost:3000',
     'http://localhost:5173',
     'https://assettracker.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com',
