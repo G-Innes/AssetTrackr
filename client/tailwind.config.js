@@ -15,8 +15,7 @@ export default {
   ],
   theme: {
     fontFamily: {
-      body: ['"Inter var"', '"Inter"', '"Open Sans"', 'Helvetica', 'Arial', 'sans-serif'],
-      mono: ['"Fira Code"', 'monospace'],
-    },
+        sans: ['Silkscreen', 'sans-serif'],
+      },
   },
 }

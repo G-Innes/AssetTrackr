@@ -48,7 +48,6 @@ const router = createRouter({
           path: '',
           name: 'Home',
           component: HomeView,
-          beforeEnter: authenticate,
         },
       ],
     },
