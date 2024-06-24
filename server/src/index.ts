@@ -5,6 +5,8 @@ import { createDatabase } from './database'
 
 const logger = pino()
 
+logger.info('Starting the application...');
+
 console.log('Attempting to create database connection...');
 createDatabase()
   .then(() => {

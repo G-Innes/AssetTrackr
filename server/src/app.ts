@@ -1,6 +1,9 @@
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
+import pino from 'pino'
 import { appRouter } from './modules'
+
+const logger = pino()
 
 export default function createApp() {
   const app = express(
@@ -28,9 +31,17 @@ export default function createApp() {
 
   app.use(express.json())
 
-  app.get('/health', (_, res) => {
-    res.status(200).send('OK')
-  })
+  app.get('/api/health', (req, res) => {
+    try {
+      // Add any necessary health checks here
+      logger.info('Health check passed');
+      res.status(200).json({ status: 'ok' });
+    } catch (error) {
+      const typeError = error as Error;
+      logger.error('Health check failed', { error: typeError.message });
+      res.status(500).json({ status: 'error', message: typeError.message });
+    }
+  });
 
   // Routes imported from /module/index.ts
   app.use('/api', appRouter)
