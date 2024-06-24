@@ -21,16 +21,18 @@ export default function createApp() {
 
 // Enable CORS middleware with custom options
   app.use((req, res, next) => {
-    console.log('Request Origin:', req.headers.origin);
     next();
   },cors({
-    origin: frontendURLs,
+    origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
     credentials: true, // Allow cookies and credentials
   }));
 
   app.use(express.json())
+
+    // Handle OPTIONS requests explicitly
+    app.options('*', cors());
 
   app.get('/api/health', (req, res) => {
     try {
@@ -47,8 +49,6 @@ export default function createApp() {
   // Routes imported from /module/index.ts
   app.use('/api', appRouter)
 
-  // Handle OPTIONS requests explicitly
-  app.options('*', cors());
 
   // Error handling middleware
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
