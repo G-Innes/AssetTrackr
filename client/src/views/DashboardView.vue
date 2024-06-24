@@ -6,6 +6,10 @@ import AssetCard from '../components/AssetCard.vue';
 import { getAllAssetHoldingsForUser } from '@/services/apiService';
 import type { Asset } from '@/components/AssetCard.vue';
 import { getUserProfile } from '@/services/apiService';
+import { logout } from '../services/apiService'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const colors = [
   '#A0E7E5', // Pastel Turquoise
@@ -48,6 +52,12 @@ onMounted(async () => {
 function getColor(index: number): string {
   return colors[index % colors.length];
 }
+
+function logoutUser() {
+  logout()
+  router.push({ name: 'Login' })
+  location.reload();
+}
 </script>
 
 <template>
@@ -67,7 +77,8 @@ function getColor(index: number): string {
       <AssetCard v-for="(asset, index) in assets" :key="asset.assetId" :asset="asset" :card-color="getColor(index)" />
     </div>
 
-    <div class="mt-4">
+    <div class="mt-4 flex justify-center">
+      <FwbButton class="memphis-card-btn cursor-pointer flex justify-center w-2/12 bg-red-500 text-white hover:bg-white hover:text-black" @click.prevent="logoutUser" link="#">Logout </FwbButton>
     </div>
   </div>
 </template>
@@ -83,6 +94,12 @@ function getColor(index: number): string {
   display: flex;
   flex-direction: column;
   padding: 2rem;
+}
+
+.memphis-card-btn {
+  box-shadow: 5px 5px 0 #121212;
+  border-radius: 5px;
+  transition: transform 0.2s;
 }
 
 </style>

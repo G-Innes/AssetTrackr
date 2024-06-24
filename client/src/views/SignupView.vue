@@ -56,6 +56,13 @@ async function submitSignup() {
 </script>
 
 <template>
+  <nav class="memphis-header">
+    <div class="container mx-auto flex justify-between items-center">
+      <router-link to="/" class="navbar-link">
+        <slot name="logo"><span class="logo font-sans">AssetTrackr</span></slot>
+      </router-link>
+    </div>
+  </nav>
   <PageForm heading="Sign up for an account" formLabel="Signup" @submit="submitSignup">
     <template #default>
       <FwbInput class="focus:ring-black-500 focus:border-black-500" label="Email" type="email" v-model="userForm.email" :required="true" />
@@ -97,3 +104,51 @@ async function submitSignup() {
     </template>
   </PageForm>
 </template>
+
+
+<style scoped>
+
+.memphis-header {
+  background-color: #CCCCCC;
+
+  box-shadow: 0 4px 0 #121212;
+  padding: 0.5rem 1rem;
+}
+
+.memphis-header .navbar-link {
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+}
+
+.memphis-header .navbar-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+  color: #1A5138;
+}
+.logo {
+  font-size: 1.4rem;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  animation: change 10s infinite linear;
+}
+@keyframes change {
+  0% {
+    width: 100%;
+    color: #1c90a0;
+  }
+  20% {
+    width: 100%;
+    color: #58a1ae;
+  }
+  30% {
+    width: 100%;
+    color: #339c7c;
+  }
+  100% {
+    width: 100%;
+    color: #2e8666;
+  }
+}
+</style>

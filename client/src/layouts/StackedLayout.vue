@@ -38,7 +38,7 @@ function toggleMenu() {
           v-for="link in navigation"
           :key="link.name"
           :to="link.to"
-          :class="['navbar-link', { 'bg-gray-900': link.isActive }]"
+          :class="['navbar-link', { 'text-white-900': link.isActive }]"
         >
           {{ link.label }}
         </router-link>
