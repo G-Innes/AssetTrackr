@@ -14,14 +14,14 @@ export default function createApp() {
     'http://localhost',
     'http://localhost:3000',
     'http://localhost:5173',
-    'https://assettracker.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com',
+    'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com',
   ];
 
   console.log('Frontend URLs:', frontendURLs);
 
 // Enable CORS middleware with custom options
   app.use((req, res, next) => {
-
+    console.log('Request Origin:', req.headers.origin);
     next();
   },cors({
     origin: frontendURLs,
