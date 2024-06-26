@@ -150,7 +150,7 @@ jobs:
         run: >-
           docker build
           -t $SERVER_IMAGE_TAG
-          -f ./server/Dockerfile .
+          -f ./server/Dockerfile ./server
       # if you need to pass additional environment variables to the client
       # build, then you will need to pass them as a docker build argument:
       # --build-arg VITE_MY_CUSTOM_VAR=${{vars.MY_CUSTOM_VAR}}
@@ -158,7 +158,7 @@ jobs:
         run: >-
           docker build
           -t $CLIENT_IMAGE_TAG
-          -f ./client/Dockerfile .
+          -f ./client/Dockerfile ./client
       - name: Push server image
         run: >-
           aws lightsail push-container-image
