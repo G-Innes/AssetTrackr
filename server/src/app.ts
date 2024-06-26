@@ -52,10 +52,10 @@ export default function createApp() {
 
   // Error handling middleware
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.log(`Error occurred while processing request: ${err.message}`);
-    console.log(`Request Method: ${req.method} | Request URL: ${req.originalUrl}`)
+    // console.log(`Error occurred while processing request: ${err.message}`);
+    // console.log(`Request Method: ${req.method} | Request URL: ${req.originalUrl}`)
     res.setHeader('Access-Control-Allow-Origin', frontendURLs);
-    console.error(err.stack)
+    logger.error(err.stack)
     res.status(500).send('Something went wrong')
     next(err)
   })
