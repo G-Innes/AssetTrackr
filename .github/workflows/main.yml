@@ -192,7 +192,7 @@ jobs:
 
           echo '{
             "client": {
-              "image": "grantinnes/assettrackr-client:$CLIENT_IMAGE_TAG",
+              "image": "grantinnes/assettrackr-client:latest",
               "command": [],
               "ports": {
                 "80": "HTTP"
@@ -202,7 +202,7 @@ jobs:
               }
             },
             "server": {
-              "image": "grantinnes/assettrackr-client:$CLIENT_IMAGE_TAG",
+              "image": "grantinnes/assettrackr-client:latest",
               "ports": {
                 "3000": "HTTP"
               },
