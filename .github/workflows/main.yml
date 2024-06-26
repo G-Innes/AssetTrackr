@@ -215,7 +215,7 @@ jobs:
                 "PROD_DB_HOST": "ep-long-poetry-a5f8ruz7.us-east-2.aws.neon.tech",
                 "PROD_DB_DATABASE": "AssetTrackr",
                 "PROD_DB_USERNAME": "AssetTrackr_owner",
-                "PROD_DB_PASSWORD": "imjQhFg48GzC"
+                "PROD_DB_PASSWORD": "imjQhFg48GzC",
                 "PROD_VUE_APP_BASE_URL": "https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com"
               }
             }
