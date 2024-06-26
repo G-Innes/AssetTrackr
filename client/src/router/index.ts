@@ -6,7 +6,7 @@ import HomeLayout from '../layouts/HomeLayout.vue';
 import DashboardLayout from '../layouts/DashboardLayout.vue';
 
 const router = createRouter({
-  history: createWebHistory(process.env.NODE_ENV === 'production' ? '/' : '/'),
+  history: createWebHistory(import.meta.env.MODE === 'production' ? '/' : '/'),
   routes: [
     {
       path: '/dashboard',
