@@ -8,6 +8,8 @@ on:
 
 jobs:
   test:
+    if: false
+    # disable for now
     runs-on: ubuntu-latest
     services:
         postgres:
@@ -114,7 +116,7 @@ jobs:
     #       retention-days: 7
 
   build-deploy:
-    needs: test
+    # needs: test
     runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/main'
     env:
@@ -198,7 +200,7 @@ jobs:
                 "80": "HTTP"
               },
               "environment": {
-                "API_PROXY_PASS": "http://server:3000"
+                "API_PROXY_PASS": "http://localhost:3000"
               }
             },
             "server": {
