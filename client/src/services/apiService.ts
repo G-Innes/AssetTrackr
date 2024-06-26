@@ -6,9 +6,8 @@ import type { Asset } from '@/components/AssetCard.vue';
 import type { Transaction } from '../components/TransactionCard.vue';
 import { assets } from '../assets/assets'
 
-const prodUrl = process.env.PROD_VUE_APP_BASE_URL || 'http://server:3000';
 
-const baseURL = process.env.NODE_ENV === 'production' ? prodUrl : 'http://localhost:3000';
+const baseURL = process.env.NODE_ENV === 'production' ? 'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com' : 'http://localhost:3000';
 
 const apiClient = axios.create({
   baseURL,
