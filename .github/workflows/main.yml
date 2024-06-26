@@ -210,13 +210,14 @@ jobs:
                 "NODE_ENV": "production",
                 "DB_SSL": "true",
                 "DB_SYNC": "true",
+
                 "PROD_DB_TYPE": "postgres",
+                "PROD_DB_HOST": ${{ secrets.PROD_DB_HOST }},
                 "PROD_DB_PORT": "5432",
-                "PROD_DB_HOST": "ep-long-poetry-a5f8ruz7.us-east-2.aws.neon.tech",
+                "PROD_DB_USERNAME": ${{ secrets.PROD_DB_USERNAME }},
+                "PROD_DB_PASSWORD": ${{ secrets.PROD_DB_PASSWORD }},
                 "PROD_DB_DATABASE": "AssetTrackr",
-                "PROD_DB_USERNAME": "AssetTrackr_owner",
-                "PROD_DB_PASSWORD": "imjQhFg48GzC",
-                "PROD_VUE_APP_BASE_URL": "https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com"
+                "PROD_VUE_APP_BASE_URL": ${{ secrets.PROD_VUE_APP_BASE_URL }}
               }
             }
           }' > containers.json
