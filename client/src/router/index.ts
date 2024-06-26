@@ -6,7 +6,7 @@ import HomeLayout from '../layouts/HomeLayout.vue';
 import DashboardLayout from '../layouts/DashboardLayout.vue';
 
 const router = createRouter({
-  history: createWebHistory(process.env.NODE_ENV === 'production' ? 'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com' : 'http://localhost:3000'),
+  history: createWebHistory(process.env.NODE_ENV === 'production' ? '/' : '/'),
   routes: [
     {
       path: '/dashboard',
