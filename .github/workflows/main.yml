@@ -189,8 +189,6 @@ jobs:
 
       - name: Create containers.json
         run: |
-          LIGHTSAIL_CLIENT_IMAGE="assettrackr.client:$LATEST_CLIENT_VERSION"
-          LIGHTSAIL_SERVER_IMAGE="assettrackr.server:$LATEST_SERVER_VERSION"
 
           echo '{
             "client": {
