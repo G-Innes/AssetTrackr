@@ -7,7 +7,8 @@ import type { Transaction } from '../components/TransactionCard.vue';
 import { assets } from '../assets/assets'
 
 
-const baseURL = import.meta.env.MODE === 'production' ? 'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com' : 'http://localhost:3000';
+// const baseURL = import.meta.env.MODE === 'production' ? 'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com' : 'http://localhost:3000';
+const baseURL = 'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com';
 
 const apiClient = axios.create({
   baseURL,
