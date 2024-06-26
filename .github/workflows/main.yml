@@ -144,55 +144,48 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Verify Docker and Docker Compose versions
-        run: |
-          docker --version
-          docker compose version
-    
-      - name: Build and push images with Docker Compose
-        run: |
-          docker-compose build
-          docker-compose push
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build server image
+        run: >-
+          docker build
+          -t $SERVER_IMAGE_TAG
+          -f ./server/Dockerfile .
+  
+      - name: Build client image
+        run: >-
+          docker build
+          -t $CLIENT_IMAGE_TAG
+          --build-arg VITE_API_ORIGIN=$API_ORIGIN
+          --build-arg VITE_API_PATH=$API_PATH
+          -f ./client/Dockerfile .
+  
+      - name: Push server image
+        run: >-
+          aws lightsail push-container-image
+          --service-name assettrackr
+          --label $SERVER_IMAGE_TAG
+          --image $SERVER_IMAGE_TAG
+          --output yaml
 
-      - name: Get Latest Image Versions
+      - name: Push client image
+        run: >-
+          aws lightsail push-container-image
+          --service-name assettrackr
+          --label $CLIENT_IMAGE_TAG
+          --image $CLIENT_IMAGE_TAG
+          --output yaml
+
+      - name: Get Lightsail image tag
         run: |
-          CLIENT_IMAGES=$(aws lightsail get-container-images --service-name assettrackr --query 'containerImages[?contains(@.image, `:assettrackr.client-`)].image' --output text)
-          echo "CLIENT_IMAGES: $CLIENT_IMAGES"
-          CLIENT_VERSIONS=($(echo "$CLIENT_IMAGES" | grep -oP '(?<=:assettrackr.client-)\d+\.\d+' | sort -V))
-          echo "CLIENT_VERSIONS: ${CLIENT_VERSIONS[@]}"
-          LATEST_CLIENT_VERSION=${CLIENT_VERSIONS[-1]}
-          echo "LATEST_CLIENT_VERSION: $LATEST_CLIENT_VERSION"
-        
-          SERVER_IMAGES=$(aws lightsail get-container-images --service-name assettrackr --query 'containerImages[?contains(@.image, `:assettrackr.server-`)].image' --output text)
-          echo "SERVER_IMAGES: $SERVER_IMAGES"
-          SERVER_VERSIONS=($(echo "$SERVER_IMAGES" | grep -oP '(?<=:assettrackr.server-)\d+\.\d+' | sort -V))
-          echo "SERVER_VERSIONS: ${SERVER_VERSIONS[@]}"
-          LATEST_SERVER_VERSION=${SERVER_VERSIONS[-1]}
-          echo "LATEST_SERVER_VERSION: $LATEST_SERVER_VERSION"
-        
-          echo "LATEST_CLIENT_VERSION=$LATEST_CLIENT_VERSION" >> $GITHUB_ENV
-          echo "LATEST_SERVER_VERSION=$LATEST_SERVER_VERSION" >> $GITHUB_ENV
-          echo "LIGHTSAIL_CLIENT_IMAGE=assettrackr.client:$LATEST_CLIENT_VERSION" >> $GITHUB_ENV
-          echo "LIGHTSAIL_SERVER_IMAGE=assettrackr.server:$LATEST_SERVER_VERSION" >> $GITHUB_ENV
-
-
-
-      - name: Debug AWS Lightsail Image Retrieval
-        run: |
-          echo "Latest Server Image: $LIGHTSAIL_SERVER_IMAGE"
-          echo "Latest Client Image: $LIGHTSAIL_CLIENT_IMAGE"
+          aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) | .image'
+          echo "LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) | .image')" >> $GITHUB_ENV
+          echo "LIGHTSAIL_CLIENT_IMAGE=$(aws lightsail get-container-images --service-name assettrackr | jq -r '.containerImages[] | select(.image | contains(".'$CLIENT_IMAGE_TAG'")) | .image')" >> $GITHUB_ENV
 
       - name: Create containers.json
         run: |
-          LIGHTSAIL_CLIENT_IMAGE="assettrackr.client:$LATEST_CLIENT_VERSION"
-          LIGHTSAIL_SERVER_IMAGE="assettrackr.server:$LATEST_SERVER_VERSION"
 
           echo '{
             "client": {
-              "image": "'"$LIGHTSAIL_CLIENT_IMAGE"'",
+              "image": "LIGHTSAIL_CLIENT_IMAGE",
               "command": [],
               "ports": {
                 "80": "HTTP"
@@ -202,7 +195,7 @@ jobs:
               }
             },
             "server": {
-              "image": "'"$LIGHTSAIL_SERVER_IMAGE"'",
+              "image": "LIGHTSAIL_SERVER_IMAGE",
               "ports": {
                 "3000": "HTTP"
               },
@@ -212,12 +205,12 @@ jobs:
                 "DB_SYNC": "true",
 
                 "PROD_DB_TYPE": "postgres",
-                "PROD_DB_HOST": "ep-long-poetry-a5f8ruz7.us-east-2.aws.neon.tech",
+                "PROD_DB_HOST": "${{ secrets.PROD_DB_HOST }}",
                 "PROD_DB_PORT": "5432",
-                "PROD_DB_USERNAME": "AssetTrackr_owner",
-                "PROD_DB_PASSWORD": "imjQhFg48GzC",
+                "PROD_DB_USERNAME": "${{ secrets.PROD_DB_USERNAME }}",
+                "PROD_DB_PASSWORD": "${{ secrets.PROD_DB_PASSWORD }}",
                 "PROD_DB_DATABASE": "AssetTrackr",
-                "PROD_VUE_APP_BASE_URL": "https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com"
+                "PROD_VUE_APP_BASE_URL": "${{ secrets.PROD_VUE_APP_BASE_URL }}"
               }
             }
           }' > containers.json
