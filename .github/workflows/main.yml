@@ -146,39 +146,39 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Verify Docker and Docker Compose versions
-        run: |
-          docker --version
-          docker compose version
-    
-      - name: Build and push images with Docker Compose
-        run: |
-          docker-compose build
-          docker-compose push
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build server image
+        run: >-
+          docker build
+          -t $SERVER_IMAGE_TAG
+          -f ./server/Dockerfile .
+      # if you need to pass additional environment variables to the client
+      # build, then you will need to pass them as a docker build argument:
+      # --build-arg VITE_MY_CUSTOM_VAR=${{vars.MY_CUSTOM_VAR}}
+      - name: Build client image
+        run: >-
+          docker build
+          -t $CLIENT_IMAGE_TAG
+          -f ./client/Dockerfile .
+      - name: Push server image
+        run: >-
+          aws lightsail push-container-image
+          --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }}
+          --label $SERVER_IMAGE_TAG
+          --image $SERVER_IMAGE_TAG
+          --output yaml
+      - name: Push client image
+        run: >-
+          aws lightsail push-container-image
+          --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }}
+          --label $CLIENT_IMAGE_TAG
+          --image $CLIENT_IMAGE_TAG
+          --output yaml
 
       - name: Get Latest Image Versions
         run: |
-          CLIENT_IMAGES=$(aws lightsail get-container-images --service-name assettrackr --query 'containerImages[?contains(@.image, `:assettrackr.client-`)].image' --output text)
-          echo "CLIENT_IMAGES: $CLIENT_IMAGES"
-          CLIENT_VERSIONS=($(echo "$CLIENT_IMAGES" | grep -oP '(?<=:assettrackr.client-)\d+\.\d+' | sort -V))
-          echo "CLIENT_VERSIONS: ${CLIENT_VERSIONS[@]}"
-          LATEST_CLIENT_VERSION=${CLIENT_VERSIONS[-1]}
-          echo "LATEST_CLIENT_VERSION: $LATEST_CLIENT_VERSION"
-        
-          SERVER_IMAGES=$(aws lightsail get-container-images --service-name assettrackr --query 'containerImages[?contains(@.image, `:assettrackr.server-`)].image' --output text)
-          echo "SERVER_IMAGES: $SERVER_IMAGES"
-          SERVER_VERSIONS=($(echo "$SERVER_IMAGES" | grep -oP '(?<=:assettrackr.server-)\d+\.\d+' | sort -V))
-          echo "SERVER_VERSIONS: ${SERVER_VERSIONS[@]}"
-          LATEST_SERVER_VERSION=${SERVER_VERSIONS[-1]}
-          echo "LATEST_SERVER_VERSION: $LATEST_SERVER_VERSION"
-        
-          echo "LATEST_CLIENT_VERSION=$LATEST_CLIENT_VERSION" >> $GITHUB_ENV
-          echo "LATEST_SERVER_VERSION=$LATEST_SERVER_VERSION" >> $GITHUB_ENV
-          echo "LIGHTSAIL_CLIENT_IMAGE=assettrackr.client:$LATEST_CLIENT_VERSION" >> $GITHUB_ENV
-          echo "LIGHTSAIL_SERVER_IMAGE=assettrackr.server:$LATEST_SERVER_VERSION" >> $GITHUB_ENV
+          aws lightsail get-container-images --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) | .image'
+          echo "LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) | .image')" >> $GITHUB_ENV
+          echo "LIGHTSAIL_CLIENT_IMAGE=$(aws lightsail get-container-images --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} | jq -r '.containerImages[] | select(.image | contains(".'$CLIENT_IMAGE_TAG'")) | .image')" >> $GITHUB_ENV
 
 
 
@@ -194,7 +194,7 @@ jobs:
 
           echo '{
             "client": {
-              "image": "grantinnes/assettrackr-client:latest",
+              "image": "{{ env.LIGHTSAIL_CLIENT_IMAGE }}",
               "command": [],
               "ports": {
                 "80": "HTTP"
@@ -204,7 +204,7 @@ jobs:
               }
             },
             "server": {
-              "image": "grantinnes/assettrackr-server:latest",
+              "image": "{{ env.LIGHTSAIL_SERVER_IMAGE }}",
               "ports": {
                 "3000": "HTTP"
               },
