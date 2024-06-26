@@ -212,12 +212,12 @@ jobs:
                 "DB_SYNC": "true",
 
                 "PROD_DB_TYPE": "postgres",
-                "PROD_DB_HOST": ${{ secrets.PROD_DB_HOST }},
+                "PROD_DB_HOST": "${{ secrets.PROD_DB_HOST }}",
                 "PROD_DB_PORT": "5432",
-                "PROD_DB_USERNAME": ${{ secrets.PROD_DB_USERNAME }},
-                "PROD_DB_PASSWORD": ${{ secrets.PROD_DB_PASSWORD }},
+                "PROD_DB_USERNAME": "${{ secrets.PROD_DB_USERNAME }}",
+                "PROD_DB_PASSWORD": "${{ secrets.PROD_DB_PASSWORD }}",
                 "PROD_DB_DATABASE": "AssetTrackr",
-                "PROD_VUE_APP_BASE_URL": ${{ secrets.PROD_VUE_APP_BASE_URL }}
+                "PROD_VUE_APP_BASE_URL": "${{ secrets.PROD_VUE_APP_BASE_URL }}"
               }
             }
           }' > containers.json
