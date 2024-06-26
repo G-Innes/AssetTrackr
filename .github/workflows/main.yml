@@ -192,7 +192,7 @@ jobs:
 
           echo '{
             "client": {
-              "image": "'"$LIGHTSAIL_CLIENT_IMAGE"'",
+              "image": "grantinnes/assettrackr-client:$CLIENT_IMAGE_TAG",
               "command": [],
               "ports": {
                 "80": "HTTP"
@@ -202,7 +202,7 @@ jobs:
               }
             },
             "server": {
-              "image": "'"$LIGHTSAIL_SERVER_IMAGE"'",
+              "image": "grantinnes/assettrackr-client:$CLIENT_IMAGE_TAG",
               "ports": {
                 "3000": "HTTP"
               },
