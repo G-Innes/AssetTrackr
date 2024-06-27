@@ -3,9 +3,9 @@ import { FwbButton } from 'flowbite-vue'
 </script>
 
 <template>
-  <div style="background-color: #A0C4FF;" class="memphis-card m-auto p-8 text-center w-8/12">
-      <h1 class="text-5xl font-bold">AssetTrackr App</h1>
-      <p class="text-xl mt-2">Your to</p>
+  <div style="background-color: #A0C4FF;" class="memphis-card m-auto p-8 text-center w-full flex flex-col items-center">
+      <h1 class=" font-bold">AssetTrackr App</h1>
+      <p class=" mt-2">Your tool for financial success</p>
     </div>
 
   <div class="container1 align-center w-full min-h-screen flex flex-col items-center justify-center">

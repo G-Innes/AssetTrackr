@@ -61,10 +61,14 @@ function logoutUser() {
 </script>
 
 <template>
-  <div class="DashboardView p-4">
-
-    <div class="memphis-card mb-16 text-center w-full">
-      <h1 class="text-5xl font-bold">Welcome, {{ username }}</h1>
+  
+  <div class="DashboardView p-4 ">
+    <div class="mt-4 flex flex-row justify-end">
+      <FwbButton class="memphis-card-btn cursor-pointer flex justify-center px-4 py-2  bg-red-500 text-white hover:bg-white hover:text-black" @click.prevent="logoutUser" link="#">Logout </FwbButton>
+    </div>
+  </div>
+    <div class="memphis-card mb-16 text-center w-auto flex flex-col items-center justify-center">
+      <h1 class="text-3xl font-bold">Welcome, {{ username }}</h1>
       <p class="text-xl mt-2">Your total portfolio value today is: <span class="font-semibold">${{ totalPortfolioValue.toFixed(2) }}</span></p>
     </div>
 
@@ -77,10 +81,7 @@ function logoutUser() {
       <AssetCard v-for="(asset, index) in assets" :key="asset.assetId" :asset="asset" :card-color="getColor(index)" />
     </div>
 
-    <div class="mt-4 flex justify-center">
-      <FwbButton class="memphis-card-btn cursor-pointer flex justify-center w-2/12 bg-red-500 text-white hover:bg-white hover:text-black" @click.prevent="logoutUser" link="#">Logout </FwbButton>
-    </div>
-  </div>
+   
 </template>
 
 <style scoped>
