@@ -76,7 +76,7 @@ jobs:
           TEST_DB_PORT: 5432
 
           # port to start the server on
-          PORT: 5432
+          PORT: 3000
 
       # Build the front end for E2E tests. We are building it
       # instead of running it in dev mode because there is some
