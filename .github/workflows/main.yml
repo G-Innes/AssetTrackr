@@ -70,11 +70,11 @@ jobs:
         env:
           # Pass the same credentials to our server environment variables, just like
           # we would if we had an .env file.
-          TEST_DB_USERNAME: postgres
-          TEST_DB_PASSWORD: postgres
-          TEST_DB_DATABASE: test_db
-          TEST_DB_HOST: localhost
-          TEST_DB_PORT: 5432
+          PROD_DB_USERNAME: "${{ secrets.PROD_DB_USERNAME }}"
+          PROD_DB_PASSWORD: "${{ secrets.PROD_DB_PASSWORD }}"
+          PROD_DB_DATABASE: "AssetTrackr"
+          PROD_DB_HOST: "${{ secrets.PROD_DB_HOST }}"
+          PROD_DB_PORT: 5432
 
           # port to start the server on
           PORT: 3000
