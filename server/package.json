@@ -8,6 +8,8 @@
     "start": "NODE_ENV=development ts-node src/index.ts",
     "start:prod": "NODE_ENV=production ts-node src/index.ts",
     "test": "NODE_ENV=test jest --coverage",
+    "test:e2e": "NODE_ENV=test npm run start & sleep 10 && npm run test:e2e:run",
+    "test:e2e:run": "npx playwright test",
     "dev": "tsx watch src",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
