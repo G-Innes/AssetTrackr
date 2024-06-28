@@ -66,7 +66,6 @@ jobs:
 
       - name: Start server for E2E tests
         run: npm run test:e2e -w=server &
-          sleep 10
         env:
           # Pass the same credentials to our server environment variables, just like
           # we would if we had an .env file.
