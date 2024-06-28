@@ -203,6 +203,25 @@ describe('assetController', () => {
       )
 
       expect(response.status).toBe(204)
+      // Verify that the asset is deleted from the database
+      const updatedAsset = await getRepository(Asset).findOne({ where: { id: asset.id } });
+      expect(updatedAsset?.userAssets).toBeUndefined();
     })
+
+    // it('should return 404 if user is not found', async () => {
+    //   const user = await createTestUser();
+    //   const asset = await createTestAsset();
+    //   await createTestUserAsset(user, asset, 10);
+  
+    //   const invalidUserId = user.id + 1; // Assuming this ID does not exist
+  
+    //   const response = await request(app).delete(
+    //     `/user/${invalidUserId}/assets/${asset.id}`
+    //   );
+  
+    //   console.log('Response body:', response.body); // Log response body for debugging
+    //   expect(response.status).toBe(404);
+    //   expect(response.body.message).toContain(`User not found with id: ${invalidUserId}`);
+    // });
   })
 })
