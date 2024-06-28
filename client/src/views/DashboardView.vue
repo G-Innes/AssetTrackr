@@ -64,7 +64,7 @@ function logoutUser() {
   
   <div class="DashboardView p-4 ">
     <div class="mt-4 flex flex-row justify-end">
-      <FwbButton class="memphis-card-btn cursor-pointer flex justify-center px-4 py-2  bg-red-500 text-white hover:bg-white hover:text-black" @click.prevent="logoutUser" link="#">Logout </FwbButton>
+      <FwbButton class="PLSB memphis-card-btn cursor-pointer flex justify-center px-4 py-2  bg-red-500 text-white hover:bg-white hover:text-black" @click.prevent="logoutUser" link="#">Logout </FwbButton>
     </div>
   </div>
     <div class="memphis-card mb-16 text-center w-auto flex flex-col items-center justify-center">
@@ -77,7 +77,7 @@ function logoutUser() {
       <FwbAlert class="text-black-bold">No assets yet!</FwbAlert>
     </div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div v-else class="PLS grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <AssetCard v-for="(asset, index) in assets" :key="asset.assetId" :asset="asset" :card-color="getColor(index)" />
     </div>
 

@@ -40,7 +40,7 @@ const goToDashboard = () => {
 <template>
   <div class="AssetView">
     <transition name="fade">
-      <div v-if="showAlert" class="fixed top-0 left-0 w-full p-4 text-white bg-green-600 text-center text-2xl">
+      <div v-if="showAlert" class="PLS fixed top-0 left-0 w-full p-4 text-white bg-green-600 text-center text-2xl">
         {{ alertMessage }}
       </div>
     </transition>
