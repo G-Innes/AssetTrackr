@@ -20,6 +20,7 @@ AssetTrackr is a portfolio tracking web application that allows you to log buy a
 - Calculate and display the total portfolio value.
 - User authentication and authorization.
 - Dashboard displaying all assets held and their current values.
+- View filtered transaction history
 - Containerization with Docker.
 - CI/CD pipeline for automated testing and deployment.
 
@@ -100,7 +101,6 @@ The project uses a CI/CD pipeline for automated testing and deployment. The pipe
 3. Deploy the application to Amazon Lightsail if all tests pass.
 
 ## Future Features
-- Filtered transactions
 - Performance tracking charts.
 - Allocation charts.
 - Links to related news.
