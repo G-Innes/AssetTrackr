@@ -159,6 +159,41 @@ export async function getAllTransactionsForUser() {
   }
 }
 
+export async function getTransactionsByType(type: string) {
+  const userId = getCurrentUserId()
+
+  if (!userId) {
+    throw new Error('User ID not found')
+  }
+
+  const endpoint = `/api/user/${userId}/transactions/type/${type}`
+
+  try {
+    const response = await apiClient.get(endpoint)
+    const transactions = response.data
+
+    // Create a mapping of asset IDs to tickers
+    const assetsMap: Record<number, string> = {}
+    assets.forEach((asset) => {
+      assetsMap[asset.assetId] = asset.ticker
+    })
+
+    // Enrich transactions with the ticker
+    const enrichedTransactions = transactions.map((transaction: any) => {
+      const assetTicker = assetsMap[transaction.assetId] || 'N/A' // Default to 'N/A' if not found
+      return {
+        ...transaction,
+        assetTicker, // Attach the asset ticker to the transaction
+      }
+    })
+
+    return enrichedTransactions
+  } catch (error) {
+    console.error('Error fetching transactions by type', error)
+    throw error
+  }
+}
+
 export async function getUserProfile(): Promise<{ id: number; username: string; email: string }> {
   const userId = getCurrentUserId()
 

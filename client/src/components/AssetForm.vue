@@ -209,7 +209,7 @@ const selectTicker = async (selectedTicker: string) => {
           <button
             type="button"
             @click="handleSubmit('sell')"
-            class="lex memphis-button sell mr-2 w-60 justify-center rounded-md border border-transparent px-4 py-2 shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            class="memphis-button sell mr-2 w-60 justify-center rounded-md border border-transparent px-4 py-2 shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
             Sell
           </button>
