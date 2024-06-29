@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import { User } from '../entities/user'
 import { Asset } from '../entities/asset'
 import { UserAssets } from '../entities/userAssets'
-import { Transaction, TransactionType } from '../entities/transaction';
+import { Transaction, TransactionType } from '../entities/transaction'
 import config from '../config'
 
 // function for creating a user for tests
@@ -50,17 +50,17 @@ export async function createTestTransaction(
   assetId: number,
   type: TransactionType
 ) {
-  const transactionRepository = getRepository(Transaction);
-  const transaction = new Transaction();
+  const transactionRepository = getRepository(Transaction)
+  const transaction = new Transaction()
 
-  transaction.user = user;
-  transaction.assetId = asset.assetId;
-  transaction.asset = asset;
-  transaction.transactionType = type;
-  transaction.quantity = 10;
-  transaction.price = 100;
-  transaction.transaction_date = new Date();
+  transaction.user = user
+  transaction.assetId = asset.assetId
+  transaction.asset = asset
+  transaction.transactionType = type
+  transaction.quantity = 10
+  transaction.price = 100
+  transaction.transaction_date = new Date()
 
-  await transactionRepository.save(transaction);
-  return transaction;
- }
+  await transactionRepository.save(transaction)
+  return transaction
+}

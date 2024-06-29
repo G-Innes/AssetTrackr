@@ -33,7 +33,7 @@ async function generateToken(user: User) {
 export async function signup(req: Request, res: Response) {
   try {
     // Destructure username, email, and password from request body
-    const { email, userName,  password, confirmPassword } = req.body
+    const { email, userName, password, confirmPassword } = req.body
 
     // Ensure username, email, and password are defined
     if (!email || !userName || !password || !confirmPassword) {
@@ -42,7 +42,7 @@ export async function signup(req: Request, res: Response) {
       })
     }
 
-    if (password !== confirmPassword){
+    if (password !== confirmPassword) {
       return res.status(400).json({
         message: 'Passwords should match',
       })

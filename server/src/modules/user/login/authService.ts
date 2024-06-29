@@ -1,37 +1,38 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { getRepository } from 'typeorm';
-import { z } from 'zod';
-import config from '../../../config';
-import { User } from '../../../entities/user';
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import { getRepository } from 'typeorm'
+import { z } from 'zod'
+import config from '../../../config'
+import { User } from '../../../entities/user'
 
 // Schema for the JWT token payload
 const tokenPayloadSchema = z.object({
   user: z.object({
     id: z.number(),
   }),
-});
+})
 // Type for the JWT token payload
-type TokenPayload = z.infer<typeof tokenPayloadSchema>;
+type TokenPayload = z.infer<typeof tokenPayloadSchema>
 
 // Function to generate a JWT token for a user
 async function generateToken(user: User) {
   // Parse the user's id into the token payload
   const tokenPayload: TokenPayload = tokenPayloadSchema.parse({
     user: { id: user.id },
-  });
+  })
   // Sign the token with the JWT secret and set the expiration time
   const token = jwt.sign(tokenPayload, config.auth!.jwtSecret, {
     expiresIn: config.auth!.jwtExpiresIn,
-  });
+  })
 
-  return token;
+  return token
 }
 
 export async function loginUser(usernameOrEmail: string, password: string) {
   // Convert to lowercase and trim whitespace
-  const normalizedUsernameOrEmail = usernameOrEmail ? usernameOrEmail.toLowerCase().trim() : '';
-  console.log("Normalized username/email:", normalizedUsernameOrEmail);
+  const normalizedUsernameOrEmail = usernameOrEmail
+    ? usernameOrEmail.toLowerCase().trim()
+    : ''
 
   // Look up the user by username or email
   const user = await getRepository(User)
@@ -40,23 +41,22 @@ export async function loginUser(usernameOrEmail: string, password: string) {
       'LOWER(user.username) = :usernameOrEmail OR LOWER(user.email) = :usernameOrEmail',
       { usernameOrEmail: normalizedUsernameOrEmail }
     )
-    .getOne();
-    console.log("Found user:", user);
+    .getOne()
   // If the user is not found, throw an error
   if (!user) {
-    throw new Error('Invalid username or email');
+    throw new Error('Invalid username or email')
   }
 
   // Check if the password is valid
-  const validPassword = await bcrypt.compare(password, user.password);
+  const validPassword = await bcrypt.compare(password, user.password)
 
   // If the password is not valid, throw an error
   if (!validPassword) {
-    throw new Error('Invalid password');
+    throw new Error('Invalid password')
   }
 
   // Generate a JWT token for the user
-  const token = await generateToken(user);
+  const token = await generateToken(user)
 
   // Return the user's id, username, email, and token
   return {
@@ -64,5 +64,5 @@ export async function loginUser(usernameOrEmail: string, password: string) {
     username: user.username,
     email: user.email,
     token,
-  };
+  }
 }

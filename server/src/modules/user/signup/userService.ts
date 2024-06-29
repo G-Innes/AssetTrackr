@@ -16,8 +16,8 @@ type TokenPayload = z.infer<typeof tokenPayloadSchema>
 
 // Define an interface that extends the User entity
 interface UserWithToken extends User {
-    token: string;
-  }
+  token: string
+}
 
 // Function to generate a JWT token for a user
 async function generateToken(user: User) {
@@ -59,5 +59,5 @@ export async function signupUser(data: any): Promise<UserWithToken> {
   const token = await generateToken(newUser)
 
   // Return a new object with token property
-  return { ...newUser, token };
+  return { ...newUser, token }
 }

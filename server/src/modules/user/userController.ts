@@ -57,7 +57,7 @@ export default {
     try {
       // Delete user from the database using user ID
       const result = await getRepository(User).delete({ id: userId })
-      console.log('deleteUser result:', result)
+      // console.log('deleteUser result:', result)
 
       // If no rows were affected, throw an error
       if (!result.affected) {

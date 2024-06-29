@@ -18,39 +18,36 @@ type MyConnectionOptions = ConnectionOptions & {
 const isTestEnvironment = process.env.NODE_ENV === 'test'
 const isProductionEnvironment = process.env.NODE_ENV === 'production'
 
-console.log('Environment:', process.env.NODE_ENV)
-console.log('Database Host:', process.env.PROD_DB_HOST)
-
 // Database connection details
 const baseConfig: Partial<MyConnectionOptions> = {
   type: 'postgres',
   host: isTestEnvironment
     ? process.env.TEST_DB_HOST
     : isProductionEnvironment
-    ? process.env.PROD_DB_HOST
-    : process.env.DEV_DB_HOST,
+      ? process.env.PROD_DB_HOST
+      : process.env.DEV_DB_HOST,
   port: Number(
     isTestEnvironment
       ? process.env.TEST_DB_PORT
       : isProductionEnvironment
-      ? process.env.PROD_DB_PORT
-      : process.env.DEV_DB_PORT
+        ? process.env.PROD_DB_PORT
+        : process.env.DEV_DB_PORT
   ),
   username: isTestEnvironment
     ? process.env.TEST_DB_USERNAME
     : isProductionEnvironment
-    ? process.env.PROD_DB_USERNAME
-    : process.env.DEV_DB_USERNAME,
+      ? process.env.PROD_DB_USERNAME
+      : process.env.DEV_DB_USERNAME,
   password: isTestEnvironment
     ? process.env.TEST_DB_PASSWORD
     : isProductionEnvironment
-    ? process.env.PROD_DB_PASSWORD
-    : process.env.DEV_DB_PASSWORD,
+      ? process.env.PROD_DB_PASSWORD
+      : process.env.DEV_DB_PASSWORD,
   database: isTestEnvironment
     ? process.env.TEST_DB_DATABASE
     : isProductionEnvironment
-    ? process.env.PROD_DB_DATABASE
-    : process.env.DEV_DB_DATABASE,
+      ? process.env.PROD_DB_DATABASE
+      : process.env.DEV_DB_DATABASE,
   entities: [path.join(__dirname, '/entities/*.ts')],
   synchronize: true,
   auth: {
@@ -63,11 +60,14 @@ const baseConfig: Partial<MyConnectionOptions> = {
 // Conditionally add SSL configuration for non-test environments
 const config: MyConnectionOptions = {
   ...baseConfig,
-  ssl: isProductionEnvironment ? { rejectUnauthorized: false } : isTestEnvironment ? false : { rejectUnauthorized: false },
+  ssl: isProductionEnvironment
+    ? { rejectUnauthorized: false }
+    : isTestEnvironment
+      ? false
+      : { rejectUnauthorized: false },
 } as MyConnectionOptions
 
 // Logging database configuration
-console.log('Database Configuration:', config);
-
+// console.log('Database Configuration:', config);
 
 export default config

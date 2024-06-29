@@ -8,7 +8,7 @@ export class Asset {
   id!: number
 
   @Column({ type: 'integer', nullable: true })
-  assetId!: number;
+  assetId!: number
 
   @Column('text')
   name!: string

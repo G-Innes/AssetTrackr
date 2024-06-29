@@ -3,14 +3,13 @@ import config from '../config'
 
 export async function createDatabase(): Promise<Connection> {
   try {
-    console.log('Attempting to establish database connection...');
     const connection = await createConnection(config)
-    console.log('Database connection established successfully.');
+    // console.log('Database connection established successfully.');
     await connection.synchronize()
-    console.log('Database schema synchronized.');
+    // console.log('Database schema synchronized.');
     return connection
   } catch (error) {
-    console.error('Failed to connect to the database:', error);
-    throw error;
+    console.error('Failed to connect to the database:', error)
+    throw error
   }
 }

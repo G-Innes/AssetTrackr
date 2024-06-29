@@ -1,5 +1,5 @@
-import { login } from './loginController';
+import { login } from './loginController'
 
 export default {
   login,
-};
+}

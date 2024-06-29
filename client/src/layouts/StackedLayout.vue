@@ -2,7 +2,6 @@
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-
 const { links } = defineProps<{
   links: {
     label: string
@@ -28,12 +27,12 @@ function toggleMenu() {
 </script>
 
 <template>
-    <nav class="memphis-header">
-    <div class="container mx-auto flex justify-between items-center">
+  <nav class="memphis-header">
+    <div class="container mx-auto flex items-center justify-between">
       <router-link to="/" class="navbar-link">
         <slot name="logo"><span class="logo font-sans">AssetTrackr</span></slot>
       </router-link>
-      <div class="hidden md:flex space-x-4">
+      <div class="hidden space-x-4 md:flex">
         <router-link
           v-for="link in navigation"
           :key="link.name"
@@ -43,21 +42,38 @@ function toggleMenu() {
           {{ link.label }}
         </router-link>
       </div>
-      <div class="md:hidden flex items-center">
-        <button @click="toggleMenu" class="text-gray-400 hover:text-white focus:outline-none focus:text-white">
-          <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+      <div class="flex items-center md:hidden">
+        <button
+          @click="toggleMenu"
+          class="text-gray-400 hover:text-white focus:text-white focus:outline-none"
+        >
+          <svg
+            class="h-6 w-6"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16m-7 6h7"
+            />
           </svg>
         </button>
       </div>
     </div>
     <div v-show="isMenuOpen" class="md:hidden">
-      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
         <router-link
           v-for="link in navigation"
           :key="link.name"
           :to="link.to"
-          :class="['block text-white px-3 py-2 rounded-md text-base font-medium', { 'bg-gray-900': link.isActive }]"
+          :class="[
+            'block rounded-md px-3 py-2 text-base font-medium text-white',
+            { 'bg-gray-900': link.isActive },
+          ]"
         >
           {{ link.label }}
         </router-link>
@@ -73,9 +89,8 @@ function toggleMenu() {
 </template>
 
 <style scoped>
-
 .memphis-header {
-  background-color: #CCCCCC;
+  background-color: #cccccc;
 
   box-shadow: 0 4px 0 #121212;
   padding: 0.5rem 1rem;
@@ -90,7 +105,7 @@ function toggleMenu() {
 .memphis-header .navbar-link:hover {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 0.25rem;
-  color: #1A5138;
+  color: #1a5138;
 }
 .logo {
   font-size: 1.4rem;

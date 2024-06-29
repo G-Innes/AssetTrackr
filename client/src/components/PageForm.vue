@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-
-
 defineProps<{
   heading: string
   formLabel: string
@@ -33,7 +31,7 @@ defineEmits<{
 }
 
 .memphis-card {
-  background-color: #CCCCCC;
+  background-color: #cccccc;
   color: #121212;
   box-shadow: 10px 10px 0 #121212;
   border-radius: 10px;

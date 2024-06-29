@@ -1,10 +1,6 @@
 import { Request, Response } from 'express'
 import { getRepository, EntityNotFoundError } from 'typeorm'
-import {
-  UserAssets,
-  Asset,
-  User,
-} from '../../entities/index'
+import { UserAssets, Asset, User } from '../../entities/index'
 import { handleError } from '../../utils/errorHandlingUtils'
 
 // function to delete asset holdings for user

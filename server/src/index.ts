@@ -5,12 +5,11 @@ import { createDatabase } from './database'
 
 const logger = pino()
 
-logger.info('Starting the application...');
+logger.info('Starting the application...')
 
-console.log('Attempting to create database connection...');
 createDatabase()
   .then(() => {
-    logger.info('Database connection established successfully.');
+    logger.info('Database connection established successfully.')
     const app = createApp()
 
     const port = 3000

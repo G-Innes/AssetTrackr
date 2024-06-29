@@ -5,7 +5,6 @@ import PageForm from '../components/PageForm.vue'
 import { FwbAlert, FwbButton, FwbInput } from 'flowbite-vue'
 import { useRouter } from 'vue-router'
 
-
 const router = useRouter()
 
 // allow login with either username or email
@@ -15,52 +14,52 @@ const userForm = ref({
   password: '',
 })
 
-const hasSucceeded = ref(false);
-const errorMessage = ref('');
+const hasSucceeded = ref(false)
+const errorMessage = ref('')
 
 async function submitLogin() {
   try {
-    const { usernameOrEmail, password } = userForm.value;
+    const { usernameOrEmail, password } = userForm.value
 
     // Check if usernameOrEmail and password are provided
     if (!usernameOrEmail || !password) {
-      errorMessage.value = 'Username/Email and password are required';
-      return;
+      errorMessage.value = 'Username/Email and password are required'
+      return
     }
 
     // Check for email or username
-    const isEmail = usernameOrEmail.includes('@');
+    const isEmail = usernameOrEmail.includes('@')
 
     // Create the appropriate login payload
-    let loginPayload: { usernameOrEmail: string; password: string };
+    let loginPayload: { usernameOrEmail: string; password: string }
 
     if (isEmail) {
-      loginPayload = { usernameOrEmail, password };
+      loginPayload = { usernameOrEmail, password }
     } else {
-      loginPayload = { usernameOrEmail, password };
+      loginPayload = { usernameOrEmail, password }
     }
 
     // Call the login function
-    const response = await login(loginPayload);
+    const response = await login(loginPayload)
 
     // Store the token in localStorage
-    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('token', response.data.token)
 
     // Display success message & redirect to dashboard
-    hasSucceeded.value = true;
+    hasSucceeded.value = true
 
     setTimeout(() => {
-      router.push({ name: 'Dashboard' });
-    }, 500);
+      router.push({ name: 'Dashboard' })
+    }, 500)
   } catch (error: any) {
-    errorMessage.value = error.response?.data?.message || error.message || 'Unknown error';
+    errorMessage.value = error.response?.data?.message || error.message || 'Unknown error'
   }
 }
 </script>
 
 <template>
   <nav class="memphis-header">
-    <div class="container mx-auto flex justify-between items-center">
+    <div class="container mx-auto flex items-center justify-between">
       <router-link to="/" class="navbar-link">
         <slot name="logo"><span class="logo font-sans">AssetTrackr</span></slot>
       </router-link>
@@ -68,7 +67,13 @@ async function submitLogin() {
   </nav>
   <PageForm heading="Log in to your account" formLabel="Login" @submit="submitLogin">
     <template #default>
-      <FwbInput class="focus:ring-black-500 focus:border-black-500"  label="Username or Email" type="text" v-model="userForm.usernameOrEmail" :required="true" />
+      <FwbInput
+        class="focus:ring-black-500 focus:border-black-500"
+        label="Username or Email"
+        type="text"
+        v-model="userForm.usernameOrEmail"
+        :required="true"
+      />
 
       <FwbInput
         label="Password"
@@ -78,13 +83,13 @@ async function submitLogin() {
         autocomplete="current-password"
         v-model="userForm.password"
         :required="true"
-        class="focus:ring-black-500 focus:border-black-500" 
+        class="focus:ring-black-500 focus:border-black-500"
       />
       <FwbAlert v-if="hasSucceeded" data-testid="successMessage" type="success">
         You have successfully logged in.
         <RouterLink
           :to="{ name: 'Dashboard' }"
-          class="font-semibold leading-6 text-black hover:white"
+          class="hover:white font-semibold leading-6 text-black"
           >Go to the Dashboard</RouterLink
         >
       </FwbAlert>
@@ -93,7 +98,12 @@ async function submitLogin() {
       </FwbAlert>
 
       <div class="grid">
-        <FwbButton class="bg-black text-white hover:bg-white hover:text-black" type="submit" size="xl">Log in</FwbButton>
+        <FwbButton
+          class="bg-black text-white hover:bg-white hover:text-black"
+          type="submit"
+          size="xl"
+          >Log in</FwbButton
+        >
       </div>
     </template>
 
@@ -112,9 +122,8 @@ async function submitLogin() {
 </template>
 
 <style scoped>
-
 .memphis-header {
-  background-color: #CCCCCC;
+  background-color: #cccccc;
 
   box-shadow: 0 4px 0 #121212;
   padding: 0.5rem 1rem;
@@ -129,7 +138,7 @@ async function submitLogin() {
 .memphis-header .navbar-link:hover {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 0.25rem;
-  color: #1A5138;
+  color: #1a5138;
 }
 .logo {
   font-size: 1.4rem;

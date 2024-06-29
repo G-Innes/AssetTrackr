@@ -39,7 +39,6 @@ describe('assetController', () => {
 
       // check asset exists
       if (!asset) {
-        console.log('Asset not found, creating...')
         await createTestAsset() // Create the asset if it doesn't exist
 
         asset = await getRepository(Asset).findOne({ where: { id: 1 } })
@@ -62,7 +61,6 @@ describe('assetController', () => {
       responseBody.quantity = Number(responseBody.quantity)
 
       expect(response.status).toBe(201)
-      console.log(response.body)
       expect(response.body).toEqual({
         userId: user.id,
         current_price: '100',
@@ -111,7 +109,6 @@ describe('assetController', () => {
   describe('getAllAssetHoldingsForUser', () => {
     it('should get all asset holdings for a user', async () => {
       const user = await createTestUser()
-      console.log('***THIS IS THE USER', user)
       const asset = await createTestAsset()
       const userAsset = await createTestUserAsset(user, asset, 10)
 
@@ -168,7 +165,6 @@ describe('assetController', () => {
       price: 100,
     })
 
-
     expect(response.status).toBe(201)
     expect(response.body.quantity).toBe(15)
   })
@@ -177,7 +173,6 @@ describe('assetController', () => {
     const user = await createTestUser()
     const asset = await createTestAsset()
     await createTestUserAsset(user, asset, 10)
-    console.log('Initial quantity:', 10);
     const response = await request(app).post(`/user/${user.id}/assets`).send({
       userId: user.id,
       assetId: asset.assetId,
@@ -187,7 +182,6 @@ describe('assetController', () => {
       current_price: 100,
       price: 100,
     })
-    console.log('Response:', response.body);
     expect(response.status).toBe(201)
     expect(response.body.quantity).toBe(5)
   })
@@ -204,22 +198,23 @@ describe('assetController', () => {
 
       expect(response.status).toBe(204)
       // Verify that the asset is deleted from the database
-      const updatedAsset = await getRepository(Asset).findOne({ where: { id: asset.id } });
-      expect(updatedAsset?.userAssets).toBeUndefined();
+      const updatedAsset = await getRepository(Asset).findOne({
+        where: { id: asset.id },
+      })
+      expect(updatedAsset?.userAssets).toBeUndefined()
     })
 
     // it('should return 404 if user is not found', async () => {
     //   const user = await createTestUser();
     //   const asset = await createTestAsset();
     //   await createTestUserAsset(user, asset, 10);
-  
+
     //   const invalidUserId = user.id + 1; // Assuming this ID does not exist
-  
+
     //   const response = await request(app).delete(
     //     `/user/${invalidUserId}/assets/${asset.id}`
     //   );
-  
-    //   console.log('Response body:', response.body); // Log response body for debugging
+
     //   expect(response.status).toBe(404);
     //   expect(response.body.message).toContain(`User not found with id: ${invalidUserId}`);
     // });

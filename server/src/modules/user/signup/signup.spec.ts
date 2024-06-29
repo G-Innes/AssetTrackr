@@ -88,9 +88,7 @@ describe('UserAuthController', () => {
 
       expect(res.status).toBe(400)
       expect(res.body).toHaveProperty('message')
-      expect(res.body.message).toMatch(
-        /Passwords should match/i
-      )
+      expect(res.body.message).toMatch(/Passwords should match/i)
     })
 
     it('should store email in lowercase and trim whitespace', async () => {

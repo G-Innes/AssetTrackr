@@ -2,14 +2,12 @@
 import StackedLayout from './StackedLayout.vue'
 
 const links = [
-{ label: 'Dashboard', name: 'Dashboard', to: '/dashboard' },
+  { label: 'Dashboard', name: 'Dashboard', to: '/dashboard' },
   { label: 'Buy or Sell', name: 'AssetManage', to: '/dashboard/asset-manage' },
-  { label: 'My Transactions', name: 'Transactions', to: '/dashboard/transactions' }
+  { label: 'My Transactions', name: 'Transactions', to: '/dashboard/transactions' },
 ]
-
 </script>
 
 <template>
-  <StackedLayout :links="links">
-  </StackedLayout>
+  <StackedLayout :links="links"> </StackedLayout>
 </template>

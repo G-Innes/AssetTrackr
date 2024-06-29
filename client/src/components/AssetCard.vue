@@ -1,13 +1,13 @@
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
+import { defineComponent, type PropType } from 'vue'
 
 export interface Asset {
-    assetId: number,
-    name: string;
-    ticker: string;
-    quantity: number;
-    current_price: number | null;
-    total_value: number | null;
+  assetId: number
+  name: string
+  ticker: string
+  quantity: number
+  current_price: number | null
+  total_value: number | null
 }
 
 export default defineComponent({
@@ -24,37 +24,28 @@ export default defineComponent({
   },
   computed: {
     formattedTotalValue(): string {
-        if (this.asset.total_value !== null) {
-            return this.asset.total_value.toFixed(2);
-        }
-        return 'N/A';
-    }
-  }
-});
+      if (this.asset.total_value !== null) {
+        return this.asset.total_value.toFixed(2)
+      }
+      return 'N/A'
+    },
+  },
+})
 </script>
 
 <template>
-    <div :style="{ backgroundColor: cardColor }" class="memphis-card">
-      <div class="font-bold text-xl mb-2">{{ asset.name }}</div>
-      <p class="text text-base">
-        Ticker: {{ asset.ticker }}
-      </p>
-      <p class="text text-base">
-        Quantity: {{ asset.quantity }}
-      </p>
-      <p class="text text-base">
-        Current Price: ${{ asset.current_price }}
-      </p>
-      <p class="text text-base">
-        Value: ${{ formattedTotalValue }}
-      </p>
-    </div>
-  </template>
+  <div :style="{ backgroundColor: cardColor }" class="memphis-card">
+    <div class="mb-2 text-xl font-bold">{{ asset.name }}</div>
+    <p class="text text-base">Ticker: {{ asset.ticker }}</p>
+    <p class="text text-base">Quantity: {{ asset.quantity }}</p>
+    <p class="text text-base">Current Price: ${{ asset.current_price }}</p>
+    <p class="text text-base">Value: ${{ formattedTotalValue }}</p>
+  </div>
+</template>
 
 <style scoped>
-
 .memphis-card {
-  background-color: #CCCCCC;
+  background-color: #cccccc;
   color: #121212;
   box-shadow: 10px 10px 0 #121212;
   border-radius: 10px;
@@ -66,5 +57,4 @@ export default defineComponent({
 .text {
   color: #121212;
 }
-
 </style>

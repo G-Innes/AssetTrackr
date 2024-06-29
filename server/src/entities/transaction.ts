@@ -28,8 +28,8 @@ export class Transaction {
   asset!: Asset
 
   @Column({ type: 'integer', nullable: true })
-  assetId!: number;
-  
+  assetId!: number
+
   @Column({
     type: 'enum',
     enum: TransactionType,
