@@ -109,20 +109,20 @@ The project uses a CI/CD pipeline for automated testing and deployment. The pipe
 Here are some screenshots of the application:
 
 ### Homepage
-![Homepage](assets/homepage.png)
+![Homepage](./screenshots/homepage.png)
 
 ### Homepage
-![Signup](assets/signup-.png)
+![Signup](./screenshots/signup-.png)
 
 ### Homepage
-![Login](assets/login-.png)
+![Login](./screenshots/login-.png)
 
 ### Dashboard
-![Dashboard](assets/dashboard.png)
+![Dashboard](./screenshots/dashboard.png)
 
 ### Dashboard
-![Buy/Sell](assets/buy-sell.png)
+![Buy/Sell](./screenshots/buy-sell.png)
 
 ### Transactions
-![Transactions](assets/transactions.png)
+![Transactions](./screenshots/transactions.png)
 
