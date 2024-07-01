@@ -65,6 +65,10 @@ export async function createAssetHoldingsForUser(req: Request, res: Response) {
 
     // If userAsset does not exist, create a new one
     if (!userAsset) {
+      if (quantity < 0) {
+        // Prevent selling an asset that the user does not own
+        return res.status(400).json({ message: 'Cannot sell an asset you do not own' });
+      }
       userAsset = new UserAssets()
       userAsset.user = user
       userAsset.asset = asset
@@ -83,8 +87,18 @@ export async function createAssetHoldingsForUser(req: Request, res: Response) {
 
       await transactionRepository.save(transaction)
     } else {
+      // Prevent user from selling more than they have
+      if (quantity < 0 && (userAsset.quantity + quantity) < 0) {
+        return res.status(400).json({ message: 'Insufficient asset quantity for sale' });
+      }
       // If userAsset does exist, update the quantity
       userAsset.quantity += quantity
+      if (userAsset.quantity === 0) {
+        // Delete the userAsset record
+        await userAssetsRepository.remove(userAsset);
+      } else {
+        // Save the updated userAsset record if quantity is not zero
+      }
       await userAssetsRepository.save(userAsset)
 
       // Determine the transaction type based on the quantity
