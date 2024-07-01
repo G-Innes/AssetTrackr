@@ -15,7 +15,7 @@ test.describe('User Authentication Flow', () => {
 
   test('should successfully log in a user', async ({ page }) => {
     await page.goto('http://localhost:5173/login')
-    await page.fill('form input[type="text"]', 'grant')
+    await page.fill('form input[type="text"]', 'testuser')
     await page.fill('form input[type="password"]', 'Password123!')
     await page.click('form button[type="submit"]')
     await page.waitForNavigation()
@@ -26,7 +26,7 @@ test.describe('User Authentication Flow', () => {
 test.describe('Asset Management Flow', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:5173/login')
-    await page.fill('form input[type="text"]', 'grant')
+    await page.fill('form input[type="text"]', 'testuser')
     await page.fill('form input[type="password"]', 'Password123!')
     await page.click('form button[type="submit"]')
     await page.waitForNavigation()
