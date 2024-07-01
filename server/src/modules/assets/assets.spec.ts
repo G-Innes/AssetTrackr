@@ -186,6 +186,44 @@ describe('assetController', () => {
     expect(response.body.quantity).toBe(5)
   })
 
+  it('Should return 400 for selling more assets than owned', async () => {
+    const user = await createTestUser()
+    const asset = await createTestAsset()
+    await createTestUserAsset(user, asset, 10)
+
+    const response = await request(app).post(`/user/${user.id}/assets`).send({
+      userId: user.id,
+      assetId: asset.id,
+      quantity: -15,
+      name: asset.name,
+      ticker: asset.ticker,
+      current_price: 100,
+      price: 100,
+    })
+
+    expect(response.status).toBe(400)
+    expect(response.body.message).toBe('Insufficient asset quantity for sale')
+  })
+
+  // it('should delete the asset when quantity is 0', async () => {
+  //   const user = await createTestUser()
+  //   const asset = await createTestAsset()
+  //   await createTestUserAsset(user, asset, 10)
+
+  //   const response = await request(app).post(`/user/${user.id}/assets`).send({
+  //     userId: user.id,
+  //     assetId: asset.id,
+  //     quantity: -10,
+  //     name: asset.name,
+  //     ticker: asset.ticker,
+  //     current_price: 100,
+  //     price: 100,
+  //   })
+
+  //   expect(response.status).toBe(201)
+  //   expect(response.body.quantity).toBe(0)
+  // })
+
   describe('deleteAssetHoldingsForUser', () => {
     it('should delete asset holdings for a user', async () => {
       const user = await createTestUser()
