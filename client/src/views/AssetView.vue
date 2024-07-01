@@ -8,6 +8,7 @@ import { createAsset } from '../services/apiService'
 const router = useRouter()
 const showAlert = ref(false)
 const alertMessage = ref('')
+const alertType = ref('success')
 
 const handleSubmit = async (payload: {
   userId: number
@@ -21,11 +22,15 @@ const handleSubmit = async (payload: {
     await createAsset(payload)
     showAlert.value = true
     alertMessage.value = 'Transaction Complete!'
-  } catch (error) {
-    alertMessage.value = 'Failed to submit transaction. Please try again.'
-    console.error('Error submitting asset form:', error)
+    alertType.value = 'success'
+  } catch (error: unknown) {
+    // Directly assert the error type to access its properties
+    const errorMessage = (error as any).response?.data?.message || 'Failed to submit transaction. Please try again.';
+    alertMessage.value = errorMessage;
+    console.error('Error submitting asset form:', error);
+    showAlert.value = true;
+    alertType.value = 'error'
   }
-  showAlert.value = true
   // Hide the alert after 3 seconds
   setTimeout(() => {
     showAlert.value = false
@@ -42,7 +47,10 @@ const goToDashboard = () => {
     <transition name="fade">
       <div
         v-if="showAlert"
-        class="PLS fixed left-0 top-0 w-full bg-green-600 p-4 text-center text-2xl text-white"
+        :class="[
+          'PLS fixed left-0 top-0 w-full p-4 text-center text-2xl text-white',
+          alertType === 'success' ? 'bg-green-600' : 'bg-red-600'
+        ]"
       >
         {{ alertMessage }}
       </div>
