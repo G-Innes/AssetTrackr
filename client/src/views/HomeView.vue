@@ -17,7 +17,7 @@ import { FwbButton } from 'flowbite-vue'
     <div class="memphis-container grid grid-cols-1 gap-6 p-6 md:grid-cols-2 lg:grid-cols-3">
       <div style="background-color: #c1e1c1" class="memphis-card memphis-square p-6">
         <h2 class="memphis-title">Welcome to Our App</h2>
-        <p class="memphis-text">Discover the amazing features we offer. Join us today!</p>
+        <p class="memphis-text">Discover the amazing features we offer. Join us today!<br><span style="font-size: 8px;">*Landing page is placeholder, real functionality is inside</span></p>
         <div class="mt-4 flex space-x-4">
           <FwbButton
             component="RouterLink"
@@ -67,8 +67,8 @@ import { FwbButton } from 'flowbite-vue'
       </div>
 
       <div style="background-color: #ead8c3" class="memphis-card memphis-square p-6">
-        <h2 class="memphis-title">Contact</h2>
-        <p class="memphis-text">Reach out to us if you have any questions or feedback.</p>
+        <h2 class="memphis-title">Design</h2>
+        <p class="memphis-text">Super simple design. This will be transformed into a more modern design in future</p>
       </div>
     </div>
   </div>
