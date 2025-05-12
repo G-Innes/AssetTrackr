@@ -15,7 +15,8 @@ import { assets } from '../assets/assets'
 // Use environment variables for API URL
 const baseURL =
   import.meta.env.VITE_API_URL ||
-  (import.meta.env.MODE === 'production' ? window.location.origin : 'http://localhost:3000')
+  // Always use relative URLs to leverage the proxy in both development and preview modes
+  '' // Empty string uses relative URLs for API requests
 
 const apiClient = axios.create({
   baseURL,

@@ -12,10 +12,10 @@
     "start:full": "npm run build && concurrently \"npm run start:server\" \"npm run start:client\"",
     "start:client": "cd client && npm run preview",
     "start:server": "cd server && npm run start:prod",
-    "start": "npm run start:full", 
+    "start": "npm run start:full",
     "install:client": "cd client && npm install",
     "install:server": "cd server && npm install",
-    "build:client": "cd client && npm run build || exit 1",
+    "build:client": "cd client && npm run build",
     "build:server": "cd server && npm run build",
     "build": "npm run build:client && npm run build:server",
     "dev:client": "cd client && npm run dev",
@@ -31,7 +31,9 @@
     "typecheck:server": "cd server && npm run typecheck",
     "lint": "npm run lint:client && npm run lint:server",
     "format": "npm run format:client && npm run format:server",
-    "typecheck": "npm run typecheck:client && npm run typecheck:server"
+    "typecheck": "npm run typecheck:client && npm run typecheck:server",
+    "preview:client": "cd client && npm run preview",
+    "setup": "npm install concurrently && cd server && npm install && cd ../client && npm install"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",

@@ -13,16 +13,40 @@ export default function createApp() {
     'http://localhost',
     'http://localhost:3000',
     'http://localhost:5173',
+    'http://localhost:4173', // Add preview port
+    'http://127.0.0.1:5173', // Add IPv4 versions
+    'http://127.0.0.1:4173',
     'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com',
   ]
 
   // Enable CORS middleware with custom options
   app.use(
     (req, res, next) => {
-      next()
+      // Set CORS headers directly
+      const { origin } = req.headers
+      if (origin && frontendURLs.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin)
+      } else {
+        // Allow any origin in development
+        res.setHeader('Access-Control-Allow-Origin', '*')
+      }
+      res.setHeader(
+        'Access-Control-Allow-Methods',
+        'GET,HEAD,PUT,PATCH,POST,DELETE'
+      )
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Content-Type,Authorization'
+      )
+      res.setHeader('Access-Control-Allow-Credentials', 'true')
+
+      if (req.method === 'OPTIONS') {
+        return res.status(200).end()
+      }
+      return next()
     },
     cors({
-      origin: '*',
+      origin: frontendURLs,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       allowedHeaders: 'Content-Type,Authorization',
       credentials: true, // Allow cookies and credentials
@@ -30,6 +54,12 @@ export default function createApp() {
   )
 
   app.use(express.json())
+
+  // Add logging middleware to debug requests
+  app.use((req, res, next) => {
+    logger.info(`Incoming request: ${req.method} ${req.originalUrl}`)
+    next()
+  })
 
   // Handle OPTIONS requests explicitly
   app.options('*', cors())
