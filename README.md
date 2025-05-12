@@ -1,6 +1,6 @@
 # AssetTrackr
 
-https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com/
+~https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com/~ (Local run only)
 is a web application designed to help users manage their cryptocurrency investments. This application allows users to log buy and sell transactions, fetch live prices from the Coinbase API, and view their total portfolio value in real-time. With features like user authentication, a comprehensive dashboard, and transaction history filtering, it provides a seamless and secure experience for crypto enthusiasts.
 
 ## Table of Contents
