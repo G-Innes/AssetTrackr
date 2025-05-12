@@ -30,10 +30,14 @@ export const assetSchema = z.object({
   assetId: z.number().int().positive(),
   name: z.string().min(3).max(20),
   ticker: z.string().min(3).max(6),
-  userAssets: z.array(z.lazy(() => z.object({
-    id: z.number().int().positive(),
-    quantity: z.number().positive(),
-  }))),
+  userAssets: z.array(
+    z.lazy(() =>
+      z.object({
+        id: z.number().int().positive(),
+        quantity: z.number().positive(),
+      })
+    )
+  ),
   current_price: z.number().positive(),
 })
 

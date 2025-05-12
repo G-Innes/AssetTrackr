@@ -4,16 +4,14 @@ import { computed } from 'vue'
 const props = defineProps({
   asset: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 // Computed property to determine if the price change is positive or negative
 const priceChangeClass = computed(() => {
   if (!props.asset.price_change_percentage_24h) return 'text-dark-300'
-  return props.asset.price_change_percentage_24h >= 0 
-    ? 'text-success-400' 
-    : 'text-danger-400'
+  return props.asset.price_change_percentage_24h >= 0 ? 'text-success-400' : 'text-danger-400'
 })
 
 // Format currency
@@ -48,12 +46,20 @@ const cardGlow = computed(() => {
 </script>
 
 <template>
-  <div class="glass-card group relative overflow-hidden rounded-xl border border-white/10 bg-glass-gradient transition-all duration-300 hover:-translate-y-1" :class="cardGlow">
+  <div
+    class="glass-card group relative overflow-hidden rounded-xl border border-white/10 bg-glass-gradient transition-all duration-300 hover:-translate-y-1"
+    :class="cardGlow"
+  >
     <div class="p-6">
       <div class="flex items-center justify-between">
         <!-- Asset info -->
         <div class="flex items-center">
-          <div :class="['flex h-12 w-12 items-center justify-center rounded-full ring-1 font-semibold', iconBackground]">
+          <div
+            :class="[
+              'flex h-12 w-12 items-center justify-center rounded-full font-semibold ring-1',
+              iconBackground,
+            ]"
+          >
             {{ asset.ticker.substring(0, 3) }}
           </div>
           <div class="ml-3">
@@ -61,7 +67,7 @@ const cardGlow = computed(() => {
             <p class="text-sm text-dark-300">{{ asset.quantity }} {{ asset.ticker }}</p>
           </div>
         </div>
-        
+
         <!-- Price info -->
         <div class="text-right">
           <p class="font-medium text-white">{{ formatCurrency(asset.value) }}</p>
@@ -70,24 +76,24 @@ const cardGlow = computed(() => {
           </p>
         </div>
       </div>
-      
+
       <!-- Current Price -->
       <div class="mt-6 flex justify-between border-t border-white/10 pt-4 text-sm">
         <span class="text-dark-300">Current Price</span>
         <span class="font-medium text-white">{{ formatCurrency(asset.current_price) }}</span>
       </div>
     </div>
-    
+
     <!-- Action buttons -->
     <div class="flex border-t border-white/10">
-      <button 
+      <button
         class="flex-1 py-3 text-sm font-medium text-primary-400 transition-colors hover:bg-white/5"
         @click="$emit('buy', asset)"
       >
         Buy More
       </button>
       <div class="w-px bg-white/10"></div>
-      <button 
+      <button
         class="flex-1 py-3 text-sm font-medium text-danger-400 transition-colors hover:bg-white/5"
         @click="$emit('sell', asset)"
       >
@@ -122,4 +128,4 @@ const cardGlow = computed(() => {
 .glass-card:hover:before {
   opacity: 1;
 }
-</style> 
+</style>

@@ -10,15 +10,15 @@ import Header from '@/components/dashboard/Header.vue'
   <div class="relative min-h-screen overflow-hidden">
     <!-- Mobile Navigation Drawer -->
     <MobileMenu />
-    
+
     <!-- Desktop Sidebar -->
     <Sidebar />
-    
+
     <!-- Main Content Area -->
     <div class="flex flex-col lg:pl-72">
       <!-- Top Navigation -->
       <Header />
-      
+
       <!-- Page Content -->
       <main class="flex-1 px-4 py-8 sm:px-6 lg:px-8">
         <RouterView />

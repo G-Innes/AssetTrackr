@@ -25,10 +25,11 @@ const handleSubmit = async (payload: {
     alertType.value = 'success'
   } catch (error: unknown) {
     // Directly assert the error type to access its properties
-    const errorMessage = (error as any).response?.data?.message || 'Failed to submit transaction. Please try again.';
-    alertMessage.value = errorMessage;
-    console.error('Error submitting asset form:', error);
-    showAlert.value = true;
+    const errorMessage =
+      (error as any).response?.data?.message || 'Failed to submit transaction. Please try again.'
+    alertMessage.value = errorMessage
+    console.error('Error submitting asset form:', error)
+    showAlert.value = true
     alertType.value = 'error'
   }
   // Hide the alert after 3 seconds
@@ -49,7 +50,7 @@ const goToDashboard = () => {
         v-if="showAlert"
         :class="[
           'fixed left-0 top-0 z-50 w-full p-4 text-center text-xl font-medium text-white backdrop-blur-sm',
-          alertType === 'success' ? 'bg-success-600/90' : 'bg-danger-600/90'
+          alertType === 'success' ? 'bg-success-600/90' : 'bg-danger-600/90',
         ]"
       >
         {{ alertMessage }}
@@ -59,8 +60,8 @@ const goToDashboard = () => {
     <AssetForm @submit="handleSubmit" />
 
     <div class="mt-6 flex justify-center">
-      <FwbButton 
-        class="bg-primary-600 text-white shadow-glow-primary hover:bg-primary-500" 
+      <FwbButton
+        class="shadow-glow-primary bg-primary-600 text-white hover:bg-primary-500"
         @click="goToDashboard"
       >
         Go back to Dashboard

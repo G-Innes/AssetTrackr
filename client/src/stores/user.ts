@@ -38,7 +38,7 @@ export const useUserStore = defineStore('user', () => {
     try {
       // Call the API service with the correct payload structure
       const response = await apiLogin({ usernameOrEmail, password })
-      
+
       if (response.data && response.data.token) {
         // Store token in localStorage is handled by apiLogin
         // Now fetch user data
@@ -48,9 +48,9 @@ export const useUserStore = defineStore('user', () => {
       return { success: false, message: 'Login failed: Invalid credentials' }
     } catch (error) {
       console.error('Login error:', error)
-      return { 
-        success: false, 
-        message: error.response?.data?.message || error.message || 'Login failed'
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message || 'Login failed',
       }
     }
   }
@@ -71,9 +71,9 @@ export const useUserStore = defineStore('user', () => {
       return { success: true, data: response }
     } catch (error) {
       console.error('Registration error:', error)
-      return { 
-        success: false, 
-        message: error.response?.data?.message || error.message || 'Registration failed'
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message || 'Registration failed',
       }
     }
   }
@@ -87,7 +87,7 @@ export const useUserStore = defineStore('user', () => {
     fetchUser,
     login: loginUser,
     logout: logoutUser,
-    signup: registerUser
+    signup: registerUser,
   }
 })
 

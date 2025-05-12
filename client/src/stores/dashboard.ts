@@ -17,13 +17,13 @@ export const useDashboardStore = defineStore('dashboard', () => {
   const assets = ref<Asset[]>([])
   const totalValue = ref(0)
   const isLoading = ref(false)
-  
+
   async function fetchAssets() {
     isLoading.value = true
     try {
       const userAssets = await getAllAssetHoldingsForUser()
       assets.value = userAssets
-      
+
       // Calculate total portfolio value
       totalValue.value = userAssets.reduce((total, asset) => {
         const currentPrice = asset.current_price ?? 0
@@ -35,11 +35,11 @@ export const useDashboardStore = defineStore('dashboard', () => {
       isLoading.value = false
     }
   }
-  
+
   return {
     assets,
     totalValue,
     isLoading,
-    fetchAssets
+    fetchAssets,
   }
-}) 
+})

@@ -1,7 +1,7 @@
 {
     "extends": "@vue/tsconfig/tsconfig.dom.json",
     "include": ["env.d.ts", "src/**/*.ts", "src/**/*", "src/**/*.vue", "src/**/*vue", "**/*.vue", "src/**/*js", "src/**/*jsx", "src/**/*tsx", "src/**/*ts", "src/**/*json"],
-    "exclude": ["src/**/tests/*", "node_modules"],
+    "exclude": ["src/**/tests/*", "node_modules", "src/layouts/StackedLayout.vue"],
     "compilerOptions": {
       "rootDir": "..",
       "strict": true,

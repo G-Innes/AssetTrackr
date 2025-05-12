@@ -8,46 +8,49 @@ export interface Asset {
 function generateName(ticker: string): string {
   // For common cryptocurrencies, use more readable names
   const cryptoNames: Record<string, string> = {
-    'BTC': 'Bitcoin',
-    'ETH': 'Ethereum',
-    'ADA': 'Cardano',
-    'XRP': 'Ripple',
-    'DOT': 'Polkadot',
-    'DOGE': 'Dogecoin',
-    'USDT': 'Tether',
-    'USDC': 'USD Coin',
-    'SOL': 'Solana',
-    'AVAX': 'Avalanche',
-    'LINK': 'Chainlink',
-    'MATIC': 'Polygon',
-    'LTC': 'Litecoin',
-    'ALGO': 'Algorand',
-    'XLM': 'Stellar',
-    'UNI': 'Uniswap',
-    'AAVE': 'Aave',
-    'FTM': 'Fantom',
-    'ATOM': 'Cosmos',
-    'VET': 'VeChain',
-    'DAI': 'Dai',
-    'ETC': 'Ethereum Classic',
-    'FIL': 'Filecoin',
-    'XTZ': 'Tezos',
-    'LUNA': 'Terra',
-    'HBAR': 'Hedera',
-    'EOS': 'EOS',
-    'FLOW': 'Flow',
-    'AXS': 'Axie Infinity',
-    'SAND': 'The Sandbox'
-  };
+    BTC: 'Bitcoin',
+    ETH: 'Ethereum',
+    ADA: 'Cardano',
+    XRP: 'Ripple',
+    DOT: 'Polkadot',
+    DOGE: 'Dogecoin',
+    USDT: 'Tether',
+    USDC: 'USD Coin',
+    SOL: 'Solana',
+    AVAX: 'Avalanche',
+    LINK: 'Chainlink',
+    MATIC: 'Polygon',
+    LTC: 'Litecoin',
+    ALGO: 'Algorand',
+    XLM: 'Stellar',
+    UNI: 'Uniswap',
+    AAVE: 'Aave',
+    FTM: 'Fantom',
+    ATOM: 'Cosmos',
+    VET: 'VeChain',
+    DAI: 'Dai',
+    ETC: 'Ethereum Classic',
+    FIL: 'Filecoin',
+    XTZ: 'Tezos',
+    LUNA: 'Terra',
+    HBAR: 'Hedera',
+    EOS: 'EOS',
+    FLOW: 'Flow',
+    AXS: 'Axie Infinity',
+    SAND: 'The Sandbox',
+  }
 
   if (cryptoNames[ticker]) {
-    return cryptoNames[ticker];
+    return cryptoNames[ticker]
   }
 
   // Otherwise generate name from ticker
-  return ticker.split('').map((char, i) => 
-    i === 0 ? char.toUpperCase() : char.toLowerCase()
-  ).join('') + ' Token';
+  return (
+    ticker
+      .split('')
+      .map((char, i) => (i === 0 ? char.toUpperCase() : char.toLowerCase()))
+      .join('') + ' Token'
+  )
 }
 
 // Add names to all assets
@@ -82,5 +85,5 @@ export const assets: Asset[] = [
   { assetId: 125, ticker: 'DOT', name: 'Polkadot' },
   { assetId: 148, ticker: 'FIL', name: 'Filecoin' },
   { assetId: 245, ticker: 'LTC', name: 'Litecoin' },
-  { assetId: 254, ticker: 'MATIC', name: 'Polygon' }
-];
+  { assetId: 254, ticker: 'MATIC', name: 'Polygon' },
+]
