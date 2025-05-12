@@ -2,10 +2,10 @@
 import { ref, onMounted, computed } from 'vue'
 import AssetCard from '@/components/dashboard/AssetCard.vue'
 import { getAllAssetHoldingsForUser } from '@/services/apiService'
-import type { Asset } from '@/components/AssetCard.vue'
 import { getUserProfile } from '@/services/apiService'
 import { useRouter } from 'vue-router'
 import { useDashboardStore } from '@/stores/dashboard'
+import type { Asset } from '@/stores/dashboard'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
@@ -28,7 +28,7 @@ const stats = computed(() => [
 ])
 
 // Calculate the portfolio change percentage
-function calculatePortfolioChange() {
+function calculatePortfolioChange(): number {
   if (!assets.value.length) return 0
 
   const assetChanges = assets.value.map((asset) => {
@@ -41,7 +41,7 @@ function calculatePortfolioChange() {
 }
 
 // Format currency
-function formatCurrency(value) {
+function formatCurrency(value: number): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -49,7 +49,7 @@ function formatCurrency(value) {
 }
 
 // Format percentage
-function formatPercentage(value) {
+function formatPercentage(value: number): string {
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`
 }
 
@@ -59,10 +59,23 @@ onMounted(async () => {
     const userProfile = await getUserProfile()
     username.value = userProfile.username
 
-    const userAssets: Asset[] = await getAllAssetHoldingsForUser()
-    assets.value = userAssets
+    const apiAssets = await getAllAssetHoldingsForUser()
 
-    totalValue.value = userAssets.reduce((total, asset) => {
+    // Transform the API assets to match the dashboard store's Asset interface
+    const transformedAssets: Asset[] = apiAssets.map((asset) => ({
+      id: asset.assetId || 0, // Using assetId as id if available
+      assetId: asset.assetId,
+      name: asset.name,
+      ticker: asset.ticker,
+      quantity: asset.quantity,
+      current_price: asset.current_price || 0,
+      value: (asset.current_price || 0) * asset.quantity,
+      price_change_percentage_24h: 0, // Default to 0 as it's not in the API response
+    }))
+
+    assets.value = transformedAssets
+
+    totalValue.value = apiAssets.reduce((total, asset) => {
       const currentPrice = asset.current_price ?? 0
       return total + asset.quantity * currentPrice
     }, 0)
@@ -72,14 +85,14 @@ onMounted(async () => {
 })
 
 // Handle buy/sell actions
-function handleBuy(asset) {
+function handleBuy(asset: { ticker: string }): void {
   router.push({
     name: 'AssetManage',
     query: { ticker: asset.ticker, action: 'buy' },
   })
 }
 
-function handleSell(asset) {
+function handleSell(asset: { ticker: string }): void {
   router.push({
     name: 'AssetManage',
     query: { ticker: asset.ticker, action: 'sell' },

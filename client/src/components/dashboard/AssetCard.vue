@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { Asset } from '@/stores/dashboard'
 
 const props = defineProps({
   asset: {
-    type: Object,
+    type: Object as () => Asset,
     required: true,
   },
 })
@@ -15,7 +16,7 @@ const priceChangeClass = computed(() => {
 })
 
 // Format currency
-const formatCurrency = (value) => {
+const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -23,7 +24,7 @@ const formatCurrency = (value) => {
 }
 
 // Format percentage
-const formatPercentage = (value) => {
+const formatPercentage = (value: number | undefined): string => {
   if (!value) return '0.00%'
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`
 }
@@ -43,6 +44,8 @@ const cardGlow = computed(() => {
   const colorIndex = hash % colors.length
   return `shadow-glow-${colors[colorIndex]}`
 })
+
+defineEmits(['buy', 'sell'])
 </script>
 
 <template>
