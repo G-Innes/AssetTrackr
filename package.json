@@ -1,16 +1,52 @@
- {
-  "name": "ginnes-be.3.5",
+{
+  "name": "assettrackr",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "Asset tracking application",
+  "private": true,
   "workspaces": [
-    "server",
-    "client"
-  ]
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "install:client": "cd client && npm install",
+    "install:server": "cd server && npm install",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "build": "npm run build:client && npm run build:server",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "start": "cd server && npm run start:prod",
+    "vercel-build": "npm run build",
+    "prepare": "husky",
+    "lint:client": "cd client && npm run lint",
+    "lint:server": "cd server && npm run lint",
+    "format:client": "cd client && npm run format",
+    "format:server": "cd server && npm run format",
+    "typecheck:client": "cd client && npm run typecheck",
+    "typecheck:server": "cd server && npm run typecheck",
+    "lint": "npm run lint:client && npm run lint:server",
+    "format": "npm run format:client && npm run format:server",
+    "typecheck": "npm run typecheck:client && npm run typecheck:server"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.6.5",
+    "@commitlint/config-conventional": "^18.6.5",
+    "concurrently": "^8.2.2",
+    "husky": "^9.0.11",
+    "lint-staged": "^16.0.0"
+  },
+  "engines": {
+    "node": ">=18.19.0"
+  },
+  "lint-staged": {
+    "client/src/**/*.{js,ts,jsx,tsx,vue}": [
+      "npm run format:client",
+      "npm run lint:client"
+    ],
+    "server/src/**/*.{js,ts}": [
+      "npm run format:server",
+      "npm run lint:server"
+    ]
+  }
 }

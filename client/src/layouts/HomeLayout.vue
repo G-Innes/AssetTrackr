@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import StackedLayout from './StackedLayout.vue'
+import { RouterView } from 'vue-router'
 
 const links = [
   { label: 'Dashboard', name: 'Dashboard', to: '/dashboard' },
@@ -11,5 +11,6 @@ const links = [
 </script>
 
 <template>
-  <StackedLayout :links="links" />
+  <!-- Header is now rendered in the HomeView component -->
+  <RouterView />
 </template>

@@ -6,11 +6,10 @@ import type { Asset } from '@/components/AssetCard.vue'
 import type { Transaction } from '../components/TransactionCard.vue'
 import { assets } from '../assets/assets'
 
+// Use environment variables for API URL
 const baseURL =
-  import.meta.env.MODE === 'production'
-    ? 'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com'
-    : 'http://localhost:3000'
-// const baseURL = 'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com';
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.MODE === 'production' ? window.location.origin : 'http://localhost:3000')
 
 const apiClient = axios.create({
   baseURL,
@@ -44,11 +43,11 @@ type LoginPayload = { usernameOrEmail: string; password: string }
 export async function login(userData: LoginPayload) {
   try {
     const response = await apiClient.post('/api/user/login', userData)
-    
+
     if (response.data && response.data.token) {
       storeAccessToken(localStorage, response.data.token)
     }
-    
+
     return response
   } catch (error) {
     console.error('Login error in API service:', error)
@@ -143,28 +142,28 @@ export async function getAllTransactionsForUser() {
 
   try {
     const transactionsResponse = await apiClient.get(`/api/user/${userId}/transactions`)
-    
+
     if (!transactionsResponse.data || !Array.isArray(transactionsResponse.data)) {
       console.error('Invalid transactions response format:', transactionsResponse.data)
       return []
     }
-    
+
     const transactions = transactionsResponse.data
 
     // Log original transaction data for debugging
-    console.log('Original transactions data:', transactions);
+    console.log('Original transactions data:', transactions)
 
     // Create a mapping of asset IDs to asset details
-    const assetsMap: Record<number, {ticker: string, name: string}> = {}
-    
+    const assetsMap: Record<number, { ticker: string; name: string }> = {}
+
     // Since we know assets from assets.ts have these properties
     assets.forEach((asset: any) => {
       if (asset.assetId !== undefined) {
         // For assets without a name property, use the ticker as the name
-        const name = asset.name || asset.ticker || 'Unknown Asset';
+        const name = asset.name || asset.ticker || 'Unknown Asset'
         assetsMap[asset.assetId] = {
           ticker: asset.ticker || 'N/A',
-          name: name
+          name: name,
         }
       }
     })
@@ -173,16 +172,17 @@ export async function getAllTransactionsForUser() {
     const enrichedTransactions = transactions.map((transaction: any) => {
       // Check if a transaction has an assetId
       if (transaction.assetId === undefined && transaction.asset_id !== undefined) {
-        transaction.assetId = transaction.asset_id; // Map snake_case to camelCase
+        transaction.assetId = transaction.asset_id // Map snake_case to camelCase
       }
-      
+
       // Get asset info from the mapping or provide defaults
-      const assetInfo = transaction.assetId ? assetsMap[transaction.assetId] : null;
-      
+      const assetInfo = transaction.assetId ? assetsMap[transaction.assetId] : null
+
       // If no asset info is found but we have a ticker, create a name from the ticker
-      const ticker = assetInfo?.ticker || transaction.ticker || transaction.asset_ticker || 'N/A';
-      const name = assetInfo?.name || transaction.name || transaction.asset_name || ticker || 'Unknown Asset';
-      
+      const ticker = assetInfo?.ticker || transaction.ticker || transaction.asset_ticker || 'N/A'
+      const name =
+        assetInfo?.name || transaction.name || transaction.asset_name || ticker || 'Unknown Asset'
+
       // Normalize field names to ensure consistent access in components
       return {
         ...transaction,
@@ -198,14 +198,16 @@ export async function getAllTransactionsForUser() {
         id: transaction.id,
         quantity: transaction.quantity || 0,
         price: transaction.price || 0,
-        transaction_date: transaction.transaction_date || transaction.transactionDate || new Date().toISOString(),
-        transactionDate: transaction.transactionDate || transaction.transaction_date || new Date().toISOString()
+        transaction_date:
+          transaction.transaction_date || transaction.transactionDate || new Date().toISOString(),
+        transactionDate:
+          transaction.transactionDate || transaction.transaction_date || new Date().toISOString(),
       }
     })
 
     // Log enriched data for debugging
-    console.log('Enriched transactions data:', enrichedTransactions);
-    
+    console.log('Enriched transactions data:', enrichedTransactions)
+
     return enrichedTransactions
   } catch (error) {
     console.error('Error fetching transactions or assets:', error)
@@ -222,38 +224,38 @@ export async function getTransactionsByType(type: string) {
   }
 
   // Ensure type is valid
-  const validType = type.toLowerCase();
+  const validType = type.toLowerCase()
   if (validType !== 'buy' && validType !== 'sell') {
-    console.warn(`Invalid transaction type: ${type}, defaulting to all transactions`);
-    return getAllTransactionsForUser();
+    console.warn(`Invalid transaction type: ${type}, defaulting to all transactions`)
+    return getAllTransactionsForUser()
   }
 
   const endpoint = `/api/user/${userId}/transactions/type/${validType}`
 
   try {
     const response = await apiClient.get(endpoint)
-    
+
     if (!response.data || !Array.isArray(response.data)) {
       console.error('Invalid transactions response format:', response.data)
       return []
     }
-    
+
     const transactions = response.data
 
     // Log original transaction data for debugging
-    console.log('Transactions by type data:', transactions);
+    console.log('Transactions by type data:', transactions)
 
     // Create a mapping of asset IDs to asset details
-    const assetsMap: Record<number, {ticker: string, name: string}> = {}
-    
+    const assetsMap: Record<number, { ticker: string; name: string }> = {}
+
     // Since we know assets from assets.ts have these properties
     assets.forEach((asset: any) => {
       if (asset.assetId !== undefined) {
         // For assets without a name property, use the ticker as the name
-        const name = asset.name || asset.ticker || 'Unknown Asset';
+        const name = asset.name || asset.ticker || 'Unknown Asset'
         assetsMap[asset.assetId] = {
           ticker: asset.ticker || 'N/A',
-          name: name
+          name: name,
         }
       }
     })
@@ -262,16 +264,17 @@ export async function getTransactionsByType(type: string) {
     const enrichedTransactions = transactions.map((transaction: any) => {
       // Check if a transaction has an assetId
       if (transaction.assetId === undefined && transaction.asset_id !== undefined) {
-        transaction.assetId = transaction.asset_id; // Map snake_case to camelCase
+        transaction.assetId = transaction.asset_id // Map snake_case to camelCase
       }
-      
+
       // Get asset info from the mapping or provide defaults
-      const assetInfo = transaction.assetId ? assetsMap[transaction.assetId] : null;
-      
+      const assetInfo = transaction.assetId ? assetsMap[transaction.assetId] : null
+
       // If no asset info is found but we have a ticker, create a name from the ticker
-      const ticker = assetInfo?.ticker || transaction.ticker || transaction.asset_ticker || 'N/A';
-      const name = assetInfo?.name || transaction.name || transaction.asset_name || ticker || 'Unknown Asset';
-      
+      const ticker = assetInfo?.ticker || transaction.ticker || transaction.asset_ticker || 'N/A'
+      const name =
+        assetInfo?.name || transaction.name || transaction.asset_name || ticker || 'Unknown Asset'
+
       // Normalize field names to ensure consistent access in components
       return {
         ...transaction,
@@ -287,11 +290,13 @@ export async function getTransactionsByType(type: string) {
         id: transaction.id,
         quantity: transaction.quantity || 0,
         price: transaction.price || 0,
-        transaction_date: transaction.transaction_date || transaction.transactionDate || new Date().toISOString(),
-        transactionDate: transaction.transactionDate || transaction.transaction_date || new Date().toISOString()
+        transaction_date:
+          transaction.transaction_date || transaction.transactionDate || new Date().toISOString(),
+        transactionDate:
+          transaction.transactionDate || transaction.transaction_date || new Date().toISOString(),
       }
     })
-    
+
     return enrichedTransactions
   } catch (error) {
     console.error('Error fetching transactions by type:', error)

@@ -9,6 +9,8 @@ is a web application designed to help users manage their cryptocurrency investme
 - [User Flow](#user-flow)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Development Workflow](#development-workflow)
+- [Contributing](#contributing)
 - [Testing](#testing)
 - [CI/CD Pipeline](#cicd-pipeline)
 - [Future Features](#future-features)
@@ -77,6 +79,39 @@ is a web application designed to help users manage their cryptocurrency investme
 - **Signup/Login:** Create an account or log in to access the dashboard.
 - **Dashboard:** View your current assets and total portfolio value.
 - **Transactions:** Add buy or sell transactions to update your portfolio.
+
+## Development Workflow
+This project uses several tools to ensure code quality and maintain a consistent development workflow:
+
+- **Husky**: Automates git hooks for pre-commit and commit-msg validation
+- **lint-staged**: Runs linters and formatters only on staged files
+- **ESLint**: Enforces code quality standards
+- **Prettier**: Ensures consistent code formatting
+- **TypeScript**: Provides static type checking
+- **Commitlint**: Enforces conventional commit message format
+
+Run development servers (both client and server):
+```bash
+npm run dev
+```
+
+Format code:
+```bash
+npm run format
+```
+
+Lint code:
+```bash
+npm run lint
+```
+
+Type check:
+```bash
+npm run typecheck
+```
+
+## Contributing
+Please read our [Contributing Guidelines](./CONTRIBUTING.md) before submitting pull requests. We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for commit messages.
 
 ## Testing
 - **Backend Tests:** Run unit tests with Jest.

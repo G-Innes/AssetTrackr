@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import PageForm from '../components/PageForm.vue'
-import { FwbAlert, FwbButton, FwbInput } from 'flowbite-vue'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
@@ -34,11 +33,11 @@ async function submitSignup() {
     }
 
     // Call signup with user data
-    const result = await userStore.signup({ 
-      email, 
-      userName, 
-      password, 
-      confirmPassword 
+    const result = await userStore.signup({
+      email,
+      userName,
+      password,
+      confirmPassword,
     })
 
     if (result.success) {
@@ -64,70 +63,85 @@ async function submitSignup() {
   <header class="fixed top-0 z-10 w-full backdrop-blur-sm">
     <div class="glass-card border-b border-white/10 px-6 py-4">
       <div class="mx-auto flex items-center justify-between">
-        <router-link to="/" class="text-xl font-bold text-white">
-          AssetTrackr
-        </router-link>
+        <router-link to="/" class="text-xl font-bold text-white"> AssetTrackr </router-link>
       </div>
     </div>
   </header>
-  
+
   <PageForm heading="Sign up for an account" formLabel="Signup" @submit="submitSignup">
     <template #default>
-      <FwbInput
-        class="signup-input"
-        label="Email"
-        labelClass="text-dark-200"
-        type="email"
-        v-model="userForm.email"
-        :required="true"
-      />
+      <div class="mb-4">
+        <label for="email" class="mb-2 block text-sm font-medium text-dark-200">Email</label>
+        <input
+          id="email"
+          type="email"
+          v-model="userForm.email"
+          required
+          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white focus:border-dark-900 focus:outline-none focus:ring-2 focus:ring-dark-900/60"
+        />
+      </div>
 
-      <FwbInput
-        class="signup-input"
-        label="Username"
-        labelClass="text-dark-200"
-        type="text"
-        v-model="userForm.userName"
-        :required="true"
-      />
+      <div class="mb-4">
+        <label for="userName" class="mb-2 block text-sm font-medium text-dark-200">Username</label>
+        <input
+          id="userName"
+          type="text"
+          v-model="userForm.userName"
+          required
+          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white focus:border-dark-900 focus:outline-none focus:ring-2 focus:ring-dark-900/60"
+        />
+      </div>
 
-      <FwbInput
-        class="signup-input"
-        label="Password"
-        labelClass="text-dark-200"
-        type="password"
-        v-model="userForm.password"
-        :required="true"
-      />
+      <div class="mb-4">
+        <label for="password" class="mb-2 block text-sm font-medium text-dark-200">Password</label>
+        <input
+          id="password"
+          type="password"
+          v-model="userForm.password"
+          required
+          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white focus:border-dark-900 focus:outline-none focus:ring-2 focus:ring-dark-900/60"
+        />
+      </div>
 
-      <FwbInput
-        class="signup-input"
-        label="Confirm Password"
-        labelClass="text-dark-200"
-        type="password"
-        v-model="userForm.confirmPassword"
-        :required="true"
-      />
+      <div class="mb-4">
+        <label for="confirmPassword" class="mb-2 block text-sm font-medium text-dark-200"
+          >Confirm Password</label
+        >
+        <input
+          id="confirmPassword"
+          type="password"
+          v-model="userForm.confirmPassword"
+          required
+          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white focus:border-dark-900 focus:outline-none focus:ring-2 focus:ring-dark-900/60"
+        />
+      </div>
 
-      <FwbAlert v-if="hasSucceeded" data-testid="successMessage" type="success">
+      <div
+        v-if="hasSucceeded"
+        class="mb-4 rounded-lg bg-success-600/20 p-4 text-white"
+        data-testid="successMessage"
+      >
         You have successfully signed up!
-        <RouterLink
-          :to="{ name: 'Login' }"
-          class="font-semibold text-white"
+        <RouterLink :to="{ name: 'Login' }" class="font-semibold text-white underline"
           >Go to the login page</RouterLink
         >
-      </FwbAlert>
-      <FwbAlert v-if="errorMessage" data-testid="errorMessage" type="danger">
+      </div>
+
+      <div
+        v-if="errorMessage"
+        class="mb-4 rounded-lg bg-danger-600/20 p-4 text-white"
+        data-testid="errorMessage"
+      >
         {{ errorMessage }}
-      </FwbAlert>
+      </div>
 
       <div class="grid">
-        <FwbButton
-          class="bg-primary-600 text-white shadow-glow-primary hover:bg-primary-500"
+        <button
           type="submit"
-          size="xl"
-          >Sign up</FwbButton
+          class="shadow-glow-primary rounded-lg bg-primary-600 px-5 py-3 text-white transition hover:bg-primary-500"
         >
+          Sign up
+        </button>
       </div>
     </template>
 
@@ -149,18 +163,5 @@ async function submitSignup() {
   background-color: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-}
-
-.signup-input :deep(input) {
-  background-color: transparent !important;
-  color: white !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.signup-input :deep(input:focus) {
-  --tw-ring-color: rgb(15, 23, 42) !important;
-  --tw-ring-offset-color: rgb(15, 23, 42) !important;
-  border-color: rgb(15, 23, 42) !important;
-  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.6) !important;
 }
 </style>

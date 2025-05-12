@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import PageForm from '../components/PageForm.vue'
-import { FwbAlert, FwbButton, FwbInput } from 'flowbite-vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
@@ -29,7 +28,7 @@ async function submitLogin() {
 
     // Login via store
     const result = await userStore.login(usernameOrEmail, password)
-    
+
     if (result.success) {
       // Display success message & redirect to dashboard
       hasSucceeded.value = true
@@ -50,54 +49,64 @@ async function submitLogin() {
   <header class="fixed top-0 z-10 w-full backdrop-blur-sm">
     <div class="glass-card border-b border-white/10 px-6 py-4">
       <div class="mx-auto flex items-center justify-between">
-        <router-link to="/" class="text-xl font-bold text-white">
-          AssetTrackr
-        </router-link>
+        <router-link to="/" class="text-xl font-bold text-white"> AssetTrackr </router-link>
       </div>
     </div>
   </header>
-  
+
   <PageForm heading="Log in to your account" formLabel="Login" @submit="submitLogin">
     <template #default>
-      <FwbInput
-        class="login-input"
-        label="Username or Email"
-        labelClass="text-dark-200"
-        type="text"
-        v-model="userForm.usernameOrEmail"
-        :required="true"
-      />
+      <div class="mb-4">
+        <label for="usernameOrEmail" class="mb-2 block text-sm font-medium text-dark-200"
+          >Username or Email</label
+        >
+        <input
+          id="usernameOrEmail"
+          type="text"
+          v-model="userForm.usernameOrEmail"
+          required
+          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white focus:border-dark-900 focus:outline-none focus:ring-2 focus:ring-dark-900/60"
+        />
+      </div>
 
-      <FwbInput
-        label="Password"
-        labelClass="text-dark-200"
-        id="password"
-        name="password"
-        type="password"
-        autocomplete="current-password"
-        v-model="userForm.password"
-        :required="true"
-        class="login-input"
-      />
-      <FwbAlert v-if="hasSucceeded" data-testid="successMessage" type="success">
+      <div class="mb-4">
+        <label for="password" class="mb-2 block text-sm font-medium text-dark-200">Password</label>
+        <input
+          id="password"
+          type="password"
+          v-model="userForm.password"
+          required
+          autocomplete="current-password"
+          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white focus:border-dark-900 focus:outline-none focus:ring-2 focus:ring-dark-900/60"
+        />
+      </div>
+
+      <div
+        v-if="hasSucceeded"
+        class="mb-4 rounded-lg bg-success-600/20 p-4 text-white"
+        data-testid="successMessage"
+      >
         You have successfully logged in.
-        <RouterLink
-          :to="{ name: 'Dashboard' }"
-          class="font-semibold text-white"
+        <RouterLink :to="{ name: 'Dashboard' }" class="font-semibold text-white underline"
           >Go to the Dashboard</RouterLink
         >
-      </FwbAlert>
-      <FwbAlert v-if="errorMessage" data-testid="errorMessage" type="danger">
+      </div>
+
+      <div
+        v-if="errorMessage"
+        class="mb-4 rounded-lg bg-danger-600/20 p-4 text-white"
+        data-testid="errorMessage"
+      >
         {{ errorMessage }}
-      </FwbAlert>
+      </div>
 
       <div class="grid">
-        <FwbButton
-          class="bg-primary-600 text-white shadow-glow-primary hover:bg-primary-500"
+        <button
           type="submit"
-          size="xl"
-          >Log in</FwbButton
+          class="shadow-glow-primary rounded-lg bg-primary-600 px-5 py-3 text-white transition hover:bg-primary-500"
         >
+          Log in
+        </button>
       </div>
     </template>
 
@@ -119,18 +128,5 @@ async function submitLogin() {
   background-color: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-}
-
-.login-input :deep(input) {
-  background-color: transparent !important;
-  color: white !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.login-input :deep(input:focus) {
-  --tw-ring-color: rgb(15, 23, 42) !important;
-  --tw-ring-offset-color: rgb(15, 23, 42) !important;
-  border-color: rgb(15, 23, 42) !important;
-  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.6) !important;
 }
 </style>
