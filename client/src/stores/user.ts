@@ -2,10 +2,22 @@
 import { defineStore } from 'pinia'
 import { login as apiLogin, logout, signup, getUserProfile } from '../services/apiService'
 import { ref, computed } from 'vue'
+import { getStoredAccessToken, isTokenExpired } from '../utils/auth'
 
 export const useUserStore = defineStore('user', () => {
   const user = ref(null)
-  const isAuthenticated = computed(() => !!user.value)
+  const isAuthenticated = computed(() => {
+    if (!user.value) return false
+
+    const token = getStoredAccessToken(localStorage)
+    if (!token || isTokenExpired(token)) {
+      // Token is expired, log user out
+      logoutUser()
+      return false
+    }
+
+    return true
+  })
 
   // Load user from localStorage on initialization
   const initUser = () => {
@@ -68,7 +80,23 @@ export const useUserStore = defineStore('user', () => {
   const registerUser = async (userData) => {
     try {
       const response = await signup(userData)
-      return { success: true, data: response }
+
+      if (response.data && response.data.token) {
+        // Automatically login the user after successful registration
+        // We don't need to make a separate login call since the signup response includes a token
+
+        // Store user data
+        user.value = {
+          id: response.data.id,
+          username: response.data.username,
+          email: response.data.email,
+        }
+        localStorage.setItem('user', JSON.stringify(user.value))
+
+        return { success: true, data: response.data, autoLoggedIn: true }
+      }
+
+      return { success: true, data: response.data }
     } catch (error) {
       console.error('Registration error:', error)
       return {

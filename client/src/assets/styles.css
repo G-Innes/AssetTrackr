@@ -1,3 +1,4 @@
+/* tailwindcss directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -37,13 +38,13 @@
   input:focus,
   textarea:focus,
   select:focus {
-    --tw-ring-color: rgb(15, 23, 42) !important; /* dark-900 color */
-    --tw-ring-offset-color: rgb(15, 23, 42) !important;
+    --tw-ring-color: rgba(168, 86, 201, 0.7) !important; /* Using purple from gradient */
+    --tw-ring-offset-color: transparent !important;
     --tw-ring-offset-width: 0px !important;
     --tw-ring-opacity: 1 !important;
-    border-color: rgb(15, 23, 42) !important;
+    border-color: rgba(168, 86, 201, 0.9) !important; /* Brighter purple for borders */
     outline: none !important;
-    box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.6) !important;
+    box-shadow: 0 0 0 2px rgba(168, 86, 201, 0.5) !important;
   }
   
   /* Specifically targeting Flowbite inputs */
@@ -58,18 +59,17 @@
   
   /* Ensure all app forms have transparent backgrounds */
   form,
-  .glass-card,
   div[class*="bg-dark"] {
     background-color: transparent !important;
   }
-}
-
-/* Glass effect utility classes */
-.glass-card {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  /* Glass effect utility class */
+  .glass-card {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
 }
 
 /* Color palette comments */
@@ -90,4 +90,4 @@ Dark Grey: #333333 (Dark grey)
 Medium Grey: #666666 (Medium grey)
 Light Grey: #CCCCCC (Light grey)
 White: #F5F5F5 (Off-white)
-*/
+*/ 

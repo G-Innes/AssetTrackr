@@ -1,9 +1,15 @@
 import axios from 'axios'
-import { getStoredAccessToken, clearStoredAccessToken, storeAccessToken } from '../utils/auth'
+import type { AxiosError, AxiosResponse } from 'axios'
+import {
+  getStoredAccessToken,
+  clearStoredAccessToken,
+  storeAccessToken,
+  isTokenExpired,
+  refreshToken,
+} from '../utils/auth'
 import { getCurrentUserId } from '@/utils/user'
 import { getLivePrice } from '@/utils/getLivePrice'
 import type { Asset } from '@/components/AssetCard.vue'
-import type { Transaction } from '../components/TransactionCard.vue'
 import { assets } from '../assets/assets'
 
 // Use environment variables for API URL
@@ -19,21 +25,76 @@ const apiClient = axios.create({
 })
 
 // Interceptor to attach the token to every request
-apiClient.interceptors.request.use((config) => {
+apiClient.interceptors.request.use(async (config) => {
   const token = getStoredAccessToken(localStorage)
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+    // Check if token is expired
+    if (isTokenExpired(token)) {
+      // Try to refresh the token
+      const newToken = await refreshToken()
+      if (newToken) {
+        storeAccessToken(localStorage, newToken)
+        config.headers.Authorization = `Bearer ${newToken}`
+      } else {
+        // If refresh fails, clear the token - user will need to login again
+        clearStoredAccessToken(localStorage)
+      }
+    } else {
+      config.headers.Authorization = `Bearer ${token}`
+    }
   }
   return config
 })
 
-export function signup(userData: {
+// Add a response interceptor to handle 401 errors (Unauthorized)
+apiClient.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config
+
+    // If the error is 401 and we have an original request
+    if (error.response?.status === 401 && originalRequest) {
+      // Try to refresh the token
+      const newToken = await refreshToken()
+
+      if (newToken) {
+        // Store the new token
+        storeAccessToken(localStorage, newToken)
+
+        // Update the Authorization header with the new token
+        originalRequest.headers.Authorization = `Bearer ${newToken}`
+
+        // Retry the original request with the new token
+        return apiClient(originalRequest)
+      } else {
+        // If refresh fails, clear token and redirect to login (handled by components)
+        clearStoredAccessToken(localStorage)
+      }
+    }
+
+    return Promise.reject(error)
+  }
+)
+
+export async function signup(userData: {
   email: string
   userName: string
   password: string
   confirmPassword: string
 }) {
-  return apiClient.post('/api/user', userData)
+  try {
+    const response = await apiClient.post('/api/user', userData)
+
+    // Store token if it exists in the response
+    if (response.data && response.data.token) {
+      storeAccessToken(localStorage, response.data.token)
+    }
+
+    return response
+  } catch (error) {
+    console.error('Signup error in API service:', error)
+    throw error
+  }
 }
 
 // Adjust the type definition for the login payload

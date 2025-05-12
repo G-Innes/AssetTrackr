@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import TransactionCard from '../components/TransactionCard.vue'
 import { getAllTransactionsForUser, getTransactionsByType } from '@/services/apiService'
 import type { Transaction } from '../components/TransactionCard.vue'
 

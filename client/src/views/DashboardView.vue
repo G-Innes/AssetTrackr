@@ -6,28 +6,11 @@ import type { Asset } from '@/components/AssetCard.vue'
 import { getUserProfile } from '@/services/apiService'
 import { useRouter } from 'vue-router'
 import { useDashboardStore } from '@/stores/dashboard'
-import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
-const userStore = useUserStore()
 const dashboardStore = useDashboardStore()
 const { assets, totalValue, isLoading } = storeToRefs(dashboardStore)
-
-const colors = [
-  '#A0E7E5', // Pastel Turquoise
-  '#FFB3BA', // Pastel Pink
-  '#FFFACD', // Pastel Lemon
-  '#CABBE9', // Pastel Purple
-  '#FFDAC1', // Pastel Orange
-  '#DECBE4', // Pastel Raspberry
-  '#A0C4FF', // Pastel Blue
-  '#C1E1C1', // Pastel Green
-  '#E6F2FF', // Pastel Prussian Blue
-  '#B2F2BB', // Pastel Mint
-  '#E3D5FF', // Pastel Lavender
-  '#FFD1BA', // Pastel Peach
-]
 
 const username = ref<string>('')
 
@@ -87,15 +70,6 @@ onMounted(async () => {
     console.error('Error fetching assets:', error)
   }
 })
-
-function getColor(index: number): string {
-  return colors[index % colors.length]
-}
-
-function logoutUser() {
-  userStore.logout()
-  router.push({ name: 'Login' })
-}
 
 // Handle buy/sell actions
 function handleBuy(asset) {

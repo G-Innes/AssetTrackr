@@ -44,10 +44,18 @@ async function submitSignup() {
       errorMessage.value = ''
       // Display success message
       hasSucceeded.value = true
-      // Redirect to login page after delay
-      setTimeout(() => {
-        router.push({ name: 'Login' })
-      }, 2000)
+
+      if (result.autoLoggedIn) {
+        // If auto-login was successful, redirect to dashboard
+        setTimeout(() => {
+          router.push({ name: 'Dashboard' })
+        }, 1000)
+      } else {
+        // Otherwise, redirect to login page
+        setTimeout(() => {
+          router.push({ name: 'Login' })
+        }, 2000)
+      }
     } else {
       errorMessage.value = result.message || 'Signup failed'
     }
@@ -77,7 +85,7 @@ async function submitSignup() {
           type="email"
           v-model="userForm.email"
           required
-          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white focus:border-dark-900 focus:outline-none focus:ring-2 focus:ring-dark-900/60"
+          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white"
         />
       </div>
 
@@ -88,7 +96,7 @@ async function submitSignup() {
           type="text"
           v-model="userForm.userName"
           required
-          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white focus:border-dark-900 focus:outline-none focus:ring-2 focus:ring-dark-900/60"
+          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white"
         />
       </div>
 
@@ -99,7 +107,7 @@ async function submitSignup() {
           type="password"
           v-model="userForm.password"
           required
-          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white focus:border-dark-900 focus:outline-none focus:ring-2 focus:ring-dark-900/60"
+          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white"
         />
       </div>
 
@@ -112,7 +120,7 @@ async function submitSignup() {
           type="password"
           v-model="userForm.confirmPassword"
           required
-          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white focus:border-dark-900 focus:outline-none focus:ring-2 focus:ring-dark-900/60"
+          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white"
         />
       </div>
 
@@ -157,11 +165,3 @@ async function submitSignup() {
     </template>
   </PageForm>
 </template>
-
-<style scoped>
-.glass-card {
-  background-color: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-</style>
