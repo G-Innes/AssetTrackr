@@ -1,18 +1,19 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "outputDirectory": "client/dist",
+  "buildCommand": "npm run build:client",
+  "devCommand": "npm run dev:client",
   "installCommand": "npm install",
+  "outputDirectory": "client/dist",
   "framework": "vite",
+  "ignoreCommand": "git diff HEAD^ HEAD --quiet client/",
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/$1"
+      "destination": "http://localhost:3001/api/$1"
     },
     {
       "source": "/(.*)",
       "destination": "/"
     }
   ]
-} 
+}
