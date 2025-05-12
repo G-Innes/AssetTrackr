@@ -49,8 +49,9 @@ is a web application designed to help users manage their cryptocurrency investme
     ```
 
 2. **Install dependencies:**
+    Install all dependencies (client + server):
     ```bash
-    npm install
+    npm run install:all
     ```
 
 3. **Set up environment variables:** use the `.env.example` file in the root directory and add the necessary environment variables:
@@ -65,15 +66,17 @@ is a web application designed to help users manage their cryptocurrency investme
     ```
 
 5. **Run the application in dev mode:**
-6. cd client
+Run the full app in development mode (client + server concurrently):
     ```bash
     npm run dev
     ```
-    cd server
-    ```bash
-    npm run start
-    ```
+## Running in Production
 
+To simulate a production environment locally:
+    ```bash
+    npm run build
+    npm start
+    ```
 ## Usage
 - **Homepage:** Access the homepage to learn about the app.
 - **Signup/Login:** Create an account or log in to access the dashboard.
