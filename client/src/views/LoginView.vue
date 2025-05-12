@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { login } from '../services/apiService'
 import { ref } from 'vue'
 import PageForm from '../components/PageForm.vue'
 import { FwbAlert, FwbButton, FwbInput } from 'flowbite-vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 // allow login with either username or email
-
 const userForm = ref({
   usernameOrEmail: '',
   password: '',
@@ -27,30 +27,18 @@ async function submitLogin() {
       return
     }
 
-    // Check for email or username
-    const isEmail = usernameOrEmail.includes('@')
-
-    // Create the appropriate login payload
-    let loginPayload: { usernameOrEmail: string; password: string }
-
-    if (isEmail) {
-      loginPayload = { usernameOrEmail, password }
+    // Login via store
+    const result = await userStore.login(usernameOrEmail, password)
+    
+    if (result.success) {
+      // Display success message & redirect to dashboard
+      hasSucceeded.value = true
+      setTimeout(() => {
+        router.push({ name: 'Dashboard' })
+      }, 500)
     } else {
-      loginPayload = { usernameOrEmail, password }
+      errorMessage.value = result.message || 'Login failed'
     }
-
-    // Call the login function
-    const response = await login(loginPayload)
-
-    // Store the token in localStorage
-    localStorage.setItem('token', response.data.token)
-
-    // Display success message & redirect to dashboard
-    hasSucceeded.value = true
-
-    setTimeout(() => {
-      router.push({ name: 'Dashboard' })
-    }, 500)
   } catch (error: any) {
     errorMessage.value = error.response?.data?.message || error.message || 'Unknown error'
   }
@@ -58,18 +46,23 @@ async function submitLogin() {
 </script>
 
 <template>
-  <nav class="memphis-header">
-    <div class="container mx-auto flex items-center justify-between">
-      <router-link to="/" class="navbar-link">
-        <slot name="logo"><span class="logo font-sans">AssetTrackr</span></slot>
-      </router-link>
+  <!-- Header -->
+  <header class="fixed top-0 z-10 w-full backdrop-blur-sm">
+    <div class="glass-card border-b border-white/10 px-6 py-4">
+      <div class="mx-auto flex items-center justify-between">
+        <router-link to="/" class="text-xl font-bold text-white">
+          AssetTrackr
+        </router-link>
+      </div>
     </div>
-  </nav>
+  </header>
+  
   <PageForm heading="Log in to your account" formLabel="Login" @submit="submitLogin">
     <template #default>
       <FwbInput
-        class="focus:ring-black-500 focus:border-black-500"
+        class="login-input"
         label="Username or Email"
+        labelClass="text-dark-200"
         type="text"
         v-model="userForm.usernameOrEmail"
         :required="true"
@@ -77,19 +70,20 @@ async function submitLogin() {
 
       <FwbInput
         label="Password"
+        labelClass="text-dark-200"
         id="password"
         name="password"
         type="password"
         autocomplete="current-password"
         v-model="userForm.password"
         :required="true"
-        class="focus:ring-black-500 focus:border-black-500"
+        class="login-input"
       />
       <FwbAlert v-if="hasSucceeded" data-testid="successMessage" type="success">
         You have successfully logged in.
         <RouterLink
           :to="{ name: 'Dashboard' }"
-          class="hover:white font-semibold leading-6 text-black"
+          class="font-semibold text-white"
           >Go to the Dashboard</RouterLink
         >
       </FwbAlert>
@@ -99,7 +93,7 @@ async function submitLogin() {
 
       <div class="grid">
         <FwbButton
-          class="bg-black text-white hover:bg-white hover:text-black"
+          class="bg-primary-600 text-white shadow-glow-primary hover:bg-primary-500"
           type="submit"
           size="xl"
           >Log in</FwbButton
@@ -108,61 +102,35 @@ async function submitLogin() {
     </template>
 
     <template #footer>
-      <FwbAlert class="bg-transparent text-center">
+      <div class="mt-4 text-center text-sm text-dark-300">
         Not a member?
-        {{ ' ' }}
         <RouterLink
           :to="{ name: 'Signup' }"
-          class="font-semibold leading-6 text-black hover:text-white"
+          class="font-semibold text-primary-400 hover:text-primary-300"
           >Sign up</RouterLink
         >
-      </FwbAlert>
+      </div>
     </template>
   </PageForm>
 </template>
 
 <style scoped>
-.memphis-header {
-  background-color: #cccccc;
-
-  box-shadow: 0 4px 0 #121212;
-  padding: 0.5rem 1rem;
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-.memphis-header .navbar-link {
-  font-weight: bold;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
+.login-input :deep(input) {
+  background-color: transparent !important;
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-.memphis-header .navbar-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 0.25rem;
-  color: #1a5138;
-}
-.logo {
-  font-size: 1.4rem;
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-  animation: change 10s infinite linear;
-}
-@keyframes change {
-  0% {
-    width: 100%;
-    color: #1c90a0;
-  }
-  20% {
-    width: 100%;
-    color: #58a1ae;
-  }
-  30% {
-    width: 100%;
-    color: #339c7c;
-  }
-  100% {
-    width: 100%;
-    color: #2e8666;
-  }
+.login-input :deep(input:focus) {
+  --tw-ring-color: rgb(15, 23, 42) !important;
+  --tw-ring-offset-color: rgb(15, 23, 42) !important;
+  border-color: rgb(15, 23, 42) !important;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.6) !important;
 }
 </style>

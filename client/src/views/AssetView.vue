@@ -48,8 +48,8 @@ const goToDashboard = () => {
       <div
         v-if="showAlert"
         :class="[
-          'PLS fixed left-0 top-0 w-full p-4 text-center text-2xl text-white',
-          alertType === 'success' ? 'bg-green-600' : 'bg-red-600'
+          'fixed left-0 top-0 z-50 w-full p-4 text-center text-xl font-medium text-white backdrop-blur-sm',
+          alertType === 'success' ? 'bg-success-600/90' : 'bg-danger-600/90'
         ]"
       >
         {{ alertMessage }}
@@ -58,10 +58,13 @@ const goToDashboard = () => {
 
     <AssetForm @submit="handleSubmit" />
 
-    <div class="mt-4 flex justify-center">
-      <FwbButton class="bg-black text-white hover:bg-white hover:text-black" @click="goToDashboard"
-        >Go back to Dashboard</FwbButton
+    <div class="mt-6 flex justify-center">
+      <FwbButton 
+        class="bg-primary-600 text-white shadow-glow-primary hover:bg-primary-500" 
+        @click="goToDashboard"
       >
+        Go back to Dashboard
+      </FwbButton>
     </div>
   </div>
 </template>

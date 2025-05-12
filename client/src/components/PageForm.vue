@@ -11,10 +11,10 @@ defineEmits<{
 
 <template>
   <div class="flex min-h-screen items-center justify-center">
-    <div class="memphis-container max-w-md p-6">
-      <h2 class="memphis-title">{{ heading }}</h2>
+    <div class="relative z-10 max-w-md p-6">
+      <h2 class="mb-6 font-display text-3xl font-bold text-white">{{ heading }}</h2>
 
-      <div class="memphis-card memphis-square mt-6">
+      <div class="glass-card rounded-xl border border-white/10 p-8 shadow-glow-white">
         <form class="space-y-6" :aria-label="formLabel" @submit.prevent="$emit('submit')">
           <slot />
         </form>
@@ -26,36 +26,29 @@ defineEmits<{
 </template>
 
 <style scoped>
-.memphis-container {
-  width: 100%;
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.memphis-card {
-  background-color: #cccccc;
-  color: #121212;
-  box-shadow: 10px 10px 0 #121212;
-  border-radius: 10px;
-  transition: transform 0.2s;
-  display: flex;
-  flex-direction: column;
-  padding: 2rem;
+/* Force all inputs within this component to have transparent backgrounds and white text */
+:deep(input),
+:deep(select),
+:deep(textarea) {
+  background-color: transparent !important;
+  background: transparent !important;
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-.memphis-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #121212;
-  margin-bottom: 1rem;
-}
-
-.memphis-square {
-  grid-column: span 1;
-  grid-row: span 1;
-}
-
-@media (max-width: 767px) {
-  .memphis-container {
-    max-width: 100%;
-  }
+:deep(input:focus),
+:deep(select:focus),
+:deep(textarea:focus) {
+  --tw-ring-color: rgb(15, 23, 42) !important;
+  --tw-ring-offset-color: rgb(15, 23, 42) !important;
+  border-color: rgb(15, 23, 42) !important;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.6) !important;
 }
 </style>

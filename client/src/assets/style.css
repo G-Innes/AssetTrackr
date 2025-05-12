@@ -2,24 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-#app {
-    background-image: url(./blockchain.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-}
-/* <!-- Turquoise: #00C7B7
-Neon Pink: #FF6EC7
-Yellow: #FFD166
-Purple: #A300D6
-Orange: #FF8C42
-Dark Blue: #2B3A67
-Light Blue: #6CC3D5
-Dark Green: #1A5138
-Light Green: #7ED321
-Gold: #D4AF37
-Red: #FF5733 
+/* Global background styling */
+@layer base {
+  /* Add the exact background directly to body */
+  body {
+    @apply min-h-screen; /* Ensure full height coverage */
+    background-image: linear-gradient(90deg, rgb(168, 86, 201) 0%, rgb(168, 86, 201) 3%,rgb(140, 74, 173) 3%, rgb(140, 74, 173) 11%,rgb(112, 61, 145) 11%, rgb(112, 61, 145) 20%,rgb(85, 49, 118) 20%, rgb(85, 49, 118) 49%,rgb(57, 37, 90) 49%, rgb(57, 37, 90) 71%,rgb(29, 24, 62) 71%, rgb(29, 24, 62) 72%,rgb(1, 12, 34) 72%, rgb(1, 12, 34) 100%),linear-gradient(67.5deg, rgb(168, 86, 201) 0%, rgb(168, 86, 201) 3%,rgb(140, 74, 173) 3%, rgb(140, 74, 173) 11%,rgb(112, 61, 145) 11%, rgb(112, 61, 145) 20%,rgb(85, 49, 118) 20%, rgb(85, 49, 118) 49%,rgb(57, 37, 90) 49%, rgb(57, 37, 90) 71%,rgb(29, 24, 62) 71%, rgb(29, 24, 62) 72%,rgb(1, 12, 34) 72%, rgb(1, 12, 34) 100%),linear-gradient(112.5deg, rgb(168, 86, 201) 0%, rgb(168, 86, 201) 3%,rgb(140, 74, 173) 3%, rgb(140, 74, 173) 11%,rgb(112, 61, 145) 11%, rgb(112, 61, 145) 20%,rgb(85, 49, 118) 20%, rgb(85, 49, 118) 49%,rgb(57, 37, 90) 49%, rgb(57, 37, 90) 71%,rgb(29, 24, 62) 71%, rgb(29, 24, 62) 72%,rgb(1, 12, 34) 72%, rgb(1, 12, 34) 100%),linear-gradient(45deg, rgb(168, 86, 201) 0%, rgb(168, 86, 201) 3%,rgb(140, 74, 173) 3%, rgb(140, 74, 173) 11%,rgb(112, 61, 145) 11%, rgb(112, 61, 145) 20%,rgb(85, 49, 118) 20%, rgb(85, 49, 118) 49%,rgb(57, 37, 90) 49%, rgb(57, 37, 90) 71%,rgb(29, 24, 62) 71%, rgb(29, 24, 62) 72%,rgb(1, 12, 34) 72%, rgb(1, 12, 34) 100%),linear-gradient(90deg, rgb(95, 3, 74),rgb(35, 65, 96));
+    background-blend-mode: overlay, overlay, overlay, overlay, normal;
+    background-attachment: fixed;
+    color: white;
+  }
 
+  /* Ensure the app container takes full height */
+  #app, .app-container {
+    min-height: 100vh;
+  }
+}
+
+/* Global styling */
+@layer utilities {
+  /* Fix for white inputs */
+  input, 
+  input[type="text"], 
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  textarea {
+    background-color: transparent !important;
+    background: transparent !important;
+    color: white !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  input:focus,
+  textarea:focus,
+  select:focus {
+    --tw-ring-color: rgb(15, 23, 42) !important; /* dark-900 color */
+    --tw-ring-offset-color: rgb(15, 23, 42) !important;
+    --tw-ring-offset-width: 0px !important;
+    --tw-ring-opacity: 1 !important;
+    border-color: rgb(15, 23, 42) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.6) !important;
+  }
+  
+  /* Specifically targeting Flowbite inputs */
+  .flowbite-input,
+  .flowbite-input div, 
+  .flowbite-input input,
+  [data-testid="flowbite-input"] input {
+    background-color: transparent !important;
+    background: transparent !important;
+    color: white !important;
+  }
+  
+  /* Ensure all app forms have transparent backgrounds */
+  form,
+  .glass-card,
+  div[class*="bg-dark"] {
+    background-color: transparent !important;
+  }
+}
+
+/* Glass effect utility classes */
+.glass-card {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Color palette comments */
+/* 
 Turquoise: #00C7B7 (Bright turquoise)
 Neon Pink: #FF6EC7 (Vibrant neon pink)
 Yellow: #FFD166 (Bright yellow)
@@ -35,4 +89,5 @@ Black: #121212 (Deep black)
 Dark Grey: #333333 (Dark grey)
 Medium Grey: #666666 (Medium grey)
 Light Grey: #CCCCCC (Light grey)
-White: #F5F5F5 (Off-white)--> */
+White: #F5F5F5 (Off-white)
+*/

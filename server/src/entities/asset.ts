@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
 import { z } from 'zod'
-import { UserAssets, userAssetsSchema } from './index'
+import { UserAssets } from './userAssets'
 
 @Entity()
 export class Asset {
@@ -30,7 +30,10 @@ export const assetSchema = z.object({
   assetId: z.number().int().positive(),
   name: z.string().min(3).max(20),
   ticker: z.string().min(3).max(6),
-  userAssets: z.array(userAssetsSchema),
+  userAssets: z.array(z.lazy(() => z.object({
+    id: z.number().int().positive(),
+    quantity: z.number().positive(),
+  }))),
   current_price: z.number().positive(),
 })
 

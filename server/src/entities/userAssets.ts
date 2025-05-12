@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm'
 import { z } from 'zod'
 import { NumericTransformer } from '../utils/generalUtils'
-import { User, Asset } from './index'
+import { User } from './user'
+import { Asset } from './asset'
 
 @Entity()
 export class UserAssets {

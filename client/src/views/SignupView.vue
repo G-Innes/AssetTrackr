@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
-import { signup } from '../services/apiService'
 import PageForm from '../components/PageForm.vue'
 import { FwbAlert, FwbButton, FwbInput } from 'flowbite-vue'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 const userForm = ref({
   email: '',
@@ -33,17 +34,24 @@ async function submitSignup() {
     }
 
     // Call signup with user data
-    await signup({ email, userName, password, confirmPassword })
+    const result = await userStore.signup({ 
+      email, 
+      userName, 
+      password, 
+      confirmPassword 
+    })
 
-    errorMessage.value = ''
-
-    // Display success message
-    hasSucceeded.value = true
-
-    // Redirect to login page after delay
-    setTimeout(() => {
-      router.push({ name: 'Login' })
-    }, 2000)
+    if (result.success) {
+      errorMessage.value = ''
+      // Display success message
+      hasSucceeded.value = true
+      // Redirect to login page after delay
+      setTimeout(() => {
+        router.push({ name: 'Login' })
+      }, 2000)
+    } else {
+      errorMessage.value = result.message || 'Signup failed'
+    }
   } catch (error: any) {
     // Set error, which will be automatically displayed
     errorMessage.value = error.response?.data?.message || error.message || 'Unknown error'
@@ -52,42 +60,50 @@ async function submitSignup() {
 </script>
 
 <template>
-  <nav class="memphis-header">
-    <div class="container mx-auto flex items-center justify-between">
-      <router-link to="/" class="navbar-link">
-        <slot name="logo"><span class="logo font-sans">AssetTrackr</span></slot>
-      </router-link>
+  <!-- Header -->
+  <header class="fixed top-0 z-10 w-full backdrop-blur-sm">
+    <div class="glass-card border-b border-white/10 px-6 py-4">
+      <div class="mx-auto flex items-center justify-between">
+        <router-link to="/" class="text-xl font-bold text-white">
+          AssetTrackr
+        </router-link>
+      </div>
     </div>
-  </nav>
+  </header>
+  
   <PageForm heading="Sign up for an account" formLabel="Signup" @submit="submitSignup">
     <template #default>
       <FwbInput
-        class="focus:ring-black-500 focus:border-black-500"
+        class="signup-input"
         label="Email"
+        labelClass="text-dark-200"
         type="email"
         v-model="userForm.email"
         :required="true"
       />
 
       <FwbInput
-        class="focus:ring-black-500 focus:border-black-500"
+        class="signup-input"
         label="Username"
+        labelClass="text-dark-200"
         type="text"
         v-model="userForm.userName"
         :required="true"
       />
 
       <FwbInput
-        class="focus:ring-black-500 focus:border-black-500"
+        class="signup-input"
         label="Password"
+        labelClass="text-dark-200"
         type="password"
         v-model="userForm.password"
         :required="true"
       />
 
       <FwbInput
-        class="focus:ring-black-500 focus:border-black-500"
+        class="signup-input"
         label="Confirm Password"
+        labelClass="text-dark-200"
         type="password"
         v-model="userForm.confirmPassword"
         :required="true"
@@ -97,17 +113,17 @@ async function submitSignup() {
         You have successfully signed up!
         <RouterLink
           :to="{ name: 'Login' }"
-          class="font-semibold leading-6 text-black hover:text-white"
+          class="font-semibold text-white"
           >Go to the login page</RouterLink
         >
       </FwbAlert>
-      <AlertError v-if="errorMessage" :message="errorMessage">
+      <FwbAlert v-if="errorMessage" data-testid="errorMessage" type="danger">
         {{ errorMessage }}
-      </AlertError>
+      </FwbAlert>
 
       <div class="grid">
         <FwbButton
-          class="bg-black text-white hover:bg-white hover:text-black"
+          class="bg-primary-600 text-white shadow-glow-primary hover:bg-primary-500"
           type="submit"
           size="xl"
           >Sign up</FwbButton
@@ -116,61 +132,35 @@ async function submitSignup() {
     </template>
 
     <template #footer>
-      <FwbAlert class="bg-transparent text-center">
+      <div class="mt-4 text-center text-sm text-dark-300">
         Already a member?
-        {{ ' ' }}
         <RouterLink
           :to="{ name: 'Login' }"
-          class="font-semibold leading-6 text-black hover:text-white"
+          class="font-semibold text-primary-400 hover:text-primary-300"
           >Log in</RouterLink
         >
-      </FwbAlert>
+      </div>
     </template>
   </PageForm>
 </template>
 
 <style scoped>
-.memphis-header {
-  background-color: #cccccc;
-
-  box-shadow: 0 4px 0 #121212;
-  padding: 0.5rem 1rem;
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-.memphis-header .navbar-link {
-  font-weight: bold;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
+.signup-input :deep(input) {
+  background-color: transparent !important;
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-.memphis-header .navbar-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 0.25rem;
-  color: #1a5138;
-}
-.logo {
-  font-size: 1.4rem;
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-  animation: change 10s infinite linear;
-}
-@keyframes change {
-  0% {
-    width: 100%;
-    color: #1c90a0;
-  }
-  20% {
-    width: 100%;
-    color: #58a1ae;
-  }
-  30% {
-    width: 100%;
-    color: #339c7c;
-  }
-  100% {
-    width: 100%;
-    color: #2e8666;
-  }
+.signup-input :deep(input:focus) {
+  --tw-ring-color: rgb(15, 23, 42) !important;
+  --tw-ring-offset-color: rgb(15, 23, 42) !important;
+  border-color: rgb(15, 23, 42) !important;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.6) !important;
 }
 </style>
