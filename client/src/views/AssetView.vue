@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AssetForm from '../components/AssetForm.vue'
-import { FwbButton } from 'flowbite-vue'
 import { createAsset } from '../services/apiService'
 
 const router = useRouter()
@@ -60,12 +59,12 @@ const goToDashboard = () => {
     <AssetForm @submit="handleSubmit" />
 
     <div class="mt-6 flex justify-center">
-      <FwbButton
-        class="shadow-glow-primary bg-primary-600 text-white hover:bg-primary-500"
+      <button
+        class="shadow-glow-primary rounded-lg bg-primary-600 px-5 py-3 text-white transition hover:bg-primary-500"
         @click="goToDashboard"
       >
         Go back to Dashboard
-      </FwbButton>
+      </button>
     </div>
   </div>
 </template>
