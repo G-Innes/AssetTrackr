@@ -55,8 +55,10 @@ const baseConfig: Partial<MyConnectionOptions> = {
   synchronize: true,
   auth: {
     passwordCost: 10,
-    jwtSecret: 'secret-sauce',
-    jwtExpiresIn: '1d',
+    jwtSecret: process.env.JWT_SECRET || (isProductionEnvironment
+      ? (() => { throw new Error('JWT_SECRET environment variable is required in production') })()
+      : 'dev-secret-do-not-use-in-prod'),
+    jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1d',
   },
 }
 
