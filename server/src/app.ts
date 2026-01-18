@@ -1,5 +1,6 @@
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
+import helmet from 'helmet'
 import pino from 'pino'
 import { appRouter } from './modules'
 
@@ -8,48 +9,36 @@ const logger = pino()
 export default function createApp() {
   const app = express()
 
-  // Define all possible frontend URLs
-  const frontendURLs = [
-    'http://localhost',
+  // Security headers
+  app.use(helmet())
+
+  // Define allowed frontend origins
+  const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:5173',
-    'http://localhost:4173', // Add preview port
-    'http://127.0.0.1:5173', // Add IPv4 versions
+    'http://localhost:4173',
+    'http://127.0.0.1:5173',
     'http://127.0.0.1:4173',
-    'https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com',
+    'https://asset-trackr-client.vercel.app',
+    // Add any custom domains here
   ]
 
-  // Enable CORS middleware with custom options
+  // CORS configuration - only allow specific origins
   app.use(
-    (req, res, next) => {
-      // Set CORS headers directly
-      const { origin } = req.headers
-      if (origin && frontendURLs.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin)
-      } else {
-        // Allow any origin in development
-        res.setHeader('Access-Control-Allow-Origin', '*')
-      }
-      res.setHeader(
-        'Access-Control-Allow-Methods',
-        'GET,HEAD,PUT,PATCH,POST,DELETE'
-      )
-      res.setHeader(
-        'Access-Control-Allow-Headers',
-        'Content-Type,Authorization'
-      )
-      res.setHeader('Access-Control-Allow-Credentials', 'true')
-
-      if (req.method === 'OPTIONS') {
-        return res.status(200).end()
-      }
-      return next()
-    },
     cors({
-      origin: frontendURLs,
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      allowedHeaders: 'Content-Type,Authorization',
-      credentials: true, // Allow cookies and credentials
+      origin: (origin, callback) => {
+        // Allow requests with no origin (mobile apps, Postman, etc.)
+        if (!origin) {
+          return callback(null, true)
+        }
+        if (allowedOrigins.includes(origin)) {
+          return callback(null, true)
+        }
+        return callback(new Error('Not allowed by CORS'))
+      },
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      credentials: true,
     })
   )
 
@@ -81,10 +70,13 @@ export default function createApp() {
 
   // Error handling middleware
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    res.setHeader('Access-Control-Allow-Origin', frontendURLs)
-    logger.error(err.stack)
-    res.status(500).send('Something went wrong')
-    next(err)
+    // Log error details in development, sanitized in production
+    if (process.env.NODE_ENV === 'production') {
+      logger.error({ message: err.message, url: req.url, method: req.method })
+    } else {
+      logger.error(err.stack)
+    }
+    res.status(500).json({ message: 'Something went wrong' })
   })
 
   return app
