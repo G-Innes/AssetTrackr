@@ -3,14 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global background styling */
+/* Global background styling - Mesh Gradient */
 @layer base {
-  /* Add the exact background directly to body */
   body {
-    @apply min-h-screen; /* Ensure full height coverage */
-    background-image: linear-gradient(90deg, rgb(168, 86, 201) 0%, rgb(168, 86, 201) 3%,rgb(140, 74, 173) 3%, rgb(140, 74, 173) 11%,rgb(112, 61, 145) 11%, rgb(112, 61, 145) 20%,rgb(85, 49, 118) 20%, rgb(85, 49, 118) 49%,rgb(57, 37, 90) 49%, rgb(57, 37, 90) 71%,rgb(29, 24, 62) 71%, rgb(29, 24, 62) 72%,rgb(1, 12, 34) 72%, rgb(1, 12, 34) 100%),linear-gradient(67.5deg, rgb(168, 86, 201) 0%, rgb(168, 86, 201) 3%,rgb(140, 74, 173) 3%, rgb(140, 74, 173) 11%,rgb(112, 61, 145) 11%, rgb(112, 61, 145) 20%,rgb(85, 49, 118) 20%, rgb(85, 49, 118) 49%,rgb(57, 37, 90) 49%, rgb(57, 37, 90) 71%,rgb(29, 24, 62) 71%, rgb(29, 24, 62) 72%,rgb(1, 12, 34) 72%, rgb(1, 12, 34) 100%),linear-gradient(112.5deg, rgb(168, 86, 201) 0%, rgb(168, 86, 201) 3%,rgb(140, 74, 173) 3%, rgb(140, 74, 173) 11%,rgb(112, 61, 145) 11%, rgb(112, 61, 145) 20%,rgb(85, 49, 118) 20%, rgb(85, 49, 118) 49%,rgb(57, 37, 90) 49%, rgb(57, 37, 90) 71%,rgb(29, 24, 62) 71%, rgb(29, 24, 62) 72%,rgb(1, 12, 34) 72%, rgb(1, 12, 34) 100%),linear-gradient(45deg, rgb(168, 86, 201) 0%, rgb(168, 86, 201) 3%,rgb(140, 74, 173) 3%, rgb(140, 74, 173) 11%,rgb(112, 61, 145) 11%, rgb(112, 61, 145) 20%,rgb(85, 49, 118) 20%, rgb(85, 49, 118) 49%,rgb(57, 37, 90) 49%, rgb(57, 37, 90) 71%,rgb(29, 24, 62) 71%, rgb(29, 24, 62) 72%,rgb(1, 12, 34) 72%, rgb(1, 12, 34) 100%),linear-gradient(90deg, rgb(95, 3, 74),rgb(35, 65, 96));
-    background-blend-mode: overlay, overlay, overlay, overlay, normal;
-    background-attachment: fixed;
+    @apply min-h-screen;
+    background-color: #050508;
     color: white;
   }
 
@@ -18,6 +15,46 @@
   #app, .app-container {
     min-height: 100vh;
   }
+}
+
+/* Mesh gradient background */
+.app-container {
+  position: relative;
+  background:
+    /* Purple blob - top right */
+    radial-gradient(
+      ellipse 80% 50% at 85% 15%,
+      rgba(139, 92, 246, 0.15) 0%,
+      transparent 50%
+    ),
+    /* Indigo blob - center left */
+    radial-gradient(
+      ellipse 60% 80% at 10% 50%,
+      rgba(99, 102, 241, 0.12) 0%,
+      transparent 50%
+    ),
+    /* Cyan accent - bottom right */
+    radial-gradient(
+      ellipse 50% 50% at 80% 80%,
+      rgba(34, 211, 238, 0.08) 0%,
+      transparent 50%
+    ),
+    /* Deep purple - top left */
+    radial-gradient(
+      ellipse 70% 60% at 20% 10%,
+      rgba(168, 85, 247, 0.1) 0%,
+      transparent 50%
+    ),
+    /* Base gradient */
+    linear-gradient(
+      135deg,
+      #050508 0%,
+      #0a0a12 25%,
+      #08080f 50%,
+      #0a0a14 75%,
+      #050508 100%
+    );
+  background-attachment: fixed;
 }
 
 /* Global styling */
