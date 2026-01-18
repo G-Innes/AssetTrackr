@@ -70,12 +70,23 @@ export async function signup(req: Request, res: Response) {
         config.auth!.passwordCost
       )
 
+      // Check for duplicate username
+      console.log('Checking for duplicate username...')
+      const existingUsername = await getRepository(User).findOne({
+        where: { username: userName.trim() },
+      })
+      if (existingUsername) {
+        return res.status(400).json({
+          message: 'Username already in use',
+        })
+      }
+
       // Check for duplicate emails
       console.log('Checking for duplicate email...')
-      const existingUser = await getRepository(User).findOne({
+      const existingEmail = await getRepository(User).findOne({
         where: { email: email.toLowerCase().trim() },
       })
-      if (existingUser) {
+      if (existingEmail) {
         return res.status(400).json({
           message: 'Email already in use',
         })

@@ -37,8 +37,20 @@ export async function handleError(error: Error) {
     statusCode = 401
     message = 'Invalid password'
   } else if (error instanceof QueryFailedError) {
-    // If it's a database error, use the error message from the database
-    message = error.message
+    // Handle duplicate key constraint errors
+    const driverError = (error as any).driverError
+    if (driverError?.code === '23505') {
+      statusCode = 400
+      if (driverError.detail?.includes('username')) {
+        message = 'Username already in use'
+      } else if (driverError.detail?.includes('email')) {
+        message = 'Email already in use'
+      } else {
+        message = 'A record with this value already exists'
+      }
+    } else {
+      message = 'Database error occurred'
+    }
   } else if (error instanceof EntityNotFoundError) {
     // Handle EntityNotFoundError specifically
     statusCode = 404
