@@ -60,7 +60,7 @@ export default function createApp() {
       res.status(200).json({ status: 'ok' })
     } catch (error) {
       const typeError = error as Error
-      logger.error('Health check failed', { error: typeError.message })
+      logger.error({ err: typeError }, 'Health check failed')
       res.status(500).json({ status: 'error', message: typeError.message })
     }
   })
@@ -69,7 +69,8 @@ export default function createApp() {
   app.use('/api', appRouter)
 
   // Error handling middleware
-  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     // Log error details in development, sanitized in production
     if (process.env.NODE_ENV === 'production') {
       logger.error({ message: err.message, url: req.url, method: req.method })

@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
+import jwt, { SignOptions } from 'jsonwebtoken'
 import { getRepository } from 'typeorm'
 import { z } from 'zod'
 import config from '../../../config'
@@ -26,9 +26,10 @@ async function generateToken(user: User) {
     user: { id: user.id },
   })
   // Sign the token with the JWT secret and set the expiration time
-  const token = jwt.sign(tokenPayload, config.auth!.jwtSecret, {
-    expiresIn: config.auth!.jwtExpiresIn,
-  })
+  const signOptions: SignOptions = {
+    expiresIn: config.auth!.jwtExpiresIn as SignOptions['expiresIn'],
+  }
+  const token = jwt.sign(tokenPayload, config.auth!.jwtSecret, signOptions)
 
   return token
 }
