@@ -2,12 +2,10 @@
 import { computed } from 'vue'
 import type { Asset } from '@/stores/dashboard'
 
-const props = defineProps({
-  asset: {
-    type: Object as () => Asset,
-    required: true,
-  },
-})
+const props = defineProps<{
+  asset: Asset
+  index?: number
+}>()
 
 // Computed property to determine if the price change is positive or negative
 const priceChangeClass = computed(() => {
@@ -29,20 +27,36 @@ const formatPercentage = (value: number | undefined): string => {
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`
 }
 
+// Color mappings for dynamic classes (Tailwind safe)
+const colorMappings = {
+  icon: {
+    primary: 'bg-primary-500/20 text-primary-400 ring-primary-500/30',
+    secondary: 'bg-secondary-500/20 text-secondary-400 ring-secondary-500/30',
+    success: 'bg-success-500/20 text-success-400 ring-success-500/30',
+    danger: 'bg-danger-500/20 text-danger-400 ring-danger-500/30',
+  },
+  glow: {
+    primary: 'hover:shadow-glow-primary',
+    secondary: 'hover:shadow-glow-secondary',
+    purple: 'hover:shadow-glow-purple',
+    blue: 'hover:shadow-glow-blue',
+  },
+}
+
 // Generate a background color based on asset name for the icon
 const iconBackground = computed(() => {
-  const colors = ['primary', 'secondary', 'success', 'danger']
+  const colors = ['primary', 'secondary', 'success', 'danger'] as const
   const hash = props.asset.name.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0)
   const colorIndex = hash % colors.length
-  return `bg-${colors[colorIndex]}-500/20 text-${colors[colorIndex]}-400 ring-${colors[colorIndex]}-500/30`
+  return colorMappings.icon[colors[colorIndex]]
 })
 
 // Generate a glow effect based on asset name
 const cardGlow = computed(() => {
-  const colors = ['primary', 'secondary', 'purple', 'blue']
+  const colors = ['primary', 'secondary', 'purple', 'blue'] as const
   const hash = props.asset.name.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0)
   const colorIndex = hash % colors.length
-  return `shadow-glow-${colors[colorIndex]}`
+  return colorMappings.glow[colors[colorIndex]]
 })
 
 defineEmits(['buy', 'sell'])
@@ -50,7 +64,19 @@ defineEmits(['buy', 'sell'])
 
 <template>
   <div
-    class="glass-card group relative overflow-hidden rounded-xl border border-white/10 bg-glass-gradient transition-all duration-300 hover:-translate-y-1"
+    v-motion
+    :initial="{ opacity: 0, y: 30, scale: 0.95 }"
+    :enter="{
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 500,
+        delay: (index || 0) * 80,
+        ease: 'easeOut',
+      },
+    }"
+    class="glass-card group relative overflow-hidden rounded-2xl border border-white/10 bg-glass-gradient transition-all duration-300 hover:-translate-y-1.5"
     :class="cardGlow"
   >
     <div class="p-6">

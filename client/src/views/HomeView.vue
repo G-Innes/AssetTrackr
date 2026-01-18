@@ -12,13 +12,13 @@ import { RouterLink } from 'vue-router'
           <div class="flex items-center gap-4">
             <RouterLink
               to="/login"
-              class="rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm font-medium text-white backdrop-blur-sm hover:bg-white/10"
+              class="rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm font-medium text-white backdrop-blur-sm transition-all duration-200 hover:border-white/20 hover:bg-white/10"
             >
               Log in
             </RouterLink>
             <RouterLink
               to="/signup"
-              class="shadow-glow-primary rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white hover:bg-primary-500"
+              class="shadow-glow-primary rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-500 hover:shadow-lg"
             >
               Sign up
             </RouterLink>
@@ -32,24 +32,37 @@ import { RouterLink } from 'vue-router'
     >
       <div class="mx-auto max-w-2xl lg:mx-0 lg:flex-auto">
         <h1
+          v-motion
+          :initial="{ opacity: 0, y: 30 }"
+          :enter="{ opacity: 1, y: 0, transition: { duration: 600, ease: 'easeOut' } }"
           class="mt-10 max-w-lg font-display text-4xl font-bold tracking-tight text-white sm:text-6xl"
         >
           Manage your crypto portfolio with ease
         </h1>
-        <p class="mt-6 text-lg leading-8 text-dark-300">
+        <p
+          v-motion
+          :initial="{ opacity: 0, y: 20 }"
+          :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 150, ease: 'easeOut' } }"
+          class="mt-6 text-lg leading-8 text-dark-300"
+        >
           AssetTrackr helps you track your cryptocurrency investments in real-time. Log buy and sell
           transactions, view live prices from Coinbase, and analyze your portfolio's performance.
         </p>
-        <div class="mt-10 flex items-center gap-x-6">
+        <div
+          v-motion
+          :initial="{ opacity: 0, y: 20 }"
+          :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 300, ease: 'easeOut' } }"
+          class="mt-10 flex items-center gap-x-6"
+        >
           <RouterLink
             to="/signup"
-            class="shadow-glow-primary rounded-md bg-primary-600 px-4 py-3 text-sm font-semibold text-white hover:bg-primary-500"
+            class="shadow-glow-primary rounded-md bg-primary-600 px-4 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-500 hover:shadow-lg"
           >
             Get started
           </RouterLink>
           <RouterLink
             to="/login"
-            class="rounded-md px-4 py-3 text-sm font-semibold text-white ring-1 ring-white/20 hover:bg-white/5"
+            class="rounded-md px-4 py-3 text-sm font-semibold text-white ring-1 ring-white/20 transition-all duration-200 hover:bg-white/5 hover:ring-white/30"
           >
             Log in
           </RouterLink>
@@ -57,7 +70,15 @@ import { RouterLink } from 'vue-router'
       </div>
       <div class="mt-16 sm:mt-24 lg:mt-0 lg:flex-shrink-0 lg:flex-grow">
         <div
-          class="glass-card shadow-glow-white relative mx-auto overflow-hidden rounded-xl border border-white/10 sm:max-w-lg lg:w-[450px]"
+          v-motion
+          :initial="{ opacity: 0, x: 50, scale: 0.95 }"
+          :enter="{
+            opacity: 1,
+            x: 0,
+            scale: 1,
+            transition: { duration: 700, delay: 200, ease: 'easeOut' },
+          }"
+          class="glass-card shadow-glow-white relative mx-auto overflow-hidden rounded-xl border border-white/10 transition-all duration-300 hover:-translate-y-1 hover:border-white/20 sm:max-w-lg lg:w-[450px]"
         >
           <div class="p-4 pt-8 sm:p-10">
             <div class="mb-10 border-b border-white/10 pb-6">
@@ -134,7 +155,12 @@ import { RouterLink } from 'vue-router'
       </div>
       <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
         <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
-          <div class="glass-card shadow-glow-primary rounded-xl border border-white/10 p-6">
+          <div
+            v-motion
+            :initial="{ opacity: 0, y: 30 }"
+            :visible="{ opacity: 1, y: 0, transition: { duration: 500, delay: 0 } }"
+            class="glass-card shadow-glow-primary rounded-xl border border-white/10 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
+          >
             <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
               <svg
                 class="h-5 w-5 flex-none text-primary-400"
@@ -157,7 +183,12 @@ import { RouterLink } from 'vue-router'
               </p>
             </dd>
           </div>
-          <div class="glass-card shadow-glow-secondary rounded-xl border border-white/10 p-6">
+          <div
+            v-motion
+            :initial="{ opacity: 0, y: 30 }"
+            :visible="{ opacity: 1, y: 0, transition: { duration: 500, delay: 100 } }"
+            class="glass-card shadow-glow-secondary rounded-xl border border-white/10 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
+          >
             <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
               <svg
                 class="h-5 w-5 flex-none text-secondary-400"
@@ -180,7 +211,12 @@ import { RouterLink } from 'vue-router'
               </p>
             </dd>
           </div>
-          <div class="glass-card shadow-glow-purple rounded-xl border border-white/10 p-6">
+          <div
+            v-motion
+            :initial="{ opacity: 0, y: 30 }"
+            :visible="{ opacity: 1, y: 0, transition: { duration: 500, delay: 200 } }"
+            class="glass-card shadow-glow-purple rounded-xl border border-white/10 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
+          >
             <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
               <svg
                 class="h-5 w-5 flex-none text-purple-400"
@@ -219,15 +255,20 @@ import { RouterLink } from 'vue-router'
         <div class="mt-10 flex items-center justify-center gap-x-6">
           <RouterLink
             to="/signup"
-            class="shadow-glow-primary rounded-md bg-primary-600 px-3.5 py-2.5 text-sm font-semibold text-white hover:bg-primary-500"
+            class="shadow-glow-primary rounded-md bg-primary-600 px-3.5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-500 hover:shadow-lg"
           >
             Get started
           </RouterLink>
           <RouterLink
             to="/login"
-            class="text-sm font-semibold leading-6 text-dark-200 hover:text-white"
+            class="group text-sm font-semibold leading-6 text-dark-200 transition-colors duration-200 hover:text-white"
           >
-            Login <span aria-hidden="true">→</span>
+            Login
+            <span
+              aria-hidden="true"
+              class="inline-block transition-transform duration-200 group-hover:translate-x-1"
+              >→</span
+            >
           </RouterLink>
         </div>
       </div>

@@ -1,0 +1,39 @@
+# Node.js dependencies
+node_modules/
+server/node_modules/
+
+# Environment variables
+.env
+server/.env
+
+# Coverage directories
+coverage/
+server/coverage/
+server/.gitignore
+
+# Ignore local Git and configuration files
+/.gitignore
+client/.gitignore
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Operating system files
+.DS_Store
+
+# IDE/editor directories and files
+.vscode/
+.idea/
+
+.dockerignore
+containers.json
+public-endpoint.json
+server/dist/
+client/dist/
+# Snyk Security Extension - AI Rules (auto-generated)
+.cursor/rules/snyk_rules.mdc
+/docs
+CLAUDE.md

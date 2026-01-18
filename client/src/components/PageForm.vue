@@ -11,10 +11,27 @@ defineEmits<{
 
 <template>
   <div class="flex min-h-screen items-center justify-center">
-    <div class="relative z-10 max-w-md p-6">
-      <h2 class="mb-6 font-display text-3xl font-bold text-white">{{ heading }}</h2>
+    <div
+      v-motion
+      :initial="{ opacity: 0, y: 30, scale: 0.95 }"
+      :enter="{ opacity: 1, y: 0, scale: 1, transition: { duration: 500, ease: 'easeOut' } }"
+      class="relative z-10 w-full max-w-md p-6"
+    >
+      <h2
+        v-motion
+        :initial="{ opacity: 0, y: 20 }"
+        :enter="{ opacity: 1, y: 0, transition: { duration: 400, delay: 100 } }"
+        class="mb-6 font-display text-3xl font-bold text-white"
+      >
+        {{ heading }}
+      </h2>
 
-      <div class="glass-card shadow-glow-white rounded-xl border border-white/10 p-8">
+      <div
+        v-motion
+        :initial="{ opacity: 0, y: 20 }"
+        :enter="{ opacity: 1, y: 0, transition: { duration: 400, delay: 200 } }"
+        class="glass-card shadow-glow-white rounded-xl border border-white/10 p-8 transition-all duration-300 hover:border-white/20"
+      >
         <form class="space-y-6" :aria-label="formLabel" @submit.prevent="$emit('submit')">
           <slot />
         </form>

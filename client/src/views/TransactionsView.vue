@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getAllTransactionsForUser, getTransactionsByType } from '@/services/apiService'
 import type { Transaction } from '../components/TransactionCard.vue'
+import { Skeleton } from '@/components/ui'
 
 const router = useRouter()
 const transactions = ref<Transaction[]>([])
@@ -131,28 +132,68 @@ function viewDetails(transaction) {
       </nav>
     </div>
 
-    <!-- Loading state -->
+    <!-- Loading state with skeleton table -->
     <div
       v-if="isLoading"
-      class="glass-card shadow-glow-white flex justify-center rounded-xl border border-white/10 py-12"
+      class="glass-card shadow-glow-white overflow-hidden rounded-xl border border-white/10"
     >
-      <div class="flex items-center text-dark-300">
-        <svg class="mr-2 h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          ></circle>
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          ></path>
-        </svg>
-        Loading transactions...
+      <div class="relative overflow-x-auto">
+        <table class="w-full divide-y divide-white/10">
+          <thead>
+            <tr>
+              <th class="py-3.5 pl-4 pr-3 text-left sm:pl-6">
+                <Skeleton width="3rem" height="0.875rem" rounded="sm" />
+              </th>
+              <th class="px-3 py-3.5 text-left">
+                <Skeleton width="3rem" height="0.875rem" rounded="sm" />
+              </th>
+              <th class="px-3 py-3.5 text-left">
+                <Skeleton width="2.5rem" height="0.875rem" rounded="sm" />
+              </th>
+              <th class="px-3 py-3.5 text-left">
+                <Skeleton width="4rem" height="0.875rem" rounded="sm" />
+              </th>
+              <th class="px-3 py-3.5 text-left">
+                <Skeleton width="3rem" height="0.875rem" rounded="sm" />
+              </th>
+              <th class="px-3 py-3.5 text-left">
+                <Skeleton width="3rem" height="0.875rem" rounded="sm" />
+              </th>
+              <th class="relative py-3.5 pl-3 pr-4 sm:pr-6"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/10">
+            <tr v-for="i in 8" :key="i">
+              <td class="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-6">
+                <Skeleton width="5rem" height="1rem" rounded="sm" />
+              </td>
+              <td class="whitespace-nowrap px-3 py-4">
+                <div class="flex items-center">
+                  <Skeleton width="2rem" height="2rem" rounded="full" />
+                  <div class="ml-4">
+                    <Skeleton width="5rem" height="0.875rem" rounded="sm" />
+                    <Skeleton width="3rem" height="0.75rem" rounded="sm" class="mt-1" />
+                  </div>
+                </div>
+              </td>
+              <td class="whitespace-nowrap px-3 py-4">
+                <Skeleton width="3rem" height="1.5rem" rounded="full" />
+              </td>
+              <td class="whitespace-nowrap px-3 py-4">
+                <Skeleton width="2.5rem" height="1rem" rounded="sm" />
+              </td>
+              <td class="whitespace-nowrap px-3 py-4">
+                <Skeleton width="4rem" height="1rem" rounded="sm" />
+              </td>
+              <td class="whitespace-nowrap px-3 py-4">
+                <Skeleton width="4.5rem" height="1rem" rounded="sm" />
+              </td>
+              <td class="whitespace-nowrap py-4 pl-3 pr-4 sm:pr-6">
+                <Skeleton width="2.5rem" height="1rem" rounded="sm" class="ml-auto" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -234,9 +275,12 @@ function viewDetails(transaction) {
           </thead>
           <tbody class="divide-y divide-white/10">
             <tr
-              v-for="transaction in filteredTransactions"
+              v-for="(transaction, index) in filteredTransactions"
               :key="transaction.id"
-              class="hover:bg-white/5"
+              v-motion
+              :initial="{ opacity: 0, x: -20 }"
+              :enter="{ opacity: 1, x: 0, transition: { duration: 300, delay: index * 50 } }"
+              class="transition-colors duration-200 hover:bg-white/5"
             >
               <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-dark-200 sm:pl-6">
                 {{ formatDate(transaction.transaction_date || transaction.transactionDate) }}

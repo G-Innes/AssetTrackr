@@ -85,7 +85,7 @@ async function submitSignup() {
           type="email"
           v-model="userForm.email"
           required
-          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white"
+          class="w-full rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-200 placeholder:text-dark-400 focus:border-primary-500/50 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
         />
       </div>
 
@@ -96,7 +96,7 @@ async function submitSignup() {
           type="text"
           v-model="userForm.userName"
           required
-          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white"
+          class="w-full rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-200 placeholder:text-dark-400 focus:border-primary-500/50 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
         />
       </div>
 
@@ -107,7 +107,7 @@ async function submitSignup() {
           type="password"
           v-model="userForm.password"
           required
-          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white"
+          class="w-full rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-200 placeholder:text-dark-400 focus:border-primary-500/50 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
         />
       </div>
 
@@ -120,7 +120,7 @@ async function submitSignup() {
           type="password"
           v-model="userForm.confirmPassword"
           required
-          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white"
+          class="w-full rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-200 placeholder:text-dark-400 focus:border-primary-500/50 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
         />
       </div>
 
@@ -165,3 +165,11 @@ async function submitSignup() {
     </template>
   </PageForm>
 </template>
+
+<style scoped>
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+</style>

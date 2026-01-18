@@ -65,7 +65,7 @@ async function submitLogin() {
           type="text"
           v-model="userForm.usernameOrEmail"
           required
-          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white focus:border-dark-900 focus:outline-none focus:ring-2 focus:ring-dark-900/60"
+          class="w-full rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-200 placeholder:text-dark-400 focus:border-primary-500/50 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
         />
       </div>
 
@@ -77,7 +77,7 @@ async function submitLogin() {
           v-model="userForm.password"
           required
           autocomplete="current-password"
-          class="w-full rounded-lg border border-white/10 bg-transparent p-2.5 text-white focus:border-dark-900 focus:outline-none focus:ring-2 focus:ring-dark-900/60"
+          class="w-full rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-200 placeholder:text-dark-400 focus:border-primary-500/50 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
         />
       </div>
 

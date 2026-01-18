@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue'
 import AssetCard from '@/components/dashboard/AssetCard.vue'
+import { Skeleton } from '@/components/ui'
 import { getAllAssetHoldingsForUser } from '@/services/apiService'
 import { getUserProfile } from '@/services/apiService'
 import { useRouter } from 'vue-router'
@@ -112,11 +113,14 @@ onMounted(() => {
     </div>
 
     <!-- Stats cards -->
-    <div class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div v-if="!isLoading" class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
       <div
         v-for="(stat, index) in stats"
         :key="index"
-        class="glass-card shadow-glow-white overflow-hidden rounded-xl border border-white/10 px-6 py-5"
+        v-motion
+        :initial="{ opacity: 0, y: 20 }"
+        :enter="{ opacity: 1, y: 0, transition: { duration: 400, delay: index * 100 } }"
+        class="glass-card shadow-glow-white overflow-hidden rounded-xl border border-white/10 px-6 py-5 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
       >
         <dt class="truncate text-sm font-medium text-dark-300">{{ stat.name }}</dt>
         <dd
@@ -134,30 +138,51 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Loading state -->
-    <div
-      v-if="isLoading"
-      class="glass-card shadow-glow-white flex justify-center rounded-xl border border-white/10 py-12"
-    >
-      <div class="flex items-center text-dark-300">
-        <svg class="mr-2 h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          ></circle>
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          ></path>
-        </svg>
-        Loading your portfolio...
+    <!-- Loading state with skeletons -->
+    <template v-if="isLoading">
+      <!-- Skeleton stat cards -->
+      <div class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          v-for="i in 4"
+          :key="i"
+          class="glass-card overflow-hidden rounded-xl border border-white/10 px-6 py-5"
+        >
+          <Skeleton width="60%" height="0.875rem" rounded="sm" />
+          <Skeleton width="80%" height="2rem" rounded="md" class="mt-3" />
+        </div>
       </div>
-    </div>
+
+      <!-- Skeleton asset cards -->
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          v-for="i in 6"
+          :key="i"
+          class="glass-card overflow-hidden rounded-2xl border border-white/10 p-6"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <Skeleton width="3rem" height="3rem" rounded="full" />
+              <div class="ml-3">
+                <Skeleton width="6rem" height="1rem" rounded="sm" />
+                <Skeleton width="4rem" height="0.875rem" rounded="sm" class="mt-2" />
+              </div>
+            </div>
+            <div class="text-right">
+              <Skeleton width="5rem" height="1rem" rounded="sm" />
+              <Skeleton width="3rem" height="0.875rem" rounded="sm" class="ml-auto mt-2" />
+            </div>
+          </div>
+          <div class="mt-6 flex justify-between border-t border-white/10 pt-4">
+            <Skeleton width="5rem" height="0.875rem" rounded="sm" />
+            <Skeleton width="4rem" height="0.875rem" rounded="sm" />
+          </div>
+          <div class="mt-4 flex gap-2 border-t border-white/10 pt-3">
+            <Skeleton width="100%" height="2.5rem" rounded="md" />
+            <Skeleton width="100%" height="2.5rem" rounded="md" />
+          </div>
+        </div>
+      </div>
+    </template>
 
     <!-- Empty state -->
     <div
@@ -199,9 +224,10 @@ onMounted(() => {
     <!-- Assets grid -->
     <div v-else class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <AssetCard
-        v-for="asset in assets"
+        v-for="(asset, index) in assets"
         :key="asset.id"
         :asset="asset"
+        :index="index"
         @buy="handleBuy"
         @sell="handleSell"
       />

@@ -53,7 +53,10 @@ const handleLogout = () => {
       <!-- User Menu -->
       <div class="relative ml-auto flex items-center gap-x-4">
         <!-- Notification icon -->
-        <button type="button" class="text-dark-300 hover:text-white">
+        <button
+          type="button"
+          class="rounded-lg p-2 text-dark-300 transition-all duration-200 hover:bg-white/5 hover:text-white"
+        >
           <span class="sr-only">View notifications</span>
           <svg
             class="h-6 w-6"
@@ -75,36 +78,53 @@ const handleLogout = () => {
         <div class="relative">
           <button
             type="button"
-            class="flex items-center gap-x-2 rounded-full text-sm"
+            class="flex items-center gap-x-2 rounded-lg p-1.5 text-sm transition-all duration-200 hover:bg-white/5"
             @click="toggleDropdown"
           >
             <span class="sr-only">Open user menu</span>
             <div
-              class="shadow-glow-primary flex h-8 w-8 items-center justify-center rounded-full bg-primary-500 text-sm font-medium text-white"
+              class="shadow-glow-primary flex h-8 w-8 items-center justify-center rounded-full bg-primary-500 text-sm font-medium text-white ring-2 ring-primary-500/30 transition-all duration-200 hover:ring-primary-500/50"
             >
               {{ userStore.user?.firstName?.charAt(0).toUpperCase() || 'U' }}
             </div>
-            <span class="hidden text-sm font-medium text-dark-200 md:block">
+            <span
+              class="hidden text-sm font-medium text-dark-200 transition-colors duration-200 group-hover:text-white md:block"
+            >
               {{ userStore.user?.firstName || 'User' }}
             </span>
           </button>
 
           <!-- Dropdown menu -->
-          <div
-            v-if="dropdownOpen"
-            class="glass-card absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md border border-white/10 bg-glass-gradient py-1 shadow-lg ring-1 ring-white/5 backdrop-blur-sm focus:outline-none"
+          <Transition
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="opacity-0 scale-95 translate-y-1"
+            enter-to-class="opacity-100 scale-100 translate-y-0"
+            leave-active-class="transition duration-150 ease-in"
+            leave-from-class="opacity-100 scale-100 translate-y-0"
+            leave-to-class="opacity-0 scale-95 translate-y-1"
           >
-            <a href="#" class="block px-4 py-2 text-sm text-dark-200 hover:bg-white/10"
-              >Your Profile</a
+            <div
+              v-if="dropdownOpen"
+              class="glass-card absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-lg border border-white/10 bg-glass-gradient py-1 shadow-lg ring-1 ring-white/5 backdrop-blur-sm focus:outline-none"
             >
-            <a href="#" class="block px-4 py-2 text-sm text-dark-200 hover:bg-white/10">Settings</a>
-            <button
-              @click="handleLogout"
-              class="block w-full px-4 py-2 text-left text-sm text-dark-200 hover:bg-white/10"
-            >
-              Sign out
-            </button>
-          </div>
+              <a
+                href="#"
+                class="block px-4 py-2 text-sm text-dark-200 transition-colors duration-150 hover:bg-white/10 hover:text-white"
+                >Your Profile</a
+              >
+              <a
+                href="#"
+                class="block px-4 py-2 text-sm text-dark-200 transition-colors duration-150 hover:bg-white/10 hover:text-white"
+                >Settings</a
+              >
+              <button
+                @click="handleLogout"
+                class="block w-full px-4 py-2 text-left text-sm text-dark-200 transition-colors duration-150 hover:bg-white/10 hover:text-white"
+              >
+                Sign out
+              </button>
+            </div>
+          </Transition>
         </div>
       </div>
     </div>
