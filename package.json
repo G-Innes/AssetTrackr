@@ -22,7 +22,7 @@
     "dev:server": "cd server && npm run dev",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "vercel-build": "npm run build:client",
-    "prepare": "husky",
+    "prepare": "husky || true",
     "lint:client": "cd client && npm run lint",
     "lint:server": "cd server && npm run lint",
     "format:client": "cd client && npm run format",
