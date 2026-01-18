@@ -1,7 +1,10 @@
 /* eslint-disable no-nested-ternary */
 import 'dotenv/config'
-import path from 'path'
 import { ConnectionOptions } from 'typeorm'
+import { User } from './entities/user'
+import { Asset } from './entities/asset'
+import { Transaction } from './entities/transaction'
+import { UserAssets } from './entities/userAssets'
 
 // Interface that represents authentication options
 interface AuthOptions {
@@ -48,7 +51,7 @@ const baseConfig: Partial<MyConnectionOptions> = {
     : isProductionEnvironment
       ? process.env.PROD_DB_DATABASE
       : process.env.DEV_DB_DATABASE,
-  entities: [path.join(__dirname, '/entities/*.ts')],
+  entities: [User, Asset, Transaction, UserAssets],
   synchronize: true,
   auth: {
     passwordCost: 10,
