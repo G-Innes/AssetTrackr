@@ -43,16 +43,18 @@ export async function loginUser(usernameOrEmail: string, password: string) {
     )
     .getOne()
   // If the user is not found, throw an error
+  // Use generic message to prevent account enumeration
   if (!user) {
-    throw new Error('Invalid username or email')
+    throw new Error('Invalid credentials')
   }
 
   // Check if the password is valid
   const validPassword = await bcrypt.compare(password, user.password)
 
   // If the password is not valid, throw an error
+  // Use same generic message to prevent account enumeration
   if (!validPassword) {
-    throw new Error('Invalid password')
+    throw new Error('Invalid credentials')
   }
 
   // Generate a JWT token for the user

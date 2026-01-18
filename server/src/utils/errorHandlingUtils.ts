@@ -28,14 +28,10 @@ export async function handleError(error: Error) {
     } else {
       message = 'Validation error'
     }
-  } else if (error.message === 'Invalid username or email') {
-    // Specific error for authentication failure
+  } else if (error.message === 'Invalid credentials') {
+    // Generic error for authentication failure (prevents account enumeration)
     statusCode = 401
-    message = 'Invalid username or email'
-  } else if (error.message === 'Invalid password') {
-    // Specific error for authentication failure
-    statusCode = 401
-    message = 'Invalid password'
+    message = 'Invalid credentials'
   } else if (error instanceof QueryFailedError) {
     // Handle duplicate key constraint errors
     const driverError = (error as any).driverError
