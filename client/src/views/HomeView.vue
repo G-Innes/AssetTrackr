@@ -37,7 +37,7 @@ import { RouterLink } from 'vue-router'
           :enter="{ opacity: 1, y: 0, transition: { duration: 600, ease: 'easeOut' } }"
           class="mt-10 max-w-lg font-display text-4xl font-bold tracking-tight text-white sm:text-6xl"
         >
-          Manage your crypto portfolio with ease
+          Manage your <span class="text-primary-500">crypto</span> portfolio with ease
         </h1>
         <p
           v-motion
