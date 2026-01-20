@@ -1,6 +1,11 @@
 // src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
+import SignupView from '../views/SignupView.vue'
+import DashboardView from '../views/DashboardView.vue'
+import AssetView from '../views/AssetView.vue'
+import TransactionsView from '../views/TransactionsView.vue'
 import { authenticate } from './guards'
 import HomeLayout from '../layouts/HomeLayout.vue'
 import DashboardLayout from '../layouts/DashboardLayout.vue'
@@ -16,29 +21,29 @@ const router = createRouter({
         {
           path: '',
           name: 'Dashboard',
-          component: () => import('../views/DashboardView.vue'),
+          component: DashboardView,
         },
         {
           path: 'asset-manage',
           name: 'AssetManage',
-          component: () => import('../views/AssetView.vue'),
+          component: AssetView,
         },
         {
           path: 'transactions',
           name: 'Transactions',
-          component: () => import('../views/TransactionsView.vue'),
+          component: TransactionsView,
         },
       ],
     },
     {
       path: '/login',
       name: 'Login',
-      component: () => import('../views/LoginView.vue'),
+      component: LoginView,
     },
     {
       path: '/signup',
       name: 'Signup',
-      component: () => import('../views/SignupView.vue'),
+      component: SignupView,
     },
     {
       path: '/',
