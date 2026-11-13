@@ -6,7 +6,7 @@ import SignupView from '../views/SignupView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import AssetView from '../views/AssetView.vue'
 import TransactionsView from '../views/TransactionsView.vue'
-import { authenticate } from './guards'
+import { authenticate, redirectIfAuthenticated } from './guards'
 import HomeLayout from '../layouts/HomeLayout.vue'
 import DashboardLayout from '../layouts/DashboardLayout.vue'
 
@@ -39,11 +39,13 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: LoginView,
+      beforeEnter: [redirectIfAuthenticated],
     },
     {
       path: '/signup',
       name: 'Signup',
       component: SignupView,
+      beforeEnter: [redirectIfAuthenticated],
     },
     {
       path: '/',
@@ -56,6 +58,8 @@ const router = createRouter({
         },
       ],
     },
+    // Unknown URLs go home rather than rendering a blank page
+    { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
 })
 

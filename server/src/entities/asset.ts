@@ -1,46 +1,18 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
-import { z } from 'zod'
-import { UserAssets } from './userAssets'
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { Transaction } from './transaction'
 
-@Entity()
+@Entity('asset')
 export class Asset {
   @PrimaryGeneratedColumn('increment')
   id!: number
 
-  @Column({ type: 'integer', nullable: true })
-  assetId!: number
-
-  @Column('text')
-  name!: string
-
-  @Column('text')
+  // Always stored upper case, e.g. "BTC"
+  @Column({ type: 'text', unique: true })
   ticker!: string
 
-  @Column('decimal')
-  current_price!: number
+  @Column({ type: 'text' })
+  name!: string
 
-  @OneToMany(() => UserAssets, (userAssets) => userAssets.asset, {
-    cascade: true,
-  })
-  userAssets!: UserAssets[]
+  @OneToMany(() => Transaction, (transaction) => transaction.asset)
+  transactions?: Transaction[]
 }
-
-export const assetSchema = z.object({
-  id: z.number().int().positive(),
-  assetId: z.number().int().positive(),
-  name: z.string().min(3).max(20),
-  ticker: z.string().min(3).max(6),
-  userAssets: z.array(
-    z.lazy(() =>
-      z.object({
-        id: z.number().int().positive(),
-        quantity: z.number().positive(),
-      })
-    )
-  ),
-  current_price: z.number().positive(),
-})
-
-export type AssetInsert = Omit<Asset, 'id'>
-
-export const assetInsertSchema = assetSchema.omit({ id: true })

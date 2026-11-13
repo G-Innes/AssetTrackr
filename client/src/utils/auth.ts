@@ -1,56 +1,36 @@
 const TOKEN_KEY = 'token'
 
-export function getStoredAccessToken(storage: Storage): string | null {
-  return storage.getItem(TOKEN_KEY)
+export function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY)
 }
 
-export function clearStoredAccessToken(storage: Storage) {
-  storage.removeItem(TOKEN_KEY)
+export function storeToken(token: string) {
+  localStorage.setItem(TOKEN_KEY, token)
 }
 
-export function storeAccessToken(storage: Storage, token: string) {
-  storage.setItem(TOKEN_KEY, token)
+export function clearToken() {
+  localStorage.removeItem(TOKEN_KEY)
+  // Older versions cached the profile here; make sure it does not linger.
+  localStorage.removeItem('user')
 }
 
-export function getUserFromToken(token: string) {
-  try {
-    return JSON.parse(atob(token.split('.')[1])).user
-  } catch (error) {
-    console.error('Error parsing token:', error)
-    return null
-  }
-}
-
-export function getUserIdFromToken(token: string) {
-  const user = getUserFromToken(token)
-  return user ? user.id : null
-}
-
+/** Reads the expiry out of the token. The server remains the real judge. */
 export function isTokenExpired(token: string): boolean {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]))
-    const expirationTime = payload.exp * 1000 // Convert to milliseconds
-    return Date.now() >= expirationTime
-  } catch (error) {
-    console.error('Error checking token expiration:', error)
-    return true // Treat as expired on parsing error
+    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+    return typeof payload.exp !== 'number' || Date.now() >= payload.exp * 1000
+  } catch {
+    return true
   }
 }
 
-export function getTokenExpirationTime(token: string): number | null {
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]))
-    return payload.exp * 1000 // Convert to milliseconds
-  } catch (error) {
-    console.error('Error getting token expiration time:', error)
-    return null
+/** True when there is a token that has not expired yet. */
+export function hasValidToken(): boolean {
+  const token = getToken()
+  if (!token) return false
+  if (isTokenExpired(token)) {
+    clearToken()
+    return false
   }
-}
-
-// Structure for future refresh token implementation
-export async function refreshToken(): Promise<string | null> {
-  // This would be implemented with your backend API
-  // For now, just return null to indicate refresh not implemented
-  console.warn('Token refresh not implemented yet')
-  return null
+  return true
 }

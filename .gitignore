@@ -37,3 +37,7 @@ client/dist/
 .cursor/rules/snyk_rules.mdc
 /docs
 CLAUDE.md
+
+# Test output
+test-results/
+playwright-report/

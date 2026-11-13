@@ -1,31 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Asset } from '@/stores/dashboard'
+import { formatCurrency, formatQuantity } from '@/utils/format'
 
 const props = defineProps<{
   asset: Asset
   index?: number
 }>()
-
-// Computed property to determine if the price change is positive or negative
-const priceChangeClass = computed(() => {
-  if (!props.asset.price_change_percentage_24h) return 'text-dark-300'
-  return props.asset.price_change_percentage_24h >= 0 ? 'text-success-400' : 'text-danger-400'
-})
-
-// Format currency
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(value)
-}
-
-// Format percentage
-const formatPercentage = (value: number | undefined): string => {
-  if (!value) return '0.00%'
-  return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`
-}
 
 // Color mappings for dynamic classes (Tailwind safe)
 const colorMappings = {
@@ -93,23 +74,27 @@ defineEmits(['buy', 'sell'])
           </div>
           <div class="ml-3">
             <h3 class="font-medium text-white">{{ asset.name }}</h3>
-            <p class="text-sm text-dark-300">{{ asset.quantity }} {{ asset.ticker }}</p>
+            <p class="text-sm text-dark-300">
+              {{ formatQuantity(asset.quantity) }} {{ asset.ticker }}
+            </p>
           </div>
         </div>
 
         <!-- Price info -->
         <div class="text-right">
-          <p class="font-medium text-white">{{ formatCurrency(asset.value) }}</p>
-          <p :class="['text-sm', priceChangeClass]">
-            {{ formatPercentage(asset.price_change_percentage_24h) }}
+          <p class="font-medium text-white">
+            {{ asset.value === null ? '-' : formatCurrency(asset.value) }}
           </p>
+          <p class="text-sm text-dark-300">Value</p>
         </div>
       </div>
 
       <!-- Current Price -->
       <div class="mt-6 flex justify-between border-t border-white/10 pt-4 text-sm">
         <span class="text-dark-300">Current Price</span>
-        <span class="font-medium text-white">{{ formatCurrency(asset.current_price) }}</span>
+        <span class="font-medium text-white">{{
+          asset.current_price === null ? 'Unavailable' : formatCurrency(asset.current_price)
+        }}</span>
       </div>
     </div>
 

@@ -1,17 +1,14 @@
 module.exports = {
   roots: ['<rootDir>/src'],
-  setupFilesAfterEnv: ['./tests/jest.setup.ts'],
-  maxWorkers: 1, // Run tests serially
-  testMatch: ['**/__tests__/**/*.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
+  // Every spec file shares one test database, so run them one at a time.
+  maxWorkers: 1,
+  testMatch: ['**/*.spec.ts'],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.ts$': ['ts-jest', { diagnostics: { ignoreCodes: ['TS151001'] } }],
   },
   testEnvironment: 'node',
-  moduleNameMapper: {
-    '^src/(.*)$': '<rootDir>/src/$1',
-  },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  collectCoverage: true,
   coverageReporters: ['text', 'lcov'],
   coverageDirectory: 'coverage',
-};
+  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/index.ts'],
+}

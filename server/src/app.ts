@@ -1,84 +1,76 @@
 import cors from 'cors'
-import express, { NextFunction, Request, Response } from 'express'
+import express from 'express'
+import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
-import pino from 'pino'
-import { appRouter } from './modules'
+import config from './config'
+import { errorHandler, notFoundHandler } from './middleware/errorHandler'
+import authRoutes from './modules/auth/routes'
+import holdingsRoutes from './modules/holdings/routes'
+import transactionsRoutes from './modules/transactions/routes'
+import usersRoutes from './modules/users/routes'
+import logger from './utils/logger'
 
-const logger = pino()
+interface AppOptions {
+  /** Max signup/login attempts per IP per 15 minutes. `false` disables it. */
+  authAttemptLimit?: number | false
+}
 
-export default function createApp() {
+export default function createApp({
+  authAttemptLimit = config.isTest ? false : 20,
+}: AppOptions = {}) {
   const app = express()
 
-  // Security headers
+  // Hosted behind one reverse proxy (Render); needed for correct client IPs.
+  app.set('trust proxy', 1)
+  app.disable('x-powered-by')
+
   app.use(helmet())
-
-  // Define allowed frontend origins
-  const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'http://localhost:4173',
-    'http://127.0.0.1:5173',
-    'http://127.0.0.1:4173',
-    'https://asset-trackr-client.vercel.app',
-    // Add any custom domains here
-  ]
-
-  // CORS configuration - only allow specific origins
   app.use(
     cors({
-      origin: (origin, callback) => {
-        // Allow requests with no origin (mobile apps, Postman, etc.)
-        if (!origin) {
-          return callback(null, true)
-        }
-        if (allowedOrigins.includes(origin)) {
-          return callback(null, true)
-        }
-        return callback(new Error('Not allowed by CORS'))
-      },
-      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+      // Requests without an Origin header (curl, health checks) are not
+      // cross-origin browser requests and need no CORS headers.
+      origin: config.clientOrigins,
+      methods: ['GET', 'POST', 'PATCH', 'DELETE'],
       allowedHeaders: ['Content-Type', 'Authorization'],
-      credentials: true,
     })
   )
+  app.use(express.json({ limit: '10kb' }))
 
-  app.use(express.json())
-
-  // Add logging middleware to debug requests
   app.use((req, res, next) => {
-    logger.info(`Incoming request: ${req.method} ${req.originalUrl}`)
+    res.on('finish', () => {
+      logger.info(
+        { method: req.method, url: req.originalUrl, status: res.statusCode },
+        'request'
+      )
+    })
     next()
   })
 
-  // Handle OPTIONS requests explicitly
-  app.options('*', cors())
-
-  app.get('/api/health', (req, res) => {
-    try {
-      // Add any necessary health checks here
-      logger.info('Health check passed')
-      res.status(200).json({ status: 'ok' })
-    } catch (error) {
-      const typeError = error as Error
-      logger.error({ err: typeError }, 'Health check failed')
-      res.status(500).json({ status: 'error', message: typeError.message })
-    }
+  app.get('/api/health', (_req, res) => {
+    res.json({ status: 'ok' })
   })
 
-  // Routes imported from /module/index.ts
-  app.use('/api', appRouter)
+  // Slows down password guessing and signup spam.
+  const authRateLimit =
+    authAttemptLimit === false
+      ? express.Router()
+      : rateLimit({
+          windowMs: 15 * 60 * 1000,
+          limit: authAttemptLimit,
+          standardHeaders: 'draft-7',
+          legacyHeaders: false,
+          message: {
+            message: 'Too many attempts. Please try again in a few minutes.',
+          },
+        })
 
-  // Error handling middleware
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
-    // Log error details in development, sanitized in production
-    if (process.env.NODE_ENV === 'production') {
-      logger.error({ message: err.message, url: req.url, method: req.method })
-    } else {
-      logger.error(err.stack)
-    }
-    res.status(500).json({ message: 'Something went wrong' })
-  })
+  app.use('/api/auth', authRoutes(authRateLimit))
+  app.use('/api/me', usersRoutes)
+  app.use('/api/holdings', holdingsRoutes)
+  app.use('/api/transactions', transactionsRoutes)
+
+  app.use(notFoundHandler)
+  app.use(errorHandler)
 
   return app
 }

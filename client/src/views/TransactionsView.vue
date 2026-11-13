@@ -1,109 +1,44 @@
 <script lang="ts" setup>
-import { ref, onMounted, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { getAllTransactionsForUser, getTransactionsByType } from '@/services/apiService'
-import type { Transaction } from '../components/TransactionCard.vue'
+import { api } from '@/services/api'
 import { Skeleton } from '@/components/ui'
+import { formatCurrency, formatDate, formatQuantity } from '@/utils/format'
+import type { Transaction } from '@/types'
+
+type Filter = 'all' | 'buy' | 'sell'
+const filters: Filter[] = ['all', 'buy', 'sell']
 
 const router = useRouter()
 const transactions = ref<Transaction[]>([])
 const isLoading = ref(true)
-const activeFilter = ref('all')
+const error = ref('')
+const activeFilter = ref<Filter>('all')
 
-onMounted(async () => {
-  try {
-    transactions.value = await getAllTransactionsForUser()
-  } catch (error) {
-    console.error('Error fetching transactions:', error)
-  } finally {
-    isLoading.value = false
-  }
-})
-
-const fetchAllTransactions = async () => {
+async function loadTransactions() {
   isLoading.value = true
+  error.value = ''
   try {
-    transactions.value = await getAllTransactionsForUser()
-    activeFilter.value = 'all'
-  } catch (error) {
-    console.error('Error fetching all transactions:', error)
+    transactions.value = await api.getTransactions()
+  } catch {
+    error.value = 'Could not load your transactions. Please try again.'
   } finally {
     isLoading.value = false
   }
 }
 
-const fetchTransactionsByType = async (type: string) => {
-  isLoading.value = true
-  try {
-    // Convert type to lowercase for consistency
-    const normalizedType = type.toLowerCase()
-    transactions.value = await getTransactionsByType(normalizedType)
-    activeFilter.value = normalizedType
-  } catch (error) {
-    console.error('Error fetching transactions by type:', error)
-    // Fallback to all transactions on error
-    await fetchAllTransactions()
-  } finally {
-    isLoading.value = false
-  }
+// The whole history is already loaded, so the tabs filter it in place.
+const filteredTransactions = computed(() =>
+  activeFilter.value === 'all'
+    ? transactions.value
+    : transactions.value.filter((transaction) => transaction.type === activeFilter.value)
+)
+
+function viewDetails(transaction: Transaction) {
+  router.push({ name: 'AssetManage', query: { ticker: transaction.asset.ticker } })
 }
 
-// Filter transactions
-const filteredTransactions = computed(() => {
-  if (activeFilter.value === 'all') {
-    return transactions.value
-  }
-  // Make sure to match the case sensitivity on transaction_type
-  return transactions.value.filter(
-    (t) =>
-      t.transaction_type?.toLowerCase() === activeFilter.value ||
-      t.transactionType?.toLowerCase() === activeFilter.value
-  )
-})
-
-// Format date
-function formatDate(dateString) {
-  if (!dateString) return 'N/A'
-  try {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-  } catch (error) {
-    console.error('Error formatting date:', error)
-    return 'Invalid Date'
-  }
-}
-
-// Format currency
-function formatCurrency(value) {
-  if (value === undefined || value === null) return '$0.00'
-  try {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-    }).format(value)
-  } catch (error) {
-    console.error('Error formatting currency:', error)
-    return '$0.00'
-  }
-}
-
-// Go to transaction details
-function viewDetails(transaction) {
-  const ticker = transaction.asset_ticker || transaction.assetTicker
-  if (!ticker) {
-    console.error('Cannot view details - missing ticker', transaction)
-    return
-  }
-
-  router.push({
-    name: 'AssetManage',
-    query: { ticker },
-  })
-}
+onMounted(loadTransactions)
 </script>
 
 <template>
@@ -117,9 +52,10 @@ function viewDetails(transaction) {
     <div class="mb-6 border-b border-white/10">
       <nav class="-mb-px flex space-x-8" aria-label="Tabs">
         <button
-          v-for="filter in ['all', 'buy', 'sell']"
+          v-for="filter in filters"
           :key="filter"
-          @click="filter === 'all' ? fetchAllTransactions() : fetchTransactionsByType(filter)"
+          :aria-pressed="activeFilter === filter"
+          @click="activeFilter = filter"
           :class="[
             activeFilter === filter
               ? 'border-primary-500 text-primary-400'
@@ -197,6 +133,21 @@ function viewDetails(transaction) {
       </div>
     </div>
 
+    <!-- Error state -->
+    <div
+      v-else-if="error"
+      class="rounded-xl border border-danger-500/30 bg-danger-600/10 p-6 text-center"
+      role="alert"
+    >
+      <p class="text-sm text-white">{{ error }}</p>
+      <button
+        class="mt-4 rounded-md bg-white/10 px-3 py-2 text-sm font-medium text-white hover:bg-white/20"
+        @click="loadTransactions"
+      >
+        Try again
+      </button>
+    </div>
+
     <!-- Empty state -->
     <div
       v-else-if="filteredTransactions.length === 0"
@@ -269,65 +220,52 @@ function viewDetails(transaction) {
                 Total
               </th>
               <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                <span class="sr-only">View</span>
+                <span class="sr-only">Trade</span>
               </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-white/10">
             <tr
-              v-for="(transaction, index) in filteredTransactions"
+              v-for="transaction in filteredTransactions"
               :key="transaction.id"
-              v-motion
-              :initial="{ opacity: 0, x: -20 }"
-              :enter="{ opacity: 1, x: 0, transition: { duration: 300, delay: index * 50 } }"
               class="transition-colors duration-200 hover:bg-white/5"
             >
               <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-dark-200 sm:pl-6">
-                {{ formatDate(transaction.transaction_date || transaction.transactionDate) }}
+                {{ formatDate(transaction.executedAt) }}
               </td>
               <td class="whitespace-nowrap px-3 py-4">
                 <div class="flex items-center">
                   <div
-                    class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary-500/20 text-primary-400 ring-1 ring-primary-500/30"
+                    class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary-500/20 text-xs text-primary-400 ring-1 ring-primary-500/30"
                   >
-                    {{
-                      (transaction.asset_ticker || transaction.assetTicker || 'N/A').substring(0, 3)
-                    }}
+                    {{ transaction.asset.ticker.substring(0, 3) }}
                   </div>
                   <div class="ml-4">
-                    <div class="text-sm font-medium text-white">
-                      {{ transaction.asset_name || transaction.assetName || 'Unknown Asset' }}
-                    </div>
-                    <div class="text-sm text-dark-300">
-                      {{ transaction.asset_ticker || transaction.assetTicker || 'N/A' }}
-                    </div>
+                    <div class="text-sm font-medium text-white">{{ transaction.asset.name }}</div>
+                    <div class="text-sm text-dark-300">{{ transaction.asset.ticker }}</div>
                   </div>
                 </div>
               </td>
               <td class="whitespace-nowrap px-3 py-4 text-sm">
                 <span
                   :class="[
-                    (
-                      transaction.transaction_type ||
-                      transaction.transactionType ||
-                      ''
-                    ).toLowerCase() === 'buy'
+                    transaction.type === 'buy'
                       ? 'bg-success-900/30 text-success-400 ring-1 ring-success-700/30'
                       : 'bg-danger-900/30 text-danger-400 ring-1 ring-danger-700/30',
-                    'inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5',
+                    'inline-flex rounded-full px-2 py-1 text-xs font-semibold capitalize leading-5',
                   ]"
                 >
-                  {{ transaction.transaction_type || transaction.transactionType || 'Unknown' }}
+                  {{ transaction.type }}
                 </span>
               </td>
               <td class="whitespace-nowrap px-3 py-4 text-sm text-dark-200">
-                {{ transaction.quantity || 0 }}
+                {{ formatQuantity(transaction.quantity) }}
               </td>
               <td class="whitespace-nowrap px-3 py-4 text-sm text-dark-200">
                 {{ formatCurrency(transaction.price) }}
               </td>
               <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-white">
-                {{ formatCurrency((transaction.quantity || 0) * (transaction.price || 0)) }}
+                {{ formatCurrency(Number(transaction.quantity) * Number(transaction.price)) }}
               </td>
               <td
                 class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
@@ -336,10 +274,7 @@ function viewDetails(transaction) {
                   @click="viewDetails(transaction)"
                   class="text-primary-400 hover:text-primary-300"
                 >
-                  View<span class="sr-only"
-                    >,
-                    {{ transaction.asset_name || transaction.assetName || 'Unknown Asset' }}</span
-                  >
+                  Trade<span class="sr-only">, {{ transaction.asset.name }}</span>
                 </button>
               </td>
             </tr>

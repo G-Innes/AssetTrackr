@@ -1,108 +1,36 @@
 <script lang="ts" setup>
-import { ref, onMounted, computed } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import AssetCard from '@/components/dashboard/AssetCard.vue'
 import { Skeleton } from '@/components/ui'
-import { getAllAssetHoldingsForUser } from '@/services/apiService'
-import { getUserProfile } from '@/services/apiService'
-import { useRouter } from 'vue-router'
 import { useDashboardStore } from '@/stores/dashboard'
-import type { Asset } from '@/stores/dashboard'
-import { storeToRefs } from 'pinia'
+import { formatCurrency } from '@/utils/format'
 
 const router = useRouter()
 const dashboardStore = useDashboardStore()
-const { assets, totalValue, isLoading } = storeToRefs(dashboardStore)
+const { assets, totalValue, hasUnpricedAssets, isLoading, error, lastUpdated } =
+  storeToRefs(dashboardStore)
 
-const username = ref<string>('')
-
-// Statistics data
 const stats = computed(() => [
-  { name: 'Total Portfolio Value', value: formatCurrency(totalValue.value) },
   {
-    name: 'Portfolio Change (24h)',
-    value: formatPercentage(calculatePortfolioChange()),
-    change: calculatePortfolioChange(),
-    changeType: calculatePortfolioChange() >= 0 ? 'increase' : 'decrease',
+    name: 'Total Portfolio Value',
+    value: formatCurrency(totalValue.value),
+    hint: hasUnpricedAssets.value ? 'Excludes assets without a live price' : '',
   },
-  { name: 'Total Assets', value: assets.value.length },
-  { name: 'Last Updated', value: new Date().toLocaleTimeString() },
+  { name: 'Assets Held', value: String(assets.value.length), hint: '' },
+  {
+    name: 'Prices Updated',
+    value: lastUpdated.value ? lastUpdated.value.toLocaleTimeString() : '-',
+    hint: '',
+  },
 ])
 
-// Calculate the portfolio change percentage
-function calculatePortfolioChange(): number {
-  if (!assets.value.length) return 0
-
-  const assetChanges = assets.value.map((asset) => {
-    const changePercent = asset.price_change_percentage_24h || 0
-    return (changePercent * asset.value) / 100
-  })
-
-  const totalChange = assetChanges.reduce((sum, change) => sum + change, 0)
-  return totalValue.value > 0 ? (totalChange / totalValue.value) * 100 : 0
+function manage(asset: { ticker: string }, action: 'buy' | 'sell') {
+  router.push({ name: 'AssetManage', query: { ticker: asset.ticker, action } })
 }
 
-// Format currency
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(value || 0)
-}
-
-// Format percentage
-function formatPercentage(value: number): string {
-  return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`
-}
-
-// Fetch assets on component mount
-onMounted(async () => {
-  try {
-    const userProfile = await getUserProfile()
-    username.value = userProfile.username
-
-    const apiAssets = await getAllAssetHoldingsForUser()
-
-    // Transform the API assets to match the dashboard store's Asset interface
-    const transformedAssets: Asset[] = apiAssets.map((asset) => ({
-      id: asset.assetId || 0, // Using assetId as id if available
-      assetId: asset.assetId,
-      name: asset.name,
-      ticker: asset.ticker,
-      quantity: asset.quantity,
-      current_price: asset.current_price || 0,
-      value: (asset.current_price || 0) * asset.quantity,
-      price_change_percentage_24h: 0, // Default to 0 as it's not in the API response
-    }))
-
-    assets.value = transformedAssets
-
-    totalValue.value = apiAssets.reduce((total, asset) => {
-      const currentPrice = asset.current_price ?? 0
-      return total + asset.quantity * currentPrice
-    }, 0)
-  } catch (error) {
-    console.error('Error fetching assets:', error)
-  }
-})
-
-// Handle buy/sell actions
-function handleBuy(asset: { ticker: string }): void {
-  router.push({
-    name: 'AssetManage',
-    query: { ticker: asset.ticker, action: 'buy' },
-  })
-}
-
-function handleSell(asset: { ticker: string }): void {
-  router.push({
-    name: 'AssetManage',
-    query: { ticker: asset.ticker, action: 'sell' },
-  })
-}
-
-onMounted(() => {
-  dashboardStore.fetchAssets()
-})
+onMounted(() => dashboardStore.fetchAssets())
 </script>
 
 <template>
@@ -113,7 +41,7 @@ onMounted(() => {
     </div>
 
     <!-- Stats cards -->
-    <div v-if="!isLoading" class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div v-if="!isLoading" class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       <div
         v-for="(stat, index) in stats"
         :key="index"
@@ -123,27 +51,17 @@ onMounted(() => {
         class="glass-card shadow-glow-white overflow-hidden rounded-xl border border-white/10 px-6 py-5 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
       >
         <dt class="truncate text-sm font-medium text-dark-300">{{ stat.name }}</dt>
-        <dd
-          :class="[
-            'mt-2 text-2xl font-semibold tracking-tight',
-            stat.change !== undefined
-              ? stat.changeType === 'increase'
-                ? 'text-success-400'
-                : 'text-danger-400'
-              : 'text-white',
-          ]"
-        >
-          {{ stat.value }}
-        </dd>
+        <dd class="mt-2 text-2xl font-semibold tracking-tight text-white">{{ stat.value }}</dd>
+        <p v-if="stat.hint" class="mt-1 text-xs text-dark-400">{{ stat.hint }}</p>
       </div>
     </div>
 
     <!-- Loading state with skeletons -->
     <template v-if="isLoading">
       <!-- Skeleton stat cards -->
-      <div class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <div
-          v-for="i in 4"
+          v-for="i in 3"
           :key="i"
           class="glass-card overflow-hidden rounded-xl border border-white/10 px-6 py-5"
         >
@@ -183,6 +101,21 @@ onMounted(() => {
         </div>
       </div>
     </template>
+
+    <!-- Error state -->
+    <div
+      v-else-if="error"
+      class="rounded-xl border border-danger-500/30 bg-danger-600/10 p-6 text-center"
+      role="alert"
+    >
+      <p class="text-sm text-white">{{ error }}</p>
+      <button
+        class="mt-4 rounded-md bg-white/10 px-3 py-2 text-sm font-medium text-white hover:bg-white/20"
+        @click="dashboardStore.fetchAssets()"
+      >
+        Try again
+      </button>
+    </div>
 
     <!-- Empty state -->
     <div
@@ -228,8 +161,8 @@ onMounted(() => {
         :key="asset.id"
         :asset="asset"
         :index="index"
-        @buy="handleBuy"
-        @sell="handleSell"
+        @buy="manage($event, 'buy')"
+        @sell="manage($event, 'sell')"
       />
     </div>
   </div>

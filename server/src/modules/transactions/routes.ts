@@ -1,14 +1,28 @@
 import { Router } from 'express'
-import transactionsController from './transactionsController'
-import { authenticateToken, authorizeUser } from '../../middleware/auth'
+import { requireAuth } from '../../middleware/auth'
+import { parse } from '../../middleware/validate'
+import { asyncHandler } from '../../utils/asyncHandler'
+import { createTransactionSchema, listTransactionsSchema } from './schemas'
+import { createTransaction, listTransactions } from './service'
 
-const router = Router({ mergeParams: true })
+const router = Router()
+router.use(requireAuth)
 
-// All transaction routes require authentication and user ownership
-router.use(authenticateToken, authorizeUser)
+// GET /api/transactions?type=buy|sell&assetId=1
+router.get(
+  '/',
+  asyncHandler(async (req, res) => {
+    const filters = parse(listTransactionsSchema, req.query)
+    res.json(await listTransactions(req.userId, filters))
+  })
+)
 
-router.get('/', transactionsController.getAllTransactionsForUser)
-router.get('/:assetId', transactionsController.getAllTransactionsForAsset)
-router.get('/type/:type', transactionsController.getTransactionsByType)
+router.post(
+  '/',
+  asyncHandler(async (req, res) => {
+    const input = parse(createTransactionSchema, req.body)
+    res.status(201).json(await createTransaction(req.userId, input))
+  })
+)
 
 export default router

@@ -1,15 +1,13 @@
-// src/guards.ts
-import { isLoggedIn } from '../services/apiService'
-import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
+import type { NavigationGuard } from 'vue-router'
+import { hasValidToken } from '@/utils/auth'
 
-export function authenticate(
-  _to: RouteLocationNormalized,
-  _from: RouteLocationNormalized,
-  next: NavigationGuardNext
-) {
-  if (isLoggedIn()) {
-    next()
-  } else {
-    next({ name: 'Login' })
-  }
+/** Sends visitors without a usable token to the login page. */
+export const authenticate: NavigationGuard = (to) => {
+  if (hasValidToken()) return true
+  return { name: 'Login', query: { redirect: to.fullPath } }
+}
+
+/** Keeps signed-in users out of the login and signup pages. */
+export const redirectIfAuthenticated: NavigationGuard = () => {
+  return hasValidToken() ? { name: 'Dashboard' } : true
 }

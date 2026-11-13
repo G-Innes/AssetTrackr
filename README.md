@@ -77,11 +77,12 @@ A modern web application for managing cryptocurrency investments. Track buy/sell
 
 3. **Set up environment variables:**
 
-   Create `server/.env`:
+   Copy `server/.env.example` to `server/.env` and fill it in. You need a
+   PostgreSQL database; the server creates and upgrades its own tables on start.
     ```env
-    DATABASE_URL=your_postgres_database_url
-    JWT_SECRET=your_jwt_secret
-    NODE_ENV=development
+    DATABASE_URL=postgres://postgres:postgres@localhost:5432/assettrackr
+    TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/assettrackr_test
+    JWT_SECRET=a-random-string-of-at-least-32-characters
     ```
 
 4. **Run the application:**
@@ -150,11 +151,12 @@ npm run test:e2e
 ### Backend (Render)
 - Automatically deploys from `main` branch
 - Build command: `npm install --include=dev && npm run build`
-- Start command: `npm start`
+- Start command: `npm start` (applies database migrations, then serves)
 
 ### Environment Variables (Render)
 - `DATABASE_URL` - Neon PostgreSQL connection string
-- `JWT_SECRET` - Secret key for JWT signing
+- `JWT_SECRET` - Secret key for JWT signing (32+ characters)
+- `CLIENT_ORIGIN` - URL of the deployed client, for CORS
 - `NODE_ENV` - Set to `production`
 
 ## Future Features

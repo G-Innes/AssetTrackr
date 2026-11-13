@@ -1,29 +1,18 @@
-/* eslint-disable no-console */
-import pino from 'pino'
 import createApp from './app'
-import { createDatabase } from './database'
+import config from './config'
+import { initDatabase } from './database/dataSource'
+import logger from './utils/logger'
 
-const logger = pino()
+async function main() {
+  await initDatabase()
+  logger.info('Database connected and migrations applied')
 
-// Initialize database and start server if this file is executed directly
-if (require.main === module) {
-  logger.info('Starting the application as standalone server...')
-
-  createDatabase()
-    .then(() => {
-      logger.info('Database connection established successfully.')
-      const app = createApp()
-
-      const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000
-      app.listen(port, '0.0.0.0', () => {
-        logger.info(`Server is running at port: ${port}`)
-      })
-    })
-    .catch((error) => {
-      console.error('Failed to connect to the database:', error)
-      process.exit(1) // Application exits on failure
-    })
+  createApp().listen(config.port, '0.0.0.0', () => {
+    logger.info(`Server listening on port ${config.port}`)
+  })
 }
 
-// Export the createApp function for serverless environments
-export default createApp
+main().catch((error) => {
+  logger.fatal({ err: error }, 'Failed to start')
+  process.exit(1)
+})

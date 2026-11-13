@@ -1,45 +1,44 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import PageForm from '../components/PageForm.vue'
-import { useRouter } from 'vue-router'
+import { getErrorMessage } from '@/services/api'
 import { useUserStore } from '@/stores/user'
 
+const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
-// allow login with either username or email
 const userForm = ref({
   usernameOrEmail: '',
   password: '',
 })
 
-const hasSucceeded = ref(false)
+const isSubmitting = ref(false)
 const errorMessage = ref('')
 
 async function submitLogin() {
+  const { usernameOrEmail, password } = userForm.value
+  if (!usernameOrEmail || !password) {
+    errorMessage.value = 'Username/Email and password are required'
+    return
+  }
+
+  isSubmitting.value = true
+  errorMessage.value = ''
   try {
-    const { usernameOrEmail, password } = userForm.value
-
-    // Check if usernameOrEmail and password are provided
-    if (!usernameOrEmail || !password) {
-      errorMessage.value = 'Username/Email and password are required'
-      return
-    }
-
-    // Login via store
-    const result = await userStore.login(usernameOrEmail, password)
-
-    if (result.success) {
-      // Display success message & redirect to dashboard
-      hasSucceeded.value = true
-      setTimeout(() => {
-        router.push({ name: 'Dashboard' })
-      }, 500)
-    } else {
-      errorMessage.value = result.message || 'Login failed'
-    }
-  } catch (error: any) {
-    errorMessage.value = error.response?.data?.message || error.message || 'Unknown error'
+    await userStore.login(usernameOrEmail, password)
+    // Return to the page that asked for a login, if it was one of ours.
+    const redirect = route.query.redirect
+    await router.push(
+      typeof redirect === 'string' && redirect.startsWith('/dashboard')
+        ? redirect
+        : { name: 'Dashboard' }
+    )
+  } catch (error) {
+    errorMessage.value = getErrorMessage(error, 'Login failed')
+  } finally {
+    isSubmitting.value = false
   }
 }
 </script>
@@ -82,17 +81,6 @@ async function submitLogin() {
       </div>
 
       <div
-        v-if="hasSucceeded"
-        class="mb-4 rounded-lg bg-success-600/20 p-4 text-white"
-        data-testid="successMessage"
-      >
-        You have successfully logged in.
-        <RouterLink :to="{ name: 'Dashboard' }" class="font-semibold text-white underline"
-          >Go to the Dashboard</RouterLink
-        >
-      </div>
-
-      <div
         v-if="errorMessage"
         class="mb-4 rounded-lg bg-danger-600/20 p-4 text-white"
         data-testid="errorMessage"
@@ -103,9 +91,10 @@ async function submitLogin() {
       <div class="grid">
         <button
           type="submit"
-          class="shadow-glow-primary rounded-lg bg-primary-600 px-5 py-3 text-white transition hover:bg-primary-500"
+          :disabled="isSubmitting"
+          class="shadow-glow-primary rounded-lg bg-primary-600 px-5 py-3 text-white transition hover:bg-primary-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Log in
+          {{ isSubmitting ? 'Logging in…' : 'Log in' }}
         </button>
       </div>
     </template>

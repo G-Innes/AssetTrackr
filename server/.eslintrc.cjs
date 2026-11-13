@@ -39,6 +39,9 @@ rules: {
     '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
 
     'import/prefer-default-export': 'off',
+
+    // Express error middleware must declare all four arguments
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
 },
 
 overrides: [

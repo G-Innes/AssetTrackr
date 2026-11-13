@@ -20,10 +20,8 @@ watch(
   }
 )
 
-// Helper to check if a route is active
-const isActive = (href: string) => {
-  return route.path === href || route.path.startsWith(`${href}/`)
-}
+// Every link is a sibling page, so only an exact match is the active one
+const isActive = (href: string) => route.path === href
 
 // Toggle menu
 const toggleMenu = () => {

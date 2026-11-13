@@ -1,42 +1,43 @@
-version: '3.8'
-
+# Runs the whole stack locally: Postgres, the API and the built client.
+#
+#   JWT_SECRET=$(openssl rand -hex 48) docker compose up --build
+#
+# Nothing in this file is a secret. Real credentials belong in the
+# environment (or an untracked .env file next to this one), never in git.
 services:
-  # db:
-  #   image: postgres:13
-  #   environment:
-  #     POSTGRES_USER: ${PROD_DB_USER:-postgres}
-  #     POSTGRES_PASSWORD: ${PROD_DB_PASSWORD:-postgres}
-  #     POSTGRES_DB: ${PROD_DB_DATABASE:-AssetTrackr}
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - pgdata:/var/lib/postgresql/data
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: assettrackr
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d assettrackr']
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   server:
     build: ./server
-    mem_limit: 512m
-    cpu_quota: 50000
-    ports:
-      - "3000:3000"
     environment:
-      PROD_DB_TYPE: postgres
-      PROD_DB_HOST: ep-long-poetry-a5f8ruz7.us-east-2.aws.neon.tech
-      PROD_DB_PORT: 5432
-      PROD_DB_USERNAME: AssetTrackr_owner
-      PROD_DB_PASSWORD: imjQhFg48GzC
-      PROD_DB_DATABASE: AssetTrackr
       NODE_ENV: production
-    # depends_on:
-    #   - db
+      PORT: 3000
+      DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/assettrackr
+      DATABASE_SSL: 'false'
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET to a random string of 32+ characters}
+      CLIENT_ORIGIN: http://localhost:8080
+    ports:
+      - '3000:3000'
+    depends_on:
+      db:
+        condition: service_healthy
 
   client:
     build: ./client
-    mem_limit: 256m
-    cpu_quota: 25000
     ports:
-      - "80:80"
-    environment:
-      VUE_APP_BASE_URL: https://assettrackr.enrpm9tib5nri.eu-central-1.cs.amazonlightsail.com
+      - '8080:80'
     depends_on:
       - server
 

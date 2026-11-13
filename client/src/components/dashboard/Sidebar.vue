@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const router = useRouter()
 
 // Navigation links
 const navigation = [
@@ -12,10 +10,8 @@ const navigation = [
   { name: 'My Transactions', href: '/dashboard/transactions', icon: 'ClockIcon' },
 ]
 
-// Helper to check if a route is active
-const isActive = (href: string) => {
-  return route.path === href || route.path.startsWith(`${href}/`)
-}
+// Every link is a sibling page, so only an exact match is the active one
+const isActive = (href: string) => route.path === href
 </script>
 
 <template>

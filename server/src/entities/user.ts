@@ -1,44 +1,31 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
-import { z } from 'zod'
 import {
-  UserAssets,
-  userAssetsSchema,
-  Transaction,
-  transactionSchema,
-} from './index'
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
+import { Transaction } from './transaction'
 
-@Entity()
+@Entity('user')
 export class User {
   @PrimaryGeneratedColumn('increment')
   id!: number
 
-  @Column('text', { unique: true })
+  @Column({ type: 'text' })
   username!: string
 
-  @Column('text', { unique: true })
+  @Column({ type: 'text' })
   email!: string
 
-  @Column('text')
-  password!: string
+  // bcrypt hash. `select: false` keeps it out of every query that does not
+  // ask for it explicitly, so it cannot leak into a response by accident.
+  @Column({ name: 'password', type: 'text', select: false })
+  passwordHash!: string
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  createdAt!: Date
 
   @OneToMany(() => Transaction, (transaction) => transaction.user)
   transactions?: Transaction[]
-
-  @OneToMany(() => UserAssets, (userAssets) => userAssets.user, {
-    cascade: true,
-  })
-  userAssets?: UserAssets[]
 }
-
-export const userSchema = z.object({
-  id: z.number().int().positive(),
-  username: z.string().min(3).max(20),
-  email: z.string().trim().toLowerCase().email(),
-  password: z.string().min(8).max(100),
-  transactions: z.array(transactionSchema),
-  userAssets: z.array(userAssetsSchema),
-})
-
-export type UserInsert = Omit<User, 'id'>
-
-export const userInsertSchema = userSchema.omit({ id: true })

@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import MobileMenu from '@/components/dashboard/MobileMenu.vue'
 import Sidebar from '@/components/dashboard/Sidebar.vue'
 import Header from '@/components/dashboard/Header.vue'
+import { useUserStore } from '@/stores/user'
+
+// After a page reload only the token survives; fetch the profile again.
+onMounted(() => useUserStore().restoreSession())
 </script>
 
 <template>

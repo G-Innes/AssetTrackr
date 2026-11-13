@@ -1,67 +1,62 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
-  ManyToOne,
+  Index,
   JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
-  ManyToMany,
 } from 'typeorm'
-import { z } from 'zod'
-import { NumericTransformer } from '../utils/generalUtils'
-import { User, Asset } from './index'
+import { Asset } from './asset'
+import { User } from './user'
 
 export enum TransactionType {
   BUY = 'buy',
   SELL = 'sell',
 }
 
-@Entity()
+// The transaction ledger is the single source of truth: a user's holdings are
+// always derived from it, never stored separately.
+@Entity('transaction')
+@Index(['userId', 'assetId'])
 export class Transaction {
   @PrimaryGeneratedColumn('increment')
   id!: number
 
-  @ManyToOne(() => User)
+  @Column({ name: 'user_id', type: 'integer' })
+  userId!: number
+
+  @ManyToOne(() => User, (user) => user.transactions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user!: User
+  user?: User
 
-  @ManyToMany(() => Asset)
-  asset!: Asset
-
-  @Column({ type: 'integer', nullable: true })
+  @Column({ name: 'asset_id', type: 'integer' })
   assetId!: number
 
-  @Column({
-    type: 'enum',
-    enum: TransactionType,
+  @ManyToOne(() => Asset, (asset) => asset.transactions, {
+    onDelete: 'RESTRICT',
   })
-  transactionType!: TransactionType
+  @JoinColumn({ name: 'asset_id' })
+  asset?: Asset
 
-  @Column({
-    type: 'decimal',
-    precision: 10, // Adjust precision
-    scale: 2, // Adjust scale
-    transformer: new NumericTransformer(),
-    default: 0,
-  })
-  quantity!: number
+  @Column({ type: 'enum', enum: TransactionType, enumName: 'transaction_type' })
+  type!: TransactionType
 
-  @Column('decimal')
-  price!: number
+  // Quantities and prices are numeric(36,18) and travel as strings so that
+  // small crypto amounts (0.00012345 BTC) never pass through a JS float.
+  @Column({ type: 'numeric', precision: 36, scale: 18 })
+  quantity!: string
 
-  @Column('date')
-  transaction_date!: Date
+  // Price of one unit in USD at the time of the trade
+  @Column({ type: 'numeric', precision: 36, scale: 18 })
+  price!: string
+
+  @Column({ name: 'executed_at', type: 'timestamptz' })
+  executedAt!: Date
+
+  @Column({ type: 'text', nullable: true })
+  note!: string | null
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  createdAt!: Date
 }
-
-export const transactionSchema = z.object({
-  id: z.number().int().positive(),
-  user_id: z.number().int().positive(),
-  assetId: z.number().int().positive(),
-  transaction_type: z.string().min(3).max(20),
-  quantity: z.number(),
-  price: z.number().int().positive(),
-  transaction_date: z.date(),
-})
-
-export type TransactionInsert = Omit<Transaction, 'id'>
-
-export const transactionInsertSchema = transactionSchema.omit({ id: true })
