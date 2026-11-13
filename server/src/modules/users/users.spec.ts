@@ -55,6 +55,7 @@ describe('GET /api/me', () => {
       id: user.id,
       username: user.username,
       email: user.email,
+      isDemo: false,
       createdAt: expect.any(String),
     })
   })

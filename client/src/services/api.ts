@@ -1,6 +1,16 @@
 import axios from 'axios'
 import { clearToken, getToken } from '@/utils/auth'
-import type { Holding, NewTransaction, Transaction, TransactionType, User } from '@/types'
+import type {
+  HistoryPoint,
+  HistoryRange,
+  MarketAsset,
+  NewTransaction,
+  Portfolio,
+  Transaction,
+  TransactionChanges,
+  TransactionType,
+  User,
+} from '@/types'
 
 const client = axios.create({
   // Empty in development, where Vite proxies /api to the local server.
@@ -63,8 +73,51 @@ export const api = {
     return (await client.get<User>('/api/me')).data
   },
 
-  async getHoldings() {
-    return (await client.get<Holding[]>('/api/holdings')).data
+  /** Creates a throwaway account that already holds a sample portfolio. */
+  async startDemo() {
+    return (await client.post<AuthResponse>('/api/auth/demo')).data
+  },
+
+  async updateMe(changes: { username?: string; email?: string; password?: string }) {
+    return (await client.patch<User>('/api/me', changes)).data
+  },
+
+  async deleteMe() {
+    await client.delete('/api/me')
+  },
+
+  async getPortfolio() {
+    return (await client.get<Portfolio>('/api/portfolio')).data
+  },
+
+  async getPortfolioHistory(range: HistoryRange) {
+    const { data } = await client.get<{ points: HistoryPoint[] }>('/api/portfolio/history', {
+      params: { range },
+    })
+    return data.points
+  },
+
+  /** Deletes an asset and all of its transactions from the user's portfolio. */
+  async removeAsset(assetId: number) {
+    await client.delete(`/api/portfolio/assets/${assetId}`)
+  },
+
+  async searchAssets(query: string, limit = 8) {
+    return (await client.get<MarketAsset[]>('/api/market/assets', { params: { q: query, limit } }))
+      .data
+  },
+
+  /** The live price, or the closing price on `date` (YYYY-MM-DD). Null when there is none. */
+  async getPrice(ticker: string, date?: string): Promise<number | null> {
+    try {
+      const { data } = await client.get<{ price: number }>(
+        `/api/market/assets/${encodeURIComponent(ticker)}/price`,
+        { params: date ? { date } : {} }
+      )
+      return data.price
+    } catch {
+      return null
+    }
   },
 
   async getTransactions(filters: { type?: TransactionType; assetId?: number } = {}) {
@@ -73,5 +126,13 @@ export const api = {
 
   async createTransaction(input: NewTransaction) {
     return (await client.post<Transaction>('/api/transactions', input)).data
+  },
+
+  async updateTransaction(id: number, changes: TransactionChanges) {
+    return (await client.patch<Transaction>(`/api/transactions/${id}`, changes)).data
+  },
+
+  async deleteTransaction(id: number) {
+    await client.delete(`/api/transactions/${id}`)
   },
 }

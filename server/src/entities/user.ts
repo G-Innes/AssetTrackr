@@ -23,6 +23,10 @@ export class User {
   @Column({ name: 'password', type: 'text', select: false })
   passwordHash!: string
 
+  // A throwaway account created by "Try the demo"; purged after a day
+  @Column({ name: 'is_demo', type: 'boolean', default: false })
+  isDemo!: boolean
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date
 

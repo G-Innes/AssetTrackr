@@ -7,6 +7,7 @@ export interface PublicUser {
   id: number
   username: string
   email: string
+  isDemo: boolean
   createdAt: Date
 }
 
@@ -16,6 +17,7 @@ export function toPublicUser(user: User): PublicUser {
     id: user.id,
     username: user.username,
     email: user.email,
+    isDemo: user.isDemo,
     createdAt: user.createdAt,
   }
 }

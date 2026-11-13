@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import DemoButton from '@/components/DemoButton.vue'
 import { RouterLink } from 'vue-router'
 </script>
 
@@ -60,12 +61,11 @@ import { RouterLink } from 'vue-router'
           >
             Get started
           </RouterLink>
-          <RouterLink
-            to="/login"
-            class="rounded-md px-4 py-3 text-sm font-semibold text-white ring-1 ring-white/20 transition-all duration-200 hover:bg-white/5 hover:ring-white/30"
-          >
-            Log in
-          </RouterLink>
+          <div>
+            <DemoButton
+              class="rounded-md px-4 py-3 text-sm font-semibold text-white ring-1 ring-white/20 transition-all duration-200 hover:bg-white/5 hover:ring-white/30"
+            />
+          </div>
         </div>
       </div>
       <div class="mt-16 sm:mt-24 lg:mt-0 lg:flex-shrink-0 lg:flex-grow">

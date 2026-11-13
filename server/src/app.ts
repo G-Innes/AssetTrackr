@@ -5,7 +5,8 @@ import helmet from 'helmet'
 import config from './config'
 import { errorHandler, notFoundHandler } from './middleware/errorHandler'
 import authRoutes from './modules/auth/routes'
-import holdingsRoutes from './modules/holdings/routes'
+import marketRoutes from './modules/market/routes'
+import portfolioRoutes from './modules/portfolio/routes'
 import transactionsRoutes from './modules/transactions/routes'
 import usersRoutes from './modules/users/routes'
 import logger from './utils/logger'
@@ -66,7 +67,8 @@ export default function createApp({
 
   app.use('/api/auth', authRoutes(authRateLimit))
   app.use('/api/me', usersRoutes)
-  app.use('/api/holdings', holdingsRoutes)
+  app.use('/api/portfolio', portfolioRoutes)
+  app.use('/api/market', marketRoutes)
   app.use('/api/transactions', transactionsRoutes)
 
   app.use(notFoundHandler)

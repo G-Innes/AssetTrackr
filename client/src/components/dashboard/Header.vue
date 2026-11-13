@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useDashboardStore } from '@/stores/dashboard'
+import { usePortfolioStore } from '@/stores/portfolio'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const userStore = useUserStore()
-const dashboardStore = useDashboardStore()
+const portfolioStore = usePortfolioStore()
 const dropdownOpen = ref(false)
 
 const toggleDropdown = () => {
@@ -15,7 +15,7 @@ const toggleDropdown = () => {
 
 const handleLogout = () => {
   userStore.logout()
-  dashboardStore.reset()
+  portfolioStore.reset()
   router.push('/login')
 }
 </script>
@@ -32,6 +32,13 @@ const handleLogout = () => {
 
       <!-- User Menu -->
       <div class="relative ml-auto flex items-center gap-x-4">
+        <span
+          v-if="userStore.user?.isDemo"
+          class="rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-0.5 text-xs font-medium text-amber-200"
+          title="A sample account. It is deleted after 24 hours."
+        >
+          Demo account
+        </span>
         <!-- User dropdown -->
         <div class="relative">
           <button

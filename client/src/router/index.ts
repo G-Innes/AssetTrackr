@@ -4,7 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import SignupView from '../views/SignupView.vue'
 import DashboardView from '../views/DashboardView.vue'
-import AssetView from '../views/AssetView.vue'
+import TradeView from '../views/TradeView.vue'
 import TransactionsView from '../views/TransactionsView.vue'
 import { authenticate, redirectIfAuthenticated } from './guards'
 import HomeLayout from '../layouts/HomeLayout.vue'
@@ -26,7 +26,7 @@ const router = createRouter({
         {
           path: 'asset-manage',
           name: 'AssetManage',
-          component: AssetView,
+          component: TradeView,
         },
         {
           path: 'transactions',

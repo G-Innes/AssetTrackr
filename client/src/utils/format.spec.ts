@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { formatCurrency, formatDate, formatQuantity } from './format'
+import {
+  formatCurrency,
+  formatDate,
+  formatPercent,
+  formatQuantity,
+  formatSignedCurrency,
+  toDateInputValue,
+} from './format'
 
 describe('formatCurrency', () => {
   it('formats ordinary amounts with two decimals', () => {
@@ -39,5 +46,32 @@ describe('formatDate', () => {
 
   it('does not throw on rubbish', () => {
     expect(formatDate('not a date')).toBe('-')
+  })
+})
+
+describe('formatSignedCurrency', () => {
+  it('always carries the sign of a change', () => {
+    expect(formatSignedCurrency(1234.5)).toBe('+$1,234.50')
+    expect(formatSignedCurrency(-40)).toBe('-$40.00')
+    expect(formatSignedCurrency(0)).toBe('$0.00')
+    expect(formatSignedCurrency(null)).toBe('-')
+  })
+})
+
+describe('formatPercent', () => {
+  it('signs gains and losses', () => {
+    expect(formatPercent(12.345)).toBe('+12.35%')
+    expect(formatPercent(-0.5)).toBe('-0.50%')
+    expect(formatPercent(null)).toBe('-')
+  })
+
+  it('can leave the plus sign off for shares of a whole', () => {
+    expect(formatPercent(60, false)).toBe('60.00%')
+  })
+})
+
+describe('toDateInputValue', () => {
+  it('formats the local calendar day for a date input', () => {
+    expect(toDateInputValue(new Date(2026, 2, 5, 23, 30))).toBe('2026-03-05')
   })
 })

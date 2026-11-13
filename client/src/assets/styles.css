@@ -93,22 +93,53 @@
   }
 }
 
-/* Color palette comments */
-/* 
-Turquoise: #00C7B7 (Bright turquoise)
-Neon Pink: #FF6EC7 (Vibrant neon pink)
-Yellow: #FFD166 (Bright yellow)
-Purple: #A300D6 (Bold purple)
-Orange: #FF8C42 (Vivid orange)
-Dark Blue: #2B3A67 (Deep dark blue)
-Light Blue: #6CC3D5 (Soft light blue)
-Dark Green: #1A5138 (Rich dark green)
-Light Green: #7ED321 (Fresh light green)
-Gold: #D4AF37 (Warm gold)
-Red: #FF5733 (Intense red)
-Black: #121212 (Deep black)
-Dark Grey: #333333 (Dark grey)
-Medium Grey: #666666 (Medium grey)
-Light Grey: #CCCCCC (Light grey)
-White: #F5F5F5 (Off-white)
-*/ 
+/* Building blocks shared by the dashboard pages */
+@layer components {
+  .panel {
+    @apply rounded-xl border border-white/[0.08];
+    background-color: #12151c;
+  }
+
+  .field-label {
+    @apply text-dark-300 mb-1.5 block text-sm font-medium;
+  }
+
+  .field {
+    @apply placeholder:text-dark-500 block w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm text-white;
+    color-scheme: dark;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md px-3.5 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-600 hover:bg-primary-500 text-white;
+  }
+
+  .btn-danger {
+    @apply btn bg-danger-600 hover:bg-danger-500 text-white;
+  }
+
+  .btn-quiet {
+    @apply btn text-dark-200 border border-white/10 hover:bg-white/5 hover:text-white;
+  }
+
+  /* Columns of figures line up digit under digit */
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+:root {
+  /* Chart colours: a fixed order, checked for colour-blind separation on --chart-surface */
+  --chart-surface: #12151c;
+  --chart-1: #3987e5;
+  --chart-2: #d95926;
+  --chart-3: #199e70;
+  --chart-4: #c98500;
+  --chart-5: #d55181;
+  --chart-other: #6b7280;
+  --chart-grid: rgba(255, 255, 255, 0.07);
+  --chart-axis: #94a3b8;
+}

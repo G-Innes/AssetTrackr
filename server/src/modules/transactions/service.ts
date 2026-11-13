@@ -1,9 +1,16 @@
 import { EntityManager } from 'typeorm'
 import { dataSource } from '../../database/dataSource'
 import { Asset, Transaction, TransactionType, User } from '../../entities'
-import { badRequest } from '../../utils/errors'
 import { Decimal, formatDecimal } from '../../utils/decimal'
-import { CreateTransactionInput, ListTransactionsInput } from './schemas'
+import { badRequest, notFound } from '../../utils/errors'
+import { MarketAsset } from '../market/provider'
+import { findAsset, getPrice } from '../market/service'
+import { balanceAt, findOversell } from '../portfolio/ledger'
+import {
+  CreateTransactionInput,
+  ListTransactionsInput,
+  UpdateTransactionInput,
+} from './schemas'
 
 export interface TransactionView {
   id: number
@@ -27,80 +34,190 @@ function toView(transaction: Transaction, asset: Asset): TransactionView {
   }
 }
 
-/** Finds the asset for a ticker, creating it the first time it is traded. */
+const formatDay = (date: Date) =>
+  date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+
+/**
+ * Serialises a user's writes. Without the lock two simultaneous sells could
+ * both pass the balance check and oversell the holding.
+ */
+async function lockUser(manager: EntityManager, userId: number) {
+  await manager.findOne(User, {
+    where: { id: userId },
+    lock: { mode: 'pessimistic_write' },
+  })
+}
+
+/** The user's full history for one asset - what every balance check runs on. */
+function loadLedger(manager: EntityManager, userId: number, assetId: number) {
+  return manager.find(Transaction, { where: { userId, assetId } })
+}
+
+/**
+ * Finds the asset row for a ticker, creating it the first time it is traded.
+ * New assets must exist in the market catalogue, which also supplies their
+ * name - so a client can neither invent assets nor rename them.
+ */
 async function findOrCreateAsset(
   manager: EntityManager,
   ticker: string,
-  name: string | undefined
+  listing: MarketAsset | undefined
 ): Promise<Asset> {
+  const existing = await manager.findOneBy(Asset, { ticker })
+  if (existing) return existing
+  if (!listing) {
+    throw badRequest(`Unknown asset "${ticker}". Choose one from the list.`)
+  }
+
   // ON CONFLICT makes this safe when two users trade a new ticker at once.
   await manager
     .createQueryBuilder()
     .insert()
     .into(Asset)
-    .values({ ticker, name: name ?? ticker })
+    .values({ ticker, name: listing.name })
     .orIgnore()
     .execute()
   return manager.findOneByOrFail(Asset, { ticker })
-}
-
-/** How much of an asset a user currently owns, according to the ledger. */
-export async function getBalance(
-  manager: EntityManager,
-  userId: number,
-  assetId: number
-): Promise<Decimal> {
-  const row = await manager
-    .createQueryBuilder(Transaction, 't')
-    .select(
-      `COALESCE(SUM(CASE WHEN t.type = 'buy' THEN t.quantity ELSE -t.quantity END), 0)`,
-      'balance'
-    )
-    .where('t.userId = :userId AND t.assetId = :assetId', { userId, assetId })
-    .getRawOne<{ balance: string }>()
-  return new Decimal(row?.balance ?? 0)
 }
 
 export async function createTransaction(
   userId: number,
   input: CreateTransactionInput
 ): Promise<TransactionView> {
-  // Everything happens in one database transaction: either the trade is
-  // recorded in full or nothing changes.
-  return dataSource.transaction(async (manager) => {
-    // Serialise this user's trades. Without the lock two simultaneous sells
-    // could both pass the balance check and oversell the holding.
-    await manager.findOne(User, {
-      where: { id: userId },
-      lock: { mode: 'pessimistic_write' },
-    })
+  const executedAt = input.executedAt ?? new Date()
+  const isBackdated = Date.now() - executedAt.getTime() > 60 * 1000
+  const when = isBackdated ? ` on ${formatDay(executedAt)}` : ''
 
-    const asset = await findOrCreateAsset(manager, input.ticker, input.name)
+  // Talk to the market before opening the database transaction, so a slow
+  // price source never holds a row lock.
+  const listing = await findAsset(input.ticker).catch(() => undefined)
+  let { price } = input
+  if (price === undefined) {
+    const marketPrice = await getPrice(
+      input.ticker,
+      executedAt.toISOString().slice(0, 10)
+    )
+    if (marketPrice === undefined) {
+      throw badRequest(
+        `No market price found for ${input.ticker}${when}. Enter the price yourself.`
+      )
+    }
+    price = new Decimal(marketPrice).toFixed()
+  }
+
+  // Either the trade is recorded in full or nothing changes.
+  return dataSource.transaction(async (manager) => {
+    await lockUser(manager, userId)
+    const asset = await findOrCreateAsset(manager, input.ticker, listing)
+    const ledger = await loadLedger(manager, userId, asset.id)
 
     if (input.type === TransactionType.SELL) {
-      const balance = await getBalance(manager, userId, asset.id)
-      if (balance.isZero()) {
-        throw badRequest(`You do not own any ${asset.ticker}`)
-      }
-      if (balance.lt(input.quantity)) {
+      const held = balanceAt(ledger, executedAt)
+      if (held.isZero()) {
         throw badRequest(
-          `Insufficient balance: you own ${balance.toFixed()} ${asset.ticker}`
+          isBackdated
+            ? `You did not own any ${asset.ticker}${when}`
+            : `You do not own any ${asset.ticker}`
+        )
+      }
+      if (held.lt(input.quantity)) {
+        throw badRequest(
+          isBackdated
+            ? `Insufficient balance: you owned ${held.toFixed()} ${asset.ticker}${when}`
+            : `Insufficient balance: you own ${held.toFixed()} ${asset.ticker}`
         )
       }
     }
 
-    const transaction = await manager.save(
-      manager.create(Transaction, {
-        userId,
-        assetId: asset.id,
-        type: input.type,
-        quantity: input.quantity,
-        price: input.price,
-        executedAt: new Date(),
-        note: null,
-      })
+    const transaction = manager.create(Transaction, {
+      userId,
+      assetId: asset.id,
+      type: input.type,
+      quantity: input.quantity,
+      price,
+      executedAt,
+      note: input.note ?? null,
+    })
+
+    // A backdated sale can be covered on its own date yet leave a sale
+    // made since then short.
+    const short = findOversell([
+      ...ledger,
+      { ...transaction, id: Number.MAX_SAFE_INTEGER },
+    ])
+    if (short) {
+      throw badRequest(
+        `That would leave your sale on ${formatDay(short.executedAt)} without enough ${asset.ticker}`
+      )
+    }
+
+    return toView(await manager.save(transaction), asset)
+  })
+}
+
+export async function updateTransaction(
+  userId: number,
+  transactionId: number,
+  changes: UpdateTransactionInput
+): Promise<TransactionView> {
+  return dataSource.transaction(async (manager) => {
+    await lockUser(manager, userId)
+
+    // Looking up by id AND owner means another user's id is simply "not found".
+    const transaction = await manager.findOne(Transaction, {
+      where: { id: transactionId, userId },
+      relations: { asset: true },
+    })
+    if (!transaction) throw notFound('Transaction not found')
+    const asset = transaction.asset!
+
+    Object.entries(changes).forEach(([field, value]) => {
+      if (value !== undefined) Object.assign(transaction, { [field]: value })
+    })
+
+    const others = (await loadLedger(manager, userId, asset.id)).filter(
+      (entry) => entry.id !== transaction.id
     )
-    return toView(transaction, asset)
+    const short = findOversell([...others, transaction])
+    if (short) {
+      throw badRequest(
+        `That change would take your ${asset.ticker} balance below zero on ${formatDay(short.executedAt)}`
+      )
+    }
+
+    return toView(await manager.save(transaction), asset)
+  })
+}
+
+export async function deleteTransaction(
+  userId: number,
+  transactionId: number
+): Promise<void> {
+  await dataSource.transaction(async (manager) => {
+    await lockUser(manager, userId)
+
+    const transaction = await manager.findOne(Transaction, {
+      where: { id: transactionId, userId },
+      relations: { asset: true },
+    })
+    if (!transaction) throw notFound('Transaction not found')
+
+    const others = (
+      await loadLedger(manager, userId, transaction.assetId)
+    ).filter((entry) => entry.id !== transaction.id)
+    const short = findOversell(others)
+    if (short) {
+      throw badRequest(
+        `Deleting this would leave your sale on ${formatDay(short.executedAt)} without enough ${transaction.asset!.ticker}. Delete that sale first.`
+      )
+    }
+
+    await manager.remove(transaction)
   })
 }
 

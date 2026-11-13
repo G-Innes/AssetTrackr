@@ -21,6 +21,10 @@ export const useUserStore = defineStore('user', () => {
     startSession(await api.signup(input))
   }
 
+  async function startDemo() {
+    startSession(await api.startDemo())
+  }
+
   /** Loads the profile for a token left over from an earlier visit. */
   async function restoreSession() {
     if (user.value || !hasValidToken()) return
@@ -36,5 +40,9 @@ export const useUserStore = defineStore('user', () => {
     user.value = null
   }
 
-  return { user, isAuthenticated, login, signup, restoreSession, logout }
+  function setUser(next: User) {
+    user.value = next
+  }
+
+  return { user, isAuthenticated, login, signup, startDemo, restoreSession, setUser, logout }
 })

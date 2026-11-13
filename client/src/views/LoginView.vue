@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PageForm from '../components/PageForm.vue'
+import DemoButton from '@/components/DemoButton.vue'
 import { getErrorMessage } from '@/services/api'
 import { useUserStore } from '@/stores/user'
 
@@ -100,6 +101,10 @@ async function submitLogin() {
     </template>
 
     <template #footer>
+      <div class="mt-4 border-t border-white/10 pt-4 text-center">
+        <DemoButton class="btn-quiet w-full" />
+        <p class="text-dark-400 mt-2 text-xs">A sample portfolio, no sign-up needed.</p>
+      </div>
       <div class="text-dark-300 mt-4 text-center text-sm">
         Not a member?
         <RouterLink

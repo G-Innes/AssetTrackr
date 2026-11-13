@@ -8,7 +8,11 @@ let counter = 0
 
 /** Registers a fresh user and returns them with a valid token. */
 export async function createUser(
-  overrides: Partial<{ username: string; email: string; password: string }> = {}
+  overrides: Partial<{
+    username: string
+    email: string
+    password: string
+  }> = {}
 ) {
   counter += 1
   const credentials = {
@@ -34,18 +38,41 @@ export function as(token: string) {
   }
 }
 
-export const buy = (
-  token: string,
-  ticker: string,
-  quantity: number | string,
-  price = 100
-) =>
-  as(token).post('/api/transactions', { ticker, type: 'buy', quantity, price })
+type TradeOptions = {
+  price?: number | string
+  executedAt?: string
+  note?: string
+}
 
-export const sell = (
-  token: string,
-  ticker: string,
-  quantity: number | string,
-  price = 100
-) =>
-  as(token).post('/api/transactions', { ticker, type: 'sell', quantity, price })
+const trade =
+  (type: 'buy' | 'sell') =>
+  (
+    token: string,
+    ticker: string,
+    quantity: number | string,
+    options: TradeOptions = {}
+  ) =>
+    as(token).post('/api/transactions', {
+      ticker,
+      type,
+      quantity,
+      price: 100,
+      ...options,
+    })
+
+export const buy = trade('buy')
+export const sell = trade('sell')
+
+/** An ISO timestamp at noon UTC, `days` days before today. */
+export function daysAgo(days: number): string {
+  const date = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+  return `${date.toISOString().slice(0, 10)}T12:00:00.000Z`
+}
+
+/** Sorted "TICKER quantity" pairs of what a user currently holds. */
+export async function holdingsOf(token: string): Promise<string[]> {
+  const res = await as(token).get('/api/portfolio')
+  return res.body.holdings
+    .map((h: any) => `${h.asset.ticker} ${h.quantity}`)
+    .sort()
+}

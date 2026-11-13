@@ -18,6 +18,9 @@ const envSchema = z.object({
   JWT_SECRET: z.string().min(32).optional(),
   JWT_EXPIRES_IN: z.string().default('1d'),
 
+  // "static" swaps live Coinbase prices for fixed ones: offline work and e2e tests
+  MARKET_DATA: z.enum(['coinbase', 'static']).default('coinbase'),
+
   // Comma separated list of origins allowed to call the API from a browser.
   CLIENT_ORIGIN: z
     .string()
@@ -95,6 +98,7 @@ const config = {
     jwtSecret,
     jwtExpiresIn: env.JWT_EXPIRES_IN,
   },
+  marketData: env.MARKET_DATA,
   clientOrigins: env.CLIENT_ORIGIN.split(',')
     .map((origin) => origin.trim())
     .filter(Boolean),

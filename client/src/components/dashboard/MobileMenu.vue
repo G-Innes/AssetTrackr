@@ -7,9 +7,9 @@ const isOpen = ref(false)
 
 // Navigation links
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: 'HomeIcon' },
-  { name: 'Buy or Sell', href: '/dashboard/asset-manage', icon: 'ArrowsRightLeftIcon' },
-  { name: 'My Transactions', href: '/dashboard/transactions', icon: 'ClockIcon' },
+  { name: 'Portfolio', href: '/dashboard', icon: 'HomeIcon' },
+  { name: 'Record a trade', href: '/dashboard/asset-manage', icon: 'ArrowsRightLeftIcon' },
+  { name: 'Transactions', href: '/dashboard/transactions', icon: 'ClockIcon' },
 ]
 
 // Close menu when route changes
