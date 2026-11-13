@@ -1,24 +1,18 @@
 {
-  "extends": "@tsconfig/node18/tsconfig.json",
-
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "include": ["src", "tests", "vitest.config.ts"],
   "compilerOptions": {
-    "baseUrl": ".",
-    "rootDir": ".",
-
+    // the linter's TypeScript parser does not know "es2024" yet
+    "lib": ["es2023"],
     "module": "CommonJS",
-    "target": "ES2022",
     "moduleResolution": "Node",
-
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "strict": true,
-    "strictPropertyInitialization": false,
     "outDir": "dist",
 
-    "types": ["jest", "node"],
-    "paths": {
-      "@server/*": ["./src/*"],
-      "@tests/*": ["./tests/*"]
-    }
+    // TypeORM entities are declared with decorators
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
+
+    "types": ["vitest/globals", "node"]
   }
 }

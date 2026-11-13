@@ -20,7 +20,9 @@ services:
       retries: 10
 
   server:
-    build: ./server
+    build:
+      context: .
+      dockerfile: server/Dockerfile
     environment:
       NODE_ENV: production
       PORT: 3000
@@ -35,7 +37,9 @@ services:
         condition: service_healthy
 
   client:
-    build: ./client
+    build:
+      context: .
+      dockerfile: client/Dockerfile
     ports:
       - '8080:80'
     depends_on:

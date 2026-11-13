@@ -14,9 +14,7 @@ const MAX_VALUE = new Decimal('1e15')
 export function decimalInput(label: string, { allowZero = false } = {}) {
   return z
     .union([z.string().trim().min(1), z.number()], {
-      errorMap: () => ({
-        message: `${label} is required and must be a number`,
-      }),
+      error: `${label} is required and must be a number`,
     })
     .transform((value, ctx) => {
       let amount: Decimal

@@ -117,19 +117,17 @@ onMounted(() => {
     <div
       class="glass-card shadow-glow-white rounded-xl border border-white/10 p-8 sm:mx-auto sm:w-full sm:max-w-md"
     >
-      <h2 class="mb-6 text-center font-display text-2xl font-bold text-white">
+      <h2 class="font-display mb-6 text-center text-2xl font-bold text-white">
         Buy or Sell an Asset
       </h2>
       <form class="space-y-6" novalidate @submit.prevent>
         <div>
-          <label for="ticker" class="block text-sm font-medium text-dark-200">Ticker Symbol</label>
+          <label for="ticker" class="text-dark-200 block text-sm font-medium">Ticker Symbol</label>
           <div class="relative mt-1">
             <input
-              v-model="ticker"
-              @input="handleTickerInput"
-              @blur="handleTickerBlur"
-              type="text"
               id="ticker"
+              v-model="ticker"
+              type="text"
               name="ticker"
               autocomplete="off"
               autocapitalize="characters"
@@ -137,11 +135,13 @@ onMounted(() => {
               maxlength="12"
               :aria-invalid="!!errors.ticker"
               aria-describedby="ticker-error"
-              class="mt-1 block w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-white shadow-sm placeholder:text-dark-400 focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+              class="placeholder:text-dark-400 focus:border-primary-500/50 focus:ring-primary-500/20 mt-1 block w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-white shadow-sm focus:outline-none focus:ring-2"
+              @input="handleTickerInput"
+              @blur="handleTickerBlur"
             />
             <ul
               v-if="showSuggestions && suggestions.length > 0"
-              class="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-white/10 bg-dark-800/90 shadow-lg backdrop-blur-md"
+              class="bg-dark-800/90 absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-white/10 shadow-lg backdrop-blur-md"
             >
               <li v-for="item in suggestions" :key="item.ticker">
                 <button
@@ -154,38 +154,38 @@ onMounted(() => {
                 </button>
               </li>
             </ul>
-            <p v-if="assetName" class="mt-1 text-sm text-dark-300">{{ assetName }}</p>
-            <p v-if="errors.ticker" id="ticker-error" class="mt-1 text-sm text-danger-400">
+            <p v-if="assetName" class="text-dark-300 mt-1 text-sm">{{ assetName }}</p>
+            <p v-if="errors.ticker" id="ticker-error" class="text-danger-400 mt-1 text-sm">
               {{ errors.ticker }}
             </p>
           </div>
         </div>
 
         <div>
-          <label for="quantity" class="block text-sm font-medium text-dark-200">Quantity</label>
+          <label for="quantity" class="text-dark-200 block text-sm font-medium">Quantity</label>
           <div class="mt-1">
             <input
+              id="quantity"
               v-model="quantity"
               type="number"
               step="any"
               min="0"
               inputmode="decimal"
-              id="quantity"
               name="quantity"
               autocomplete="off"
               placeholder="0.00"
               :aria-invalid="!!errors.quantity"
               aria-describedby="quantity-error"
-              class="mt-1 block w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-white shadow-sm placeholder:text-dark-400 focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+              class="placeholder:text-dark-400 focus:border-primary-500/50 focus:ring-primary-500/20 mt-1 block w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-white shadow-sm focus:outline-none focus:ring-2"
             />
-            <p v-if="errors.quantity" id="quantity-error" class="mt-1 text-sm text-danger-400">
+            <p v-if="errors.quantity" id="quantity-error" class="text-danger-400 mt-1 text-sm">
               {{ errors.quantity }}
             </p>
           </div>
         </div>
 
         <div>
-          <span class="block text-sm font-medium text-dark-200">Current Price</span>
+          <span class="text-dark-200 block text-sm font-medium">Current Price</span>
           <p
             class="mt-2 block w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-white"
             aria-live="polite"
@@ -198,7 +198,7 @@ onMounted(() => {
           </p>
           <p
             v-if="currentPrice !== null && Number(quantity) > 0"
-            class="mt-1 text-sm text-dark-300"
+            class="text-dark-300 mt-1 text-sm"
           >
             Total: {{ formatCurrency(currentPrice * Number(quantity)) }}
           </p>
@@ -208,16 +208,16 @@ onMounted(() => {
           <button
             type="button"
             :disabled="isSubmitting"
+            class="shadow-glow-success bg-success-600 hover:bg-success-500 flex w-full justify-center rounded-md px-4 py-3 text-sm font-semibold text-white transition-all disabled:cursor-not-allowed disabled:opacity-60"
             @click="handleSubmit('buy')"
-            class="shadow-glow-success flex w-full justify-center rounded-md bg-success-600 px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-success-500 disabled:cursor-not-allowed disabled:opacity-60"
           >
             Buy
           </button>
           <button
             type="button"
             :disabled="isSubmitting"
+            class="shadow-glow-danger bg-danger-600 hover:bg-danger-500 flex w-full justify-center rounded-md px-4 py-3 text-sm font-semibold text-white transition-all disabled:cursor-not-allowed disabled:opacity-60"
             @click="handleSubmit('sell')"
-            class="shadow-glow-danger flex w-full justify-center rounded-md bg-danger-600 px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-danger-500 disabled:cursor-not-allowed disabled:opacity-60"
           >
             Sell
           </button>

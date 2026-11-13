@@ -21,7 +21,7 @@ defineEmits<{
         v-motion
         :initial="{ opacity: 0, y: 20 }"
         :enter="{ opacity: 1, y: 0, transition: { duration: 400, delay: 100 } }"
-        class="mb-6 font-display text-3xl font-bold text-white"
+        class="font-display mb-6 text-3xl font-bold text-white"
       >
         {{ heading }}
       </h2>

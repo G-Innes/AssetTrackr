@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const usernameSchema = z
-  .string({ required_error: 'Username is required' })
+  .string({ error: 'Username is required' })
   .trim()
   .min(3, 'Username must be at least 3 characters')
   .max(20, 'Username must be at most 20 characters')
@@ -11,7 +11,7 @@ export const usernameSchema = z
   )
 
 export const emailSchema = z
-  .string({ required_error: 'Email is required' })
+  .string({ error: 'Email is required' })
   .trim()
   .toLowerCase()
   .max(254, 'Email is too long')
@@ -21,7 +21,7 @@ export const signupSchema = z.object({
   username: usernameSchema,
   email: emailSchema,
   password: z
-    .string({ required_error: 'Password is required' })
+    .string({ error: 'Password is required' })
     .min(8, 'Password must be at least 8 characters')
     // bcrypt silently ignores everything after 72 bytes
     .max(72, 'Password must be at most 72 characters'),
@@ -29,13 +29,13 @@ export const signupSchema = z.object({
 
 export const loginSchema = z.object({
   usernameOrEmail: z
-    .string({ required_error: 'Username or email is required' })
+    .string({ error: 'Username or email is required' })
     .trim()
     .toLowerCase()
     .min(1, 'Username or email is required')
     .max(254),
   password: z
-    .string({ required_error: 'Password is required' })
+    .string({ error: 'Password is required' })
     .min(1, 'Password is required')
     .max(72),
 })

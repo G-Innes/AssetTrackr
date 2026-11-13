@@ -53,36 +53,36 @@ async function submitLogin() {
     </div>
   </header>
 
-  <PageForm heading="Log in to your account" formLabel="Login" @submit="submitLogin">
+  <PageForm heading="Log in to your account" form-label="Login" @submit="submitLogin">
     <template #default>
       <div class="mb-4">
-        <label for="usernameOrEmail" class="mb-2 block text-sm font-medium text-dark-200"
+        <label for="usernameOrEmail" class="text-dark-200 mb-2 block text-sm font-medium"
           >Username or Email</label
         >
         <input
           id="usernameOrEmail"
-          type="text"
           v-model="userForm.usernameOrEmail"
+          type="text"
           required
-          class="w-full rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-200 placeholder:text-dark-400 focus:border-primary-500/50 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+          class="placeholder:text-dark-400 focus:border-primary-500/50 focus:ring-primary-500/20 w-full rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-200 focus:bg-white/10 focus:outline-none focus:ring-2"
         />
       </div>
 
       <div class="mb-4">
-        <label for="password" class="mb-2 block text-sm font-medium text-dark-200">Password</label>
+        <label for="password" class="text-dark-200 mb-2 block text-sm font-medium">Password</label>
         <input
           id="password"
-          type="password"
           v-model="userForm.password"
+          type="password"
           required
           autocomplete="current-password"
-          class="w-full rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-200 placeholder:text-dark-400 focus:border-primary-500/50 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+          class="placeholder:text-dark-400 focus:border-primary-500/50 focus:ring-primary-500/20 w-full rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-200 focus:bg-white/10 focus:outline-none focus:ring-2"
         />
       </div>
 
       <div
         v-if="errorMessage"
-        class="mb-4 rounded-lg bg-danger-600/20 p-4 text-white"
+        class="bg-danger-600/20 mb-4 rounded-lg p-4 text-white"
         data-testid="errorMessage"
       >
         {{ errorMessage }}
@@ -92,7 +92,7 @@ async function submitLogin() {
         <button
           type="submit"
           :disabled="isSubmitting"
-          class="shadow-glow-primary rounded-lg bg-primary-600 px-5 py-3 text-white transition hover:bg-primary-500 disabled:cursor-not-allowed disabled:opacity-60"
+          class="shadow-glow-primary bg-primary-600 hover:bg-primary-500 rounded-lg px-5 py-3 text-white transition disabled:cursor-not-allowed disabled:opacity-60"
         >
           {{ isSubmitting ? 'Logging in…' : 'Log in' }}
         </button>
@@ -100,11 +100,11 @@ async function submitLogin() {
     </template>
 
     <template #footer>
-      <div class="mt-4 text-center text-sm text-dark-300">
+      <div class="text-dark-300 mt-4 text-center text-sm">
         Not a member?
         <RouterLink
           :to="{ name: 'Signup' }"
-          class="font-semibold text-primary-400 hover:text-primary-300"
+          class="text-primary-400 hover:text-primary-300 font-semibold"
           >Sign up</RouterLink
         >
       </div>

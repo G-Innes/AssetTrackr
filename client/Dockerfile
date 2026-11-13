@@ -1,32 +1,17 @@
-# Stage 1: Build the client application
-FROM node:18.19.0-alpine3.18 AS builder
+# Build from the repository root - the workspaces share one lockfile:
+#   docker build -f client/Dockerfile -t assettrackr-client .
 
-# Set working directory
+FROM node:22-slim AS build
 WORKDIR /app
+COPY package.json package-lock.json ./
+COPY server/package.json server/
+COPY client/package.json client/
+RUN npm ci --workspace client
+COPY client client
+# VITE_API_URL is left unset: nginx (below) proxies /api to the API container
+RUN npm run build --workspace client
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application
-COPY . .
-
-# Build the application
-RUN npm run build
-
-# Stage 2: Serve the client application with a static file server
-FROM nginx:1.23.4-alpine
-
-# Copy the built files from the previous stage
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Copy the Nginx configuration file
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port 80
-EXPOSE 80:80
-
-# Start nginx server
-CMD ["nginx", "-g", "daemon off;"]
+FROM nginx:1.27-alpine
+COPY client/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/client/dist /usr/share/nginx/html
+EXPOSE 80

@@ -37,7 +37,7 @@ onMounted(() => dashboardStore.fetchAssets())
   <div>
     <div class="mb-8">
       <h1 class="font-display text-3xl font-bold text-white">Dashboard</h1>
-      <p class="mt-2 text-dark-300">Track and manage your cryptocurrency portfolio</p>
+      <p class="text-dark-300 mt-2">Track and manage your cryptocurrency portfolio</p>
     </div>
 
     <!-- Stats cards -->
@@ -50,9 +50,9 @@ onMounted(() => dashboardStore.fetchAssets())
         :enter="{ opacity: 1, y: 0, transition: { duration: 400, delay: index * 100 } }"
         class="glass-card shadow-glow-white overflow-hidden rounded-xl border border-white/10 px-6 py-5 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
       >
-        <dt class="truncate text-sm font-medium text-dark-300">{{ stat.name }}</dt>
+        <dt class="text-dark-300 truncate text-sm font-medium">{{ stat.name }}</dt>
         <dd class="mt-2 text-2xl font-semibold tracking-tight text-white">{{ stat.value }}</dd>
-        <p v-if="stat.hint" class="mt-1 text-xs text-dark-400">{{ stat.hint }}</p>
+        <p v-if="stat.hint" class="text-dark-400 mt-1 text-xs">{{ stat.hint }}</p>
       </div>
     </div>
 
@@ -105,7 +105,7 @@ onMounted(() => dashboardStore.fetchAssets())
     <!-- Error state -->
     <div
       v-else-if="error"
-      class="rounded-xl border border-danger-500/30 bg-danger-600/10 p-6 text-center"
+      class="border-danger-500/30 bg-danger-600/10 rounded-xl border p-6 text-center"
       role="alert"
     >
       <p class="text-sm text-white">{{ error }}</p>
@@ -122,7 +122,7 @@ onMounted(() => dashboardStore.fetchAssets())
       v-else-if="!assets.length"
       class="glass-card shadow-glow-white rounded-xl border border-dashed border-white/20 p-8 text-center"
     >
-      <div class="mx-auto h-12 w-12 text-dark-400">
+      <div class="text-dark-400 mx-auto h-12 w-12">
         <svg class="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             stroke-linecap="round"
@@ -133,13 +133,13 @@ onMounted(() => dashboardStore.fetchAssets())
         </svg>
       </div>
       <h3 class="mt-2 text-sm font-medium text-white">No assets yet</h3>
-      <p class="mt-1 text-sm text-dark-400">
+      <p class="text-dark-400 mt-1 text-sm">
         Get started by adding your first cryptocurrency asset.
       </p>
       <div class="mt-6">
         <router-link
           to="/dashboard/asset-manage"
-          class="shadow-glow-primary inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+          class="shadow-glow-primary bg-primary-600 hover:bg-primary-500 focus-visible:outline-primary-600 inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           <svg class="-ml-0.5 mr-1.5 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path

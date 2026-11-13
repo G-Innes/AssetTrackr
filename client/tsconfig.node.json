@@ -1,16 +1,9 @@
 {
-  "extends": "@tsconfig/node18/tsconfig.json",
-  "include": [
-    "vite.config.*",
-    "vitest.config.*",
-    "cypress.config.*",
-    "nightwatch.conf.*",
-    "playwright.config.*",
-    "postcss.config.*"
-  ],
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "include": ["vite.config.*", "vitest.config.*", "playwright.config.*", "e2e/**/*.ts"],
   "compilerOptions": {
     "composite": true,
-    "strict": true,
+    "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "types": ["node"]

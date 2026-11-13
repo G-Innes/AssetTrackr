@@ -1,64 +1,43 @@
 /* eslint-env node */
 
 module.exports = {
-root: true,
-extends: [
+  root: true,
+  extends: [
     'eslint:recommended',
-    'airbnb', // or any other config you want to extend
+    'airbnb-base',
     'airbnb-typescript/base',
     'prettier',
-],
-parserOptions: {
+  ],
+  parserOptions: {
     ecmaVersion: 'latest',
-    project: './tsconfig.eslint.json',
+    project: './tsconfig.json',
     tsconfigRootDir: __dirname,
-},
-ignorePatterns: ['**/*.js'],
-rules: {
-    // we can override some problematic import rules here
-    // that can cause issues when using import aliases.
+  },
+  ignorePatterns: ['**/*.js', 'dist'],
+  rules: {
     'import/extensions': 'off',
-    'no-console': 'off',
+    'import/prefer-default-export': 'off',
+    // tests import dev dependencies such as supertest
     'import/no-extraneous-dependencies': 'off',
-    "import/order": ["error", {
-    "pathGroups": [
-        {
-        "pattern": "@server/**",
-        "group": "internal"
-        },
-        {
-        "pattern": "@tests/**",
-        "group": "internal"
-        },
-    ],
-    }],
 
-    // functions are always hoisted, so we can use them before they are defined
-    // which in various cases improves readability
+    // functions are hoisted, so helpers can sit below the code that uses them
     'no-use-before-define': ['error', { functions: false }],
     '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
 
-    'import/prefer-default-export': 'off',
-
     // Express error middleware must declare all four arguments
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-},
+  },
 
-overrides: [
-    // TypeORM generates classes for migrations that do not use `this`.
+  overrides: [
     {
-    files: ['src/database/migrations/**/*.ts'],
-    rules: {
-        'class-methods-use-this': 'off',
+      // TypeORM migrations are classes whose methods do not use `this`
+      files: ['src/database/migrations/**/*.ts'],
+      rules: { 'class-methods-use-this': 'off' },
     },
-    },
-
-    // for TypeORM relations
     {
-    files: ['src/entities/**/*.ts'],
-    rules: {
-        'import/no-cycle': 'off',
+      // entities reference each other for relations
+      files: ['src/entities/**/*.ts'],
+      rules: { 'import/no-cycle': 'off' },
     },
-    },
-],
+  ],
 }

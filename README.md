@@ -129,16 +129,9 @@ npm run build
 
 ## Testing
 
-**Backend Tests (Jest):**
 ```bash
-cd server
-npm run test
-```
-
-**Frontend Tests (Playwright):**
-```bash
-cd client
-npm run test:e2e
+npm test          # client unit tests + API tests (needs TEST_DATABASE_URL)
+npm run test:e2e  # Playwright, against the running app (npm run dev)
 ```
 
 ## Deployment
@@ -150,7 +143,7 @@ npm run test:e2e
 
 ### Backend (Render)
 - Automatically deploys from `main` branch
-- Build command: `npm install --include=dev && npm run build`
+- Build command: `npm install --include=dev && npm run build -w server`
 - Start command: `npm start` (applies database migrations, then serves)
 
 ### Environment Variables (Render)

@@ -5,7 +5,7 @@ interface Props {
   rounded?: 'none' | 'sm' | 'md' | 'lg' | 'full'
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   width: '100%',
   height: '1rem',
   rounded: 'md',

@@ -3,45 +3,23 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
+// In development and in `vite preview` the API is reached through this proxy,
+// so the browser only ever talks to one origin.
+const apiProxy = {
+  '/api': {
+    target: process.env.API_PROXY_TARGET || 'http://127.0.0.1:3000',
+    changeOrigin: true,
+  },
+}
+
 // https://vitejs.dev/config/
-export default defineConfig(({ command }) => {
-  const baseConfig = {
-    plugins: [vue()],
-    resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url)),
-      },
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
-  }
-  
-  // Use different proxy settings for dev and preview
-  if (command === 'serve') {
-    // Development mode
-    return {
-      ...baseConfig,
-      server: {
-        proxy: {
-          '/api': {
-            target: 'http://127.0.0.1:3000',
-            changeOrigin: true,
-            secure: false,
-          },
-        },
-      },
-    }
-  } else {
-    // Preview/build mode
-    return {
-      ...baseConfig,
-      preview: {
-        proxy: {
-          '/api': {
-            target: 'http://127.0.0.1:3000',
-            changeOrigin: true,
-            secure: false,
-          },
-        },
-      },
-    }
-  }
+  },
+  server: { proxy: apiProxy },
+  preview: { proxy: apiProxy },
 })

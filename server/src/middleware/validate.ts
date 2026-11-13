@@ -1,11 +1,11 @@
-import { ZodTypeAny, z } from 'zod'
+import { z } from 'zod'
 import { badRequest } from '../utils/errors'
 
 /**
  * Parses untrusted input with a zod schema. On failure it throws a 400 whose
  * message names the first problem and whose details list all of them.
  */
-export function parse<Schema extends ZodTypeAny>(
+export function parse<Schema extends z.ZodType>(
   schema: Schema,
   input: unknown
 ): z.infer<Schema> {

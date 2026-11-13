@@ -1,19 +1,13 @@
 {
-    "extends": "@vue/tsconfig/tsconfig.dom.json",
-    "include": ["env.d.ts", "src/**/*.ts", "src/**/*", "src/**/*.vue", "src/**/*vue", "**/*.vue", "src/**/*js", "src/**/*jsx", "src/**/*tsx", "src/**/*ts", "src/**/*json"],
-    "exclude": ["src/**/tests/*", "node_modules", "src/layouts/StackedLayout.vue"],
-    "compilerOptions": {
-      "rootDir": "..",
-      "strict": true,
-      "composite": true,
-      "baseUrl": ".",
-      "preserveSymlinks": true,
-      "experimentalDecorators": true,
-      "strictPropertyInitialization": false,
-      "paths": {
-        "@/*": ["./src/*"],
-        "@server/*": ["../server/src/*"]
-      }
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": ["src/**/*.ts", "src/**/*.vue"],
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true,
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
     }
   }
-  
+}

@@ -70,7 +70,7 @@ const goToDashboard = () => {
 
     <div class="mt-6 flex justify-center">
       <button
-        class="shadow-glow-primary rounded-lg bg-primary-600 px-5 py-3 text-white transition hover:bg-primary-500"
+        class="shadow-glow-primary bg-primary-600 hover:bg-primary-500 rounded-lg px-5 py-3 text-white transition"
         @click="goToDashboard"
       >
         Go back to Dashboard

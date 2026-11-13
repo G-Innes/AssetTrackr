@@ -1,39 +1,23 @@
 {
   "name": "assettrackr",
   "version": "1.0.0",
-  "description": "Asset tracking application",
+  "description": "Cryptocurrency portfolio tracker - Vue 3 client and Express API",
   "private": true,
   "workspaces": [
     "client",
     "server"
   ],
   "scripts": {
-    "install:all": "npm install --workspaces",
-    "start:full": "npm run build && concurrently \"npm run start:server\" \"npm run start:client\"",
-    "start:client": "cd client && npm run preview",
-    "start:server": "cd server && npm run start:prod",
-    "start": "npm run start:full",
-    "install:client": "cd client && npm install",
-    "install:server": "cd server && npm install",
-    "build:client": "cd client && npm run build",
-    "build:server": "cd server && npm run build",
-    "build": "npm run build:client && npm run build:server",
-    "dev:client": "cd client && npm run dev",
-    "dev:server": "cd server && npm run dev",
-    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "vercel-build": "npm run build:client",
-    "prepare": "husky || true",
-    "lint:client": "cd client && npm run lint",
-    "lint:server": "cd server && npm run lint",
-    "format:client": "cd client && npm run format",
-    "format:server": "cd server && npm run format",
-    "typecheck:client": "cd client && npm run typecheck",
-    "typecheck:server": "cd server && npm run typecheck",
-    "lint": "npm run lint:client && npm run lint:server",
-    "format": "npm run format:client && npm run format:server",
-    "typecheck": "npm run typecheck:client && npm run typecheck:server",
-    "preview:client": "cd client && npm run preview",
-    "setup": "npm install concurrently && cd server && npm install && cd ../client && npm install"
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build --workspaces",
+    "start": "npm run start -w server",
+    "test": "npm run test --workspaces",
+    "test:e2e": "npm run test:e2e -w client",
+    "lint": "npm run lint --workspaces",
+    "format": "npm run format --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "vercel-build": "npm run build -w client",
+    "prepare": "husky || true"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
@@ -43,16 +27,10 @@
     "lint-staged": "^16.0.0"
   },
   "engines": {
-    "node": ">=18.19.0"
+    "node": ">=22"
   },
   "lint-staged": {
-    "client/src/**/*.{js,ts,jsx,tsx,vue}": [
-      "npm run format:client",
-      "npm run lint:client"
-    ],
-    "server/src/**/*.{js,ts}": [
-      "npm run format:server",
-      "npm run lint:server"
-    ]
+    "client/{src,e2e}/**/*.{ts,vue}": "prettier --write",
+    "server/{src,tests}/**/*.ts": "prettier --write"
   }
 }

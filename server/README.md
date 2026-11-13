@@ -1,88 +1,86 @@
-# AssetTrackr Portfolio Manager
+# AssetTrackr API
 
-AssetTrackr is a portfolio manager that allows users to manage their asset portfolios. The current MVP version provides basic functionality for user authentication, profile creation, and adding assets to a user's portfolio.
+Express + TypeORM + PostgreSQL. See the [root README](../README.md) for the
+whole project; this file is the API reference.
 
-## Overview
+## Running
 
-The primary features of AssetTrackr include:
-
-- User signup and login
-- Managing user profiles
-- Adding assets to a user's portfolio
-- Update portfolio holdings with buy/sell transactions
-- Viewing portfolio holdings
-
-The application is currently in active development, with a focus on backend functionality for portfolio management of asset transactions.
-
-Future enhancements will include performance tracking of individual holdings and overall portfolio, providing users with insights into their investment performance over time.
-
-## Getting Started
-
-Follow these steps to set up the project locally:
-
-1. Clone the repository
-2. Run `npm install` in the root directory
-3. Navigate to the server directory with `cd server`
-4. add username and password to .env.example & remove '.example' from the file name
-5. Create Postgres database: `AssetTrackr`
-6. Start the server with `npm start`
-
-## API Usage
-
-You can interact with the API using tools like Insomnia or Postman. Here are some example requests:
-
-- Signup: `POST http://localhost:3000/user` with JSON body:
-```json
-  {
-    "username": "VeryFirstUser",
-    "email": "firstuser@gmail.com",
-    "password": "Password123"
-  }
+```bash
+cp .env.example .env      # then fill in DATABASE_URL and JWT_SECRET
+npm run dev               # watch mode on http://localhost:3000
+npm test                  # needs TEST_DATABASE_URL; that database is wiped
+npm run build && npm start
 ```
 
-- Login: `POST http://localhost:3000/user/login` with JSON body:
+The schema is managed by migrations in `src/database/migrations`. They are
+applied automatically when the server starts (or with `npm run migrate`).
+
+## Conventions
+
+- Every route except `/api/health` and `/api/auth/*` needs
+  `Authorization: Bearer <token>`.
+- The caller is identified by the token alone. No route accepts a user id.
+- Quantities and prices are decimal **strings** (`"0.00012345"`), stored as
+  `numeric(36,18)`. Requests may send them as strings or numbers.
+- Errors are `{ "message": string, "details"?: [{ field, message }] }`.
+
+| Status | Meaning                                              |
+| ------ | ---------------------------------------------------- |
+| 400    | Validation failed, or the trade is not possible      |
+| 401    | Missing, invalid or expired token; wrong credentials |
+| 404    | No such route or resource                            |
+| 409    | Username or email already in use                     |
+| 429    | Too many signup/login attempts from this address     |
+
+## Endpoints
+
+### Auth
+
+| Method | Path               | Body                              | Returns                   |
+| ------ | ------------------ | --------------------------------- | ------------------------- |
+| POST   | `/api/auth/signup` | `{ username, email, password }`   | `201 { user, token }`     |
+| POST   | `/api/auth/login`  | `{ usernameOrEmail, password }`   | `200 { user, token }`     |
+
+Usernames are 3-20 characters (letters, numbers, `.`, `-`, `_`) and unique
+regardless of case. Passwords are 8-72 characters.
+
+### Account
+
+| Method | Path      | Body                     | Returns                                |
+| ------ | --------- | ------------------------ | -------------------------------------- |
+| GET    | `/api/me` |                          | `{ id, username, email, createdAt }`   |
+| PATCH  | `/api/me` | `{ username?, email? }`  | the updated user                       |
+| DELETE | `/api/me` |                          | `204`; also deletes their transactions |
+
+### Transactions
+
+| Method | Path                | Notes                                               |
+| ------ | ------------------- | --------------------------------------------------- |
+| GET    | `/api/transactions` | Newest first. Optional `?type=buy\|sell&assetId=1`  |
+| POST   | `/api/transactions` | `{ ticker, type, quantity, price, name? }` -> `201` |
+
 ```json
-  {
-    "usernameOrEmail": "VeryFirstUser",
-    "password": "Password123"
-  }
+{
+  "id": 12,
+  "type": "buy",
+  "quantity": "0.004",
+  "price": "60000.55",
+  "executedAt": "2026-03-05T12:00:00.000Z",
+  "note": null,
+  "asset": { "id": 1, "ticker": "BTC", "name": "Bitcoin" }
+}
 ```
 
-- User Profile: `GET http://localhost:3000/user/user/1`
+A sell is rejected with `400` if it exceeds the caller's balance. Trades are
+written inside a database transaction that locks the user's row, so two
+simultaneous sells cannot oversell a holding.
 
-- Update User: `PUT http://localhost:3000/user/user/2` with JSON body:
-```json
-  {
-    "username": "VeryFirstUser(UPDATED)",
-    "email": "Updatedfirstuser@gmail.com"
-  }
-```
+### Holdings
 
-- Delete User: `DELETE http://localhost:3000/user/user/1`
+| Method | Path                     | Notes                                                   |
+| ------ | ------------------------ | ------------------------------------------------------- |
+| GET    | `/api/holdings`          | `[{ asset, quantity }]`, derived from the transactions  |
+| DELETE | `/api/holdings/:assetId` | Removes the asset and its transactions from the account |
 
-- Create New User Asset if does not exist, same endpoint is used for buy and sell transactions (buys add to quantity, to sell enter a negative number): `POST http://localhost:3000/user/1/assets` with JSON body:
-```json
-  {
-    "userId": 1,
-    "assetId": 1,
-    "quantity": 300,
-    "name": "Some Asset Name",
-    "ticker": "SAN",
-    "current_price": 100
-  }
-```
-
-- Get All User Assets: `GET http://localhost:3000/user/1/assets`
-
-
-- Delete User Asset: `DELETE http://localhost:3000/user/1/assets/1`
-
-# Testing
-
-You will need to create a database for testing named 'test_db'
-
-`npm run test` from server directory
-
-
-
-
+Holdings are never stored: they are the sum of the caller's buys minus sells
+per asset, so they cannot drift out of step with the history.

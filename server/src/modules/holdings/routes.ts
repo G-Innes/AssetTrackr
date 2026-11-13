@@ -6,7 +6,7 @@ import { asyncHandler } from '../../utils/asyncHandler'
 import { listHoldings, removeHolding } from './service'
 
 const assetIdSchema = z.coerce
-  .number({ invalid_type_error: 'Invalid asset id' })
+  .number({ error: 'Invalid asset id' })
   .int('Invalid asset id')
   .positive('Invalid asset id')
 

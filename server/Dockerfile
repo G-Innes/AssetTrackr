@@ -1,32 +1,26 @@
-# Use node:alpine as the base image
-FROM node:18.19.0-alpine3.18 AS builder
+# Build from the repository root - the workspaces share one lockfile:
+#   docker build -f server/Dockerfile -t assettrackr-server .
 
-# Set the working directory inside the container
-WORKDIR /app/server
+FROM node:22-slim AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY server/package.json server/
+COPY client/package.json client/
+RUN npm ci --workspace server
+COPY server server
+RUN npm run build --workspace server
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+FROM node:22-slim
+ENV NODE_ENV=production
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY server/package.json server/
+COPY client/package.json client/
+RUN npm ci --workspace server --omit=dev && npm cache clean --force
+COPY --from=build /app/server/dist server/dist
 
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application
-COPY . .
-
-# Build the server (if applicable)
-RUN npm run build
-
-# Start from a new, smaller image
-FROM node:18.19.0-alpine3.18
-
-# Set the working directory inside the container
-WORKDIR /app/server
-
-# Copy only necessary files from the builder stage
-COPY --from=builder /app/server .
-
-# Expose the port your app runs on
-EXPOSE 3000:3000
-
-# Command to run your application
-CMD ["npm", "run", "start:prod"]
+# Do not run as root
+USER node
+EXPOSE 3000
+# Applies pending database migrations, then starts the API
+CMD ["node", "server/dist/index.js"]

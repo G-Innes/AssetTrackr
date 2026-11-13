@@ -57,7 +57,7 @@ defineEmits(['buy', 'sell'])
         ease: 'easeOut',
       },
     }"
-    class="glass-card group relative overflow-hidden rounded-2xl border border-white/10 bg-glass-gradient transition-all duration-300 hover:-translate-y-1.5"
+    class="glass-card bg-glass-gradient group relative overflow-hidden rounded-2xl border border-white/10 transition-all duration-300 hover:-translate-y-1.5"
     :class="cardGlow"
   >
     <div class="p-6">
@@ -74,7 +74,7 @@ defineEmits(['buy', 'sell'])
           </div>
           <div class="ml-3">
             <h3 class="font-medium text-white">{{ asset.name }}</h3>
-            <p class="text-sm text-dark-300">
+            <p class="text-dark-300 text-sm">
               {{ formatQuantity(asset.quantity) }} {{ asset.ticker }}
             </p>
           </div>
@@ -85,7 +85,7 @@ defineEmits(['buy', 'sell'])
           <p class="font-medium text-white">
             {{ asset.value === null ? '-' : formatCurrency(asset.value) }}
           </p>
-          <p class="text-sm text-dark-300">Value</p>
+          <p class="text-dark-300 text-sm">Value</p>
         </div>
       </div>
 
@@ -101,14 +101,14 @@ defineEmits(['buy', 'sell'])
     <!-- Action buttons -->
     <div class="flex border-t border-white/10">
       <button
-        class="flex-1 py-3 text-sm font-medium text-primary-400 transition-colors hover:bg-white/5"
+        class="text-primary-400 flex-1 py-3 text-sm font-medium transition-colors hover:bg-white/5"
         @click="$emit('buy', asset)"
       >
         Buy More
       </button>
       <div class="w-px bg-white/10"></div>
       <button
-        class="flex-1 py-3 text-sm font-medium text-danger-400 transition-colors hover:bg-white/5"
+        class="text-danger-400 flex-1 py-3 text-sm font-medium transition-colors hover:bg-white/5"
         @click="$emit('sell', asset)"
       >
         Sell

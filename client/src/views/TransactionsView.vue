@@ -45,7 +45,7 @@ onMounted(loadTransactions)
   <div class="TransactionsView p-4">
     <div class="mb-8">
       <h1 class="font-display text-3xl font-bold text-white">Transactions</h1>
-      <p class="mt-2 text-dark-300">View your transaction history</p>
+      <p class="text-dark-300 mt-2">View your transaction history</p>
     </div>
 
     <!-- Filter tabs -->
@@ -55,13 +55,13 @@ onMounted(loadTransactions)
           v-for="filter in filters"
           :key="filter"
           :aria-pressed="activeFilter === filter"
-          @click="activeFilter = filter"
           :class="[
             activeFilter === filter
               ? 'border-primary-500 text-primary-400'
-              : 'border-transparent text-dark-300 hover:border-white/20 hover:text-dark-200',
+              : 'text-dark-300 hover:text-dark-200 border-transparent hover:border-white/20',
             'whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium capitalize transition-colors',
           ]"
+          @click="activeFilter = filter"
         >
           {{ filter }}
         </button>
@@ -136,7 +136,7 @@ onMounted(loadTransactions)
     <!-- Error state -->
     <div
       v-else-if="error"
-      class="rounded-xl border border-danger-500/30 bg-danger-600/10 p-6 text-center"
+      class="border-danger-500/30 bg-danger-600/10 rounded-xl border p-6 text-center"
       role="alert"
     >
       <p class="text-sm text-white">{{ error }}</p>
@@ -153,7 +153,7 @@ onMounted(loadTransactions)
       v-else-if="filteredTransactions.length === 0"
       class="glass-card shadow-glow-white rounded-xl border border-dashed border-white/20 p-8 text-center"
     >
-      <div class="mx-auto h-12 w-12 text-dark-400">
+      <div class="text-dark-400 mx-auto h-12 w-12">
         <svg class="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             stroke-linecap="round"
@@ -164,7 +164,7 @@ onMounted(loadTransactions)
         </svg>
       </div>
       <h3 class="mt-2 text-sm font-medium text-white">No transactions found</h3>
-      <p class="mt-1 text-sm text-dark-400">
+      <p class="text-dark-400 mt-1 text-sm">
         {{
           activeFilter === 'all'
             ? 'Get started by adding your first transaction.'
@@ -174,7 +174,7 @@ onMounted(loadTransactions)
       <div class="mt-6">
         <router-link
           to="/dashboard/asset-manage"
-          class="shadow-glow-primary inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+          class="shadow-glow-primary bg-primary-600 hover:bg-primary-500 focus-visible:outline-primary-600 inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           <svg class="-ml-0.5 mr-1.5 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
@@ -200,23 +200,23 @@ onMounted(loadTransactions)
             <tr>
               <th
                 scope="col"
-                class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-dark-300 sm:pl-6"
+                class="text-dark-300 py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6"
               >
                 Date
               </th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-dark-300">
+              <th scope="col" class="text-dark-300 px-3 py-3.5 text-left text-sm font-semibold">
                 Asset
               </th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-dark-300">
+              <th scope="col" class="text-dark-300 px-3 py-3.5 text-left text-sm font-semibold">
                 Type
               </th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-dark-300">
+              <th scope="col" class="text-dark-300 px-3 py-3.5 text-left text-sm font-semibold">
                 Quantity
               </th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-dark-300">
+              <th scope="col" class="text-dark-300 px-3 py-3.5 text-left text-sm font-semibold">
                 Price
               </th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-dark-300">
+              <th scope="col" class="text-dark-300 px-3 py-3.5 text-left text-sm font-semibold">
                 Total
               </th>
               <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -230,19 +230,19 @@ onMounted(loadTransactions)
               :key="transaction.id"
               class="transition-colors duration-200 hover:bg-white/5"
             >
-              <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-dark-200 sm:pl-6">
+              <td class="text-dark-200 whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                 {{ formatDate(transaction.executedAt) }}
               </td>
               <td class="whitespace-nowrap px-3 py-4">
                 <div class="flex items-center">
                   <div
-                    class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary-500/20 text-xs text-primary-400 ring-1 ring-primary-500/30"
+                    class="bg-primary-500/20 text-primary-400 ring-primary-500/30 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs ring-1"
                   >
                     {{ transaction.asset.ticker.substring(0, 3) }}
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-white">{{ transaction.asset.name }}</div>
-                    <div class="text-sm text-dark-300">{{ transaction.asset.ticker }}</div>
+                    <div class="text-dark-300 text-sm">{{ transaction.asset.ticker }}</div>
                   </div>
                 </div>
               </td>
@@ -250,18 +250,18 @@ onMounted(loadTransactions)
                 <span
                   :class="[
                     transaction.type === 'buy'
-                      ? 'bg-success-900/30 text-success-400 ring-1 ring-success-700/30'
-                      : 'bg-danger-900/30 text-danger-400 ring-1 ring-danger-700/30',
+                      ? 'bg-success-900/30 text-success-400 ring-success-700/30 ring-1'
+                      : 'bg-danger-900/30 text-danger-400 ring-danger-700/30 ring-1',
                     'inline-flex rounded-full px-2 py-1 text-xs font-semibold capitalize leading-5',
                   ]"
                 >
                   {{ transaction.type }}
                 </span>
               </td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-dark-200">
+              <td class="text-dark-200 whitespace-nowrap px-3 py-4 text-sm">
                 {{ formatQuantity(transaction.quantity) }}
               </td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-dark-200">
+              <td class="text-dark-200 whitespace-nowrap px-3 py-4 text-sm">
                 {{ formatCurrency(transaction.price) }}
               </td>
               <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-white">
@@ -271,8 +271,8 @@ onMounted(loadTransactions)
                 class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
               >
                 <button
-                  @click="viewDetails(transaction)"
                   class="text-primary-400 hover:text-primary-300"
+                  @click="viewDetails(transaction)"
                 >
                   Trade<span class="sr-only">, {{ transaction.asset.name }}</span>
                 </button>

@@ -1,43 +1,28 @@
-# Node.js dependencies
+# Dependencies
 node_modules/
-server/node_modules/
 
-# Environment variables
+# Build output
+dist/
+
+# Secrets - only the .env.example files are committed
 .env
-server/.env
+.env.*
+!.env.example
 
-# Coverage directories
+# Test output
 coverage/
-server/coverage/
-server/.gitignore
-
-# Ignore local Git and configuration files
-/.gitignore
-client/.gitignore
+test-results/
+playwright-report/
 
 # Logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Operating system files
+# OS and editor files
 .DS_Store
-
-# IDE/editor directories and files
-.vscode/
 .idea/
+.vscode/
+.cursor/
 
-.dockerignore
-containers.json
-public-endpoint.json
-server/dist/
-client/dist/
-# Snyk Security Extension - AI Rules (auto-generated)
-.cursor/rules/snyk_rules.mdc
+# Local notes
 /docs
 CLAUDE.md
-
-# Test output
-test-results/
-playwright-report/

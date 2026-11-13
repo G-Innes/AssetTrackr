@@ -23,7 +23,7 @@ const handleLogout = () => {
 <template>
   <header class="sticky top-0 z-10 flex h-16 shrink-0 items-center backdrop-blur-md">
     <div
-      class="glass-card flex flex-1 items-center justify-between border-b border-white/10 bg-glass-gradient px-4 sm:px-6 lg:px-8"
+      class="glass-card bg-glass-gradient flex flex-1 items-center justify-between border-b border-white/10 px-4 sm:px-6 lg:px-8"
     >
       <!-- Page title -->
       <div class="hidden lg:flex lg:items-center lg:gap-2">
@@ -41,12 +41,12 @@ const handleLogout = () => {
           >
             <span class="sr-only">Open user menu</span>
             <div
-              class="shadow-glow-primary flex h-8 w-8 items-center justify-center rounded-full bg-primary-500 text-sm font-medium text-white ring-2 ring-primary-500/30 transition-all duration-200 hover:ring-primary-500/50"
+              class="shadow-glow-primary bg-primary-500 ring-primary-500/30 hover:ring-primary-500/50 flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium text-white ring-2 transition-all duration-200"
             >
               {{ userStore.user?.username.charAt(0).toUpperCase() ?? '' }}
             </div>
             <span
-              class="hidden text-sm font-medium text-dark-200 transition-colors duration-200 group-hover:text-white md:block"
+              class="text-dark-200 hidden text-sm font-medium transition-colors duration-200 group-hover:text-white md:block"
             >
               {{ userStore.user?.username }}
             </span>
@@ -63,11 +63,11 @@ const handleLogout = () => {
           >
             <div
               v-if="dropdownOpen"
-              class="glass-card absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-lg border border-white/10 bg-glass-gradient py-1 shadow-lg ring-1 ring-white/5 backdrop-blur-sm focus:outline-none"
+              class="glass-card bg-glass-gradient absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-lg border border-white/10 py-1 shadow-lg ring-1 ring-white/5 backdrop-blur-sm focus:outline-none"
             >
               <button
+                class="text-dark-200 block w-full px-4 py-2 text-left text-sm transition-colors duration-150 hover:bg-white/10 hover:text-white"
                 @click="handleLogout"
-                class="block w-full px-4 py-2 text-left text-sm text-dark-200 transition-colors duration-150 hover:bg-white/10 hover:text-white"
               >
                 Sign out
               </button>

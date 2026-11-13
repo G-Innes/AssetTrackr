@@ -18,7 +18,7 @@ import { RouterLink } from 'vue-router'
             </RouterLink>
             <RouterLink
               to="/signup"
-              class="shadow-glow-primary rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-500 hover:shadow-lg"
+              class="shadow-glow-primary bg-primary-600 hover:bg-primary-500 rounded-md px-3 py-2 text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
             >
               Sign up
             </RouterLink>
@@ -35,7 +35,7 @@ import { RouterLink } from 'vue-router'
           v-motion
           :initial="{ opacity: 0, y: 30 }"
           :enter="{ opacity: 1, y: 0, transition: { duration: 600, ease: 'easeOut' } }"
-          class="mt-10 max-w-lg font-display text-4xl font-bold tracking-tight text-white sm:text-6xl"
+          class="font-display mt-10 max-w-lg text-4xl font-bold tracking-tight text-white sm:text-6xl"
         >
           Manage your <span class="text-primary-500">crypto</span> portfolio with ease
         </h1>
@@ -43,7 +43,7 @@ import { RouterLink } from 'vue-router'
           v-motion
           :initial="{ opacity: 0, y: 20 }"
           :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 150, ease: 'easeOut' } }"
-          class="mt-6 text-lg leading-8 text-dark-300"
+          class="text-dark-300 mt-6 text-lg leading-8"
         >
           AssetTrackr helps you track your cryptocurrency investments in real-time. Log buy and sell
           transactions, view live prices from Coinbase, and analyze your portfolio's performance.
@@ -56,7 +56,7 @@ import { RouterLink } from 'vue-router'
         >
           <RouterLink
             to="/signup"
-            class="shadow-glow-primary rounded-md bg-primary-600 px-4 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-500 hover:shadow-lg"
+            class="shadow-glow-primary bg-primary-600 hover:bg-primary-500 rounded-md px-4 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
           >
             Get started
           </RouterLink>
@@ -82,8 +82,8 @@ import { RouterLink } from 'vue-router'
         >
           <div class="p-4 pt-8 sm:p-10">
             <div class="mb-10 border-b border-white/10 pb-6">
-              <h2 class="text-2xl font-bold text-primary-500">AssetTrackr</h2>
-              <p class="mt-2 text-sm text-dark-400">
+              <h2 class="text-primary-500 text-2xl font-bold">AssetTrackr</h2>
+              <p class="text-dark-400 mt-2 text-sm">
                 Your personal cryptocurrency portfolio tracker
               </p>
             </div>
@@ -91,45 +91,45 @@ import { RouterLink } from 'vue-router'
             <!-- Sample portfolio display -->
             <div class="space-y-6 font-mono text-sm">
               <div class="glass-card rounded-lg p-4">
-                <div class="mb-2 text-xs font-medium text-dark-400">Portfolio Value</div>
+                <div class="text-dark-400 mb-2 text-xs font-medium">Portfolio Value</div>
                 <div class="text-2xl font-bold text-white">$143,721.65</div>
-                <div class="mt-1 text-xs text-success-500">+12.4% (30d)</div>
+                <div class="text-success-500 mt-1 text-xs">+12.4% (30d)</div>
               </div>
 
               <div class="space-y-3">
                 <div class="glass-card flex items-center justify-between rounded-lg p-3">
                   <div class="flex items-center">
                     <div
-                      class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-500/20 font-bold text-primary-400 ring-1 ring-primary-500/30"
+                      class="bg-primary-500/20 text-primary-400 ring-primary-500/30 flex h-8 w-8 items-center justify-center rounded-full font-bold ring-1"
                     >
                       BTC
                     </div>
                     <div class="ml-3">
                       <div class="font-medium text-white">Bitcoin</div>
-                      <div class="text-xs text-dark-400">12.45 BTC</div>
+                      <div class="text-dark-400 text-xs">12.45 BTC</div>
                     </div>
                   </div>
                   <div class="text-right">
                     <div class="font-medium text-white">$97,253.20</div>
-                    <div class="text-xs text-success-500">+5.3%</div>
+                    <div class="text-success-500 text-xs">+5.3%</div>
                   </div>
                 </div>
 
                 <div class="glass-card flex items-center justify-between rounded-lg p-3">
                   <div class="flex items-center">
                     <div
-                      class="flex h-8 w-8 items-center justify-center rounded-full bg-secondary-500/20 font-bold text-secondary-400 ring-1 ring-secondary-500/30"
+                      class="bg-secondary-500/20 text-secondary-400 ring-secondary-500/30 flex h-8 w-8 items-center justify-center rounded-full font-bold ring-1"
                     >
                       ETH
                     </div>
                     <div class="ml-3">
                       <div class="font-medium text-white">Ethereum</div>
-                      <div class="text-xs text-dark-400">24.8 ETH</div>
+                      <div class="text-dark-400 text-xs">24.8 ETH</div>
                     </div>
                   </div>
                   <div class="text-right">
                     <div class="font-medium text-white">$46,468.45</div>
-                    <div class="text-xs text-success-500">+8.7%</div>
+                    <div class="text-success-500 text-xs">+8.7%</div>
                   </div>
                 </div>
               </div>
@@ -144,11 +144,11 @@ import { RouterLink } from 'vue-router'
   <div class="py-24 sm:py-32">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="mx-auto max-w-2xl lg:text-center">
-        <h2 class="text-base font-semibold leading-7 text-primary-400">Track Effectively</h2>
+        <h2 class="text-primary-400 text-base font-semibold leading-7">Track Effectively</h2>
         <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
           Everything you need to manage your crypto assets
         </p>
-        <p class="mt-6 text-lg leading-8 text-dark-300">
+        <p class="text-dark-300 mt-6 text-lg leading-8">
           AssetTrackr provides a comprehensive suite of tools to help you manage your cryptocurrency
           investments with confidence.
         </p>
@@ -163,7 +163,7 @@ import { RouterLink } from 'vue-router'
           >
             <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
               <svg
-                class="h-5 w-5 flex-none text-primary-400"
+                class="text-primary-400 h-5 w-5 flex-none"
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 aria-hidden="true"
@@ -176,7 +176,7 @@ import { RouterLink } from 'vue-router'
               </svg>
               Real-time Price Updates
             </dt>
-            <dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-dark-300">
+            <dd class="text-dark-300 mt-4 flex flex-auto flex-col text-base leading-7">
               <p class="flex-auto">
                 Get the latest cryptocurrency prices directly from Coinbase API, ensuring you always
                 have accurate data for your portfolio.
@@ -191,7 +191,7 @@ import { RouterLink } from 'vue-router'
           >
             <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
               <svg
-                class="h-5 w-5 flex-none text-secondary-400"
+                class="text-secondary-400 h-5 w-5 flex-none"
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 aria-hidden="true"
@@ -204,7 +204,7 @@ import { RouterLink } from 'vue-router'
               </svg>
               Secure Authentication
             </dt>
-            <dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-dark-300">
+            <dd class="text-dark-300 mt-4 flex flex-auto flex-col text-base leading-7">
               <p class="flex-auto">
                 Your portfolio data is protected with secure authentication and authorization,
                 giving you peace of mind.
@@ -230,7 +230,7 @@ import { RouterLink } from 'vue-router'
               </svg>
               Transaction History
             </dt>
-            <dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-dark-300">
+            <dd class="text-dark-300 mt-4 flex flex-auto flex-col text-base leading-7">
               <p class="flex-auto">
                 Keep track of all your buy and sell transactions with a comprehensive history view
                 and filtering options.
@@ -249,19 +249,19 @@ import { RouterLink } from 'vue-router'
         <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
           Start tracking your crypto assets today
         </h2>
-        <p class="mx-auto mt-6 max-w-xl text-lg leading-8 text-dark-300">
+        <p class="text-dark-300 mx-auto mt-6 max-w-xl text-lg leading-8">
           Join thousands of users who trust AssetTrackr to manage their cryptocurrency portfolios.
         </p>
         <div class="mt-10 flex items-center justify-center gap-x-6">
           <RouterLink
             to="/signup"
-            class="shadow-glow-primary rounded-md bg-primary-600 px-3.5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-500 hover:shadow-lg"
+            class="shadow-glow-primary bg-primary-600 hover:bg-primary-500 rounded-md px-3.5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
           >
             Get started
           </RouterLink>
           <RouterLink
             to="/login"
-            class="group text-sm font-semibold leading-6 text-dark-200 transition-colors duration-200 hover:text-white"
+            class="text-dark-200 group text-sm font-semibold leading-6 transition-colors duration-200 hover:text-white"
           >
             Login
             <span

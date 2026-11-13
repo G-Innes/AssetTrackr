@@ -33,7 +33,7 @@ const toggleMenu = () => {
   <!-- Mobile menu button -->
   <button
     type="button"
-    class="glass-card shadow-glow-white fixed right-4 top-4 z-40 rounded-full p-2 text-dark-200 hover:text-white lg:hidden"
+    class="glass-card shadow-glow-white text-dark-200 fixed right-4 top-4 z-40 rounded-full p-2 hover:text-white lg:hidden"
     @click="toggleMenu"
   >
     <span class="sr-only">{{ isOpen ? 'Close menu' : 'Open menu' }}</span>
@@ -66,11 +66,11 @@ const toggleMenu = () => {
   <!-- Mobile menu, shown/hidden based on menu state. -->
   <div v-if="isOpen" class="fixed inset-0 z-30 lg:hidden" @click.self="isOpen = false">
     <!-- Background overlay -->
-    <div class="fixed inset-0 bg-dark-900/80 backdrop-blur-sm"></div>
+    <div class="bg-dark-900/80 fixed inset-0 backdrop-blur-sm"></div>
 
     <!-- Side drawer -->
     <div
-      class="glass-card fixed inset-y-0 left-0 z-40 w-full max-w-xs overflow-y-auto border-r border-white/10 bg-glass-gradient px-6 py-4 backdrop-blur-md sm:max-w-sm"
+      class="glass-card bg-glass-gradient fixed inset-y-0 left-0 z-40 w-full max-w-xs overflow-y-auto border-r border-white/10 px-6 py-4 backdrop-blur-md sm:max-w-sm"
     >
       <div class="flex items-center justify-between">
         <a href="/" class="-m-1.5 p-1.5">
@@ -78,7 +78,7 @@ const toggleMenu = () => {
         </a>
         <button
           type="button"
-          class="-m-2.5 rounded-md p-2.5 text-dark-200 hover:text-white"
+          class="text-dark-200 -m-2.5 rounded-md p-2.5 hover:text-white"
           @click="isOpen = false"
         >
           <span class="sr-only">Close menu</span>
@@ -179,7 +179,7 @@ const toggleMenu = () => {
           <div class="py-6">
             <router-link
               to="/login"
-              class="block rounded-md px-3 py-2.5 text-base font-medium leading-7 text-dark-200 hover:bg-white/5 hover:text-white"
+              class="text-dark-200 block rounded-md px-3 py-2.5 text-base font-medium leading-7 hover:bg-white/5 hover:text-white"
             >
               Log out
             </router-link>
