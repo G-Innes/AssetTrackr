@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import Logo from '@/components/Logo.vue'
 import { usePortfolioStore } from '@/stores/portfolio'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const userStore = useUserStore()
 const portfolioStore = usePortfolioStore()
-const dropdownOpen = ref(false)
 
-const toggleDropdown = () => {
-  dropdownOpen.value = !dropdownOpen.value
+const menu = ref<HTMLElement | null>(null)
+const isOpen = ref(false)
+
+function closeOnOutsideClick(event: MouseEvent) {
+  if (menu.value && !menu.value.contains(event.target as Node)) isOpen.value = false
 }
+onMounted(() => document.addEventListener('click', closeOnOutsideClick))
+onBeforeUnmount(() => document.removeEventListener('click', closeOnOutsideClick))
 
-const handleLogout = () => {
+function handleLogout() {
   userStore.logout()
   portfolioStore.reset()
   router.push('/login')
@@ -21,75 +26,68 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <header class="sticky top-0 z-10 flex h-16 shrink-0 items-center backdrop-blur-md">
-    <div
-      class="glass-card bg-glass-gradient flex flex-1 items-center justify-between border-b border-white/10 px-4 sm:px-6 lg:px-8"
-    >
-      <!-- Page title -->
-      <div class="hidden lg:flex lg:items-center lg:gap-2">
-        <h1 class="text-lg font-semibold text-white">AssetTrackr</h1>
-      </div>
+  <header
+    class="bg-canvas/90 sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-white/[0.08] px-4 backdrop-blur sm:px-6 lg:h-16 lg:px-8"
+  >
+    <router-link to="/dashboard" class="lg:hidden"><Logo /></router-link>
 
-      <!-- User Menu -->
-      <div class="relative ml-auto flex items-center gap-x-4">
-        <span
-          v-if="userStore.user?.isDemo"
-          class="rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-0.5 text-xs font-medium text-amber-200"
-          title="A sample account. It is deleted after 24 hours."
+    <div class="ml-auto flex items-center gap-3">
+      <span
+        v-if="userStore.user?.isDemo"
+        class="rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-0.5 text-xs font-medium text-amber-200"
+        title="A sample account. It is deleted after 24 hours."
+      >
+        Demo<span class="hidden sm:inline"> account</span>
+      </span>
+
+      <div ref="menu" class="relative">
+        <button
+          type="button"
+          class="flex items-center gap-2 rounded-md p-1 text-sm hover:bg-white/5"
+          aria-haspopup="menu"
+          :aria-expanded="isOpen"
+          @click="isOpen = !isOpen"
         >
-          Demo account
-        </span>
-        <!-- User dropdown -->
-        <div class="relative">
+          <span class="sr-only">Open user menu</span>
+          <span
+            class="bg-primary-600 flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold text-white"
+            aria-hidden="true"
+          >
+            {{ userStore.user?.username.charAt(0).toUpperCase() ?? '' }}
+          </span>
+          <span class="text-dark-200 hidden font-medium md:block">
+            {{ userStore.user?.username }}
+          </span>
+        </button>
+
+        <div
+          v-if="isOpen"
+          role="menu"
+          class="panel absolute right-0 mt-2 w-48 py-1 shadow-xl"
+          @click="isOpen = false"
+        >
+          <p
+            class="text-dark-400 truncate border-b border-white/[0.08] px-4 py-2 text-xs md:hidden"
+          >
+            {{ userStore.user?.username }}
+          </p>
+          <router-link
+            to="/dashboard/settings"
+            role="menuitem"
+            class="text-dark-200 block px-4 py-2 text-sm hover:bg-white/5 hover:text-white"
+          >
+            Settings
+          </router-link>
           <button
             type="button"
-            class="flex items-center gap-x-2 rounded-lg p-1.5 text-sm transition-all duration-200 hover:bg-white/5"
-            @click="toggleDropdown"
+            role="menuitem"
+            class="text-dark-200 block w-full px-4 py-2 text-left text-sm hover:bg-white/5 hover:text-white"
+            @click="handleLogout"
           >
-            <span class="sr-only">Open user menu</span>
-            <div
-              class="shadow-glow-primary bg-primary-500 ring-primary-500/30 hover:ring-primary-500/50 flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium text-white ring-2 transition-all duration-200"
-            >
-              {{ userStore.user?.username.charAt(0).toUpperCase() ?? '' }}
-            </div>
-            <span
-              class="text-dark-200 hidden text-sm font-medium transition-colors duration-200 group-hover:text-white md:block"
-            >
-              {{ userStore.user?.username }}
-            </span>
+            Sign out
           </button>
-
-          <!-- Dropdown menu -->
-          <Transition
-            enter-active-class="transition duration-200 ease-out"
-            enter-from-class="opacity-0 scale-95 translate-y-1"
-            enter-to-class="opacity-100 scale-100 translate-y-0"
-            leave-active-class="transition duration-150 ease-in"
-            leave-from-class="opacity-100 scale-100 translate-y-0"
-            leave-to-class="opacity-0 scale-95 translate-y-1"
-          >
-            <div
-              v-if="dropdownOpen"
-              class="glass-card bg-glass-gradient absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-lg border border-white/10 py-1 shadow-lg ring-1 ring-white/5 backdrop-blur-sm focus:outline-none"
-            >
-              <button
-                class="text-dark-200 block w-full px-4 py-2 text-left text-sm transition-colors duration-150 hover:bg-white/10 hover:text-white"
-                @click="handleLogout"
-              >
-                Sign out
-              </button>
-            </div>
-          </Transition>
         </div>
       </div>
     </div>
   </header>
 </template>
-
-<style scoped>
-.glass-card {
-  background-color: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-</style>

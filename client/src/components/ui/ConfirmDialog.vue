@@ -14,11 +14,7 @@ const emit = defineEmits<{ confirm: []; close: [] }>()
 <template>
   <Modal :title="title" @close="emit('close')">
     <div class="text-dark-200 text-sm"><slot /></div>
-    <p
-      v-if="error"
-      role="alert"
-      class="border-danger-500/30 bg-danger-600/10 text-danger-200 mt-4 rounded-md border px-3 py-2 text-sm"
-    >
+    <p v-if="error" role="alert" class="notice-error mt-4">
       {{ error }}
     </p>
     <div class="mt-6 flex justify-end gap-2">

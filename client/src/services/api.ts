@@ -78,8 +78,12 @@ export const api = {
     return (await client.post<AuthResponse>('/api/auth/demo')).data
   },
 
-  async updateMe(changes: { username?: string; email?: string; password?: string }) {
+  async updateMe(changes: { username?: string; email?: string }) {
     return (await client.patch<User>('/api/me', changes)).data
+  },
+
+  async changePassword(input: { currentPassword: string; newPassword: string }) {
+    await client.put('/api/me/password', input)
   },
 
   async deleteMe() {

@@ -1,4 +1,3 @@
-// src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
@@ -6,6 +5,7 @@ import SignupView from '../views/SignupView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import TradeView from '../views/TradeView.vue'
 import TransactionsView from '../views/TransactionsView.vue'
+import SettingsView from '../views/SettingsView.vue'
 import { authenticate, redirectIfAuthenticated } from './guards'
 import HomeLayout from '../layouts/HomeLayout.vue'
 import DashboardLayout from '../layouts/DashboardLayout.vue'
@@ -32,6 +32,11 @@ const router = createRouter({
           path: 'transactions',
           name: 'Transactions',
           component: TransactionsView,
+        },
+        {
+          path: 'settings',
+          name: 'Settings',
+          component: SettingsView,
         },
       ],
     },

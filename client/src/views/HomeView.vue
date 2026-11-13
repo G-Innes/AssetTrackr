@@ -1,285 +1,112 @@
 <script lang="ts" setup>
-import DemoButton from '@/components/DemoButton.vue'
 import { RouterLink } from 'vue-router'
+import DemoButton from '@/components/DemoButton.vue'
+import Logo from '@/components/Logo.vue'
+
+const features = [
+  {
+    title: 'Profit you can check',
+    text: 'Every holding shows its average cost, what it is worth now and the gain or loss. Profit you have already taken by selling is kept separate from profit that is still on paper.',
+  },
+  {
+    title: 'A ledger, not a balance',
+    text: 'Record trades on the day they happened, fix a typo, delete a mistake. Holdings are always worked out from the full history, so the numbers cannot drift.',
+  },
+  {
+    title: 'Live and historical prices',
+    text: 'Search every asset Coinbase prices in dollars. Backdate a trade and its price is filled in from that day’s close.',
+  },
+]
+
+const stack = [
+  ['Client', 'Vue 3, TypeScript, Pinia, Tailwind CSS, hand-built SVG charts'],
+  ['API', 'Express, TypeORM, PostgreSQL, zod validation, JWT auth'],
+  ['Money', 'Exact decimal arithmetic end to end: no floating-point balances'],
+  [
+    'Quality',
+    'Vitest and Supertest against a real database, Playwright end to end, CI on every push',
+  ],
+]
 </script>
 
 <template>
-  <!-- Hero Section -->
-  <div class="relative overflow-hidden">
-    <header class="fixed top-0 z-10 w-full backdrop-blur-sm">
-      <div class="glass-card border-b border-white/10 px-6 py-4">
-        <div class="mx-auto flex items-center justify-between">
-          <div class="text-xl font-bold text-white">AssetTrackr</div>
-          <div class="flex items-center gap-4">
-            <RouterLink
-              to="/login"
-              class="rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm font-medium text-white backdrop-blur-sm transition-all duration-200 hover:border-white/20 hover:bg-white/10"
-            >
-              Log in
-            </RouterLink>
-            <RouterLink
-              to="/signup"
-              class="shadow-glow-primary bg-primary-600 hover:bg-primary-500 rounded-md px-3 py-2 text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              Sign up
-            </RouterLink>
-          </div>
-        </div>
-      </div>
+  <div class="mx-auto max-w-6xl px-5 sm:px-8">
+    <header class="flex h-16 items-center justify-between">
+      <Logo />
+      <nav class="flex items-center gap-2" aria-label="Account">
+        <RouterLink to="/login" class="btn text-dark-200 hover:text-white">Log in</RouterLink>
+        <RouterLink to="/signup" class="btn-quiet">Sign up</RouterLink>
+      </nav>
     </header>
 
-    <div
-      class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:flex lg:items-center lg:gap-x-10 lg:px-8 lg:py-40"
-    >
-      <div class="mx-auto max-w-2xl lg:mx-0 lg:flex-auto">
+    <main>
+      <section class="pb-12 pt-14 text-center sm:pt-20">
         <h1
-          v-motion
-          :initial="{ opacity: 0, y: 30 }"
-          :enter="{ opacity: 1, y: 0, transition: { duration: 600, ease: 'easeOut' } }"
-          class="font-display mt-10 max-w-lg text-4xl font-bold tracking-tight text-white sm:text-6xl"
+          class="font-display mx-auto max-w-3xl text-4xl font-bold tracking-tight text-white sm:text-6xl"
         >
-          Manage your <span class="text-primary-500">crypto</span> portfolio with ease
+          Know what your crypto is <span class="text-primary-500">actually</span> worth.
         </h1>
-        <p
-          v-motion
-          :initial="{ opacity: 0, y: 20 }"
-          :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 150, ease: 'easeOut' } }"
-          class="text-dark-300 mt-6 text-lg leading-8"
-        >
-          AssetTrackr helps you track your cryptocurrency investments in real-time. Log buy and sell
-          transactions, view live prices from Coinbase, and analyze your portfolio's performance.
+        <p class="text-dark-300 mx-auto mt-6 max-w-2xl text-lg leading-8">
+          AssetTrackr turns a simple record of your buys and sells into cost basis, profit and loss,
+          and a history of your portfolio’s value, priced live from Coinbase.
         </p>
-        <div
-          v-motion
-          :initial="{ opacity: 0, y: 20 }"
-          :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 300, ease: 'easeOut' } }"
-          class="mt-10 flex items-center gap-x-6"
-        >
-          <RouterLink
-            to="/signup"
-            class="shadow-glow-primary bg-primary-600 hover:bg-primary-500 rounded-md px-4 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
-          >
-            Get started
+        <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div><DemoButton class="btn-primary px-5 py-2.5 text-base" /></div>
+          <RouterLink to="/signup" class="btn-quiet px-5 py-2.5 text-base">
+            Create an account
           </RouterLink>
+        </div>
+        <p class="text-dark-500 mt-3 text-sm">
+          The demo opens a sample portfolio straight away. No sign-up.
+        </p>
+      </section>
+
+      <div class="panel overflow-hidden shadow-2xl shadow-black/50">
+        <img
+          src="/preview-dashboard.png"
+          alt="The AssetTrackr dashboard: total portfolio value with a chart of its history, profit figures, an allocation breakdown and a table of holdings."
+          width="2400"
+          height="1500"
+          class="block h-auto w-full"
+        />
+      </div>
+
+      <section class="grid gap-10 py-20 md:grid-cols-3" aria-label="Features">
+        <div v-for="feature in features" :key="feature.title">
+          <h2 class="text-base font-semibold text-white">{{ feature.title }}</h2>
+          <p class="text-dark-300 mt-2 text-sm leading-6">{{ feature.text }}</p>
+        </div>
+      </section>
+
+      <section class="border-t border-white/[0.08] py-16" aria-labelledby="built-heading">
+        <div class="grid gap-8 md:grid-cols-3">
           <div>
-            <DemoButton
-              class="rounded-md px-4 py-3 text-sm font-semibold text-white ring-1 ring-white/20 transition-all duration-200 hover:bg-white/5 hover:ring-white/30"
-            />
-          </div>
-        </div>
-      </div>
-      <div class="mt-16 sm:mt-24 lg:mt-0 lg:flex-shrink-0 lg:flex-grow">
-        <div
-          v-motion
-          :initial="{ opacity: 0, x: 50, scale: 0.95 }"
-          :enter="{
-            opacity: 1,
-            x: 0,
-            scale: 1,
-            transition: { duration: 700, delay: 200, ease: 'easeOut' },
-          }"
-          class="glass-card shadow-glow-white relative mx-auto overflow-hidden rounded-xl border border-white/10 transition-all duration-300 hover:-translate-y-1 hover:border-white/20 sm:max-w-lg lg:w-[450px]"
-        >
-          <div class="p-4 pt-8 sm:p-10">
-            <div class="mb-10 border-b border-white/10 pb-6">
-              <h2 class="text-primary-500 text-2xl font-bold">AssetTrackr</h2>
-              <p class="text-dark-400 mt-2 text-sm">
-                Your personal cryptocurrency portfolio tracker
-              </p>
-            </div>
-
-            <!-- Sample portfolio display -->
-            <div class="space-y-6 font-mono text-sm">
-              <div class="glass-card rounded-lg p-4">
-                <div class="text-dark-400 mb-2 text-xs font-medium">Portfolio Value</div>
-                <div class="text-2xl font-bold text-white">$143,721.65</div>
-                <div class="text-success-500 mt-1 text-xs">+12.4% (30d)</div>
-              </div>
-
-              <div class="space-y-3">
-                <div class="glass-card flex items-center justify-between rounded-lg p-3">
-                  <div class="flex items-center">
-                    <div
-                      class="bg-primary-500/20 text-primary-400 ring-primary-500/30 flex h-8 w-8 items-center justify-center rounded-full font-bold ring-1"
-                    >
-                      BTC
-                    </div>
-                    <div class="ml-3">
-                      <div class="font-medium text-white">Bitcoin</div>
-                      <div class="text-dark-400 text-xs">12.45 BTC</div>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <div class="font-medium text-white">$97,253.20</div>
-                    <div class="text-success-500 text-xs">+5.3%</div>
-                  </div>
-                </div>
-
-                <div class="glass-card flex items-center justify-between rounded-lg p-3">
-                  <div class="flex items-center">
-                    <div
-                      class="bg-secondary-500/20 text-secondary-400 ring-secondary-500/30 flex h-8 w-8 items-center justify-center rounded-full font-bold ring-1"
-                    >
-                      ETH
-                    </div>
-                    <div class="ml-3">
-                      <div class="font-medium text-white">Ethereum</div>
-                      <div class="text-dark-400 text-xs">24.8 ETH</div>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <div class="font-medium text-white">$46,468.45</div>
-                    <div class="text-success-500 text-xs">+8.7%</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Features Section -->
-  <div class="py-24 sm:py-32">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl lg:text-center">
-        <h2 class="text-primary-400 text-base font-semibold leading-7">Track Effectively</h2>
-        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-          Everything you need to manage your crypto assets
-        </p>
-        <p class="text-dark-300 mt-6 text-lg leading-8">
-          AssetTrackr provides a comprehensive suite of tools to help you manage your cryptocurrency
-          investments with confidence.
-        </p>
-      </div>
-      <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-        <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
-          <div
-            v-motion
-            :initial="{ opacity: 0, y: 30 }"
-            :visible="{ opacity: 1, y: 0, transition: { duration: 500, delay: 0 } }"
-            class="glass-card shadow-glow-primary rounded-xl border border-white/10 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
-          >
-            <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
-              <svg
-                class="text-primary-400 h-5 w-5 flex-none"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M5.5 17a4.5 4.5 0 01-1.44-8.765 4.5 4.5 0 018.302-3.046 3.5 3.5 0 014.504 4.272A4 4 0 0115 17H5.5zm3.75-2.75a.75.75 0 001.5 0V9.66l1.95 2.1a.75.75 0 101.1-1.02l-3.25-3.5a.75.75 0 00-1.1 0l-3.25 3.5a.75.75 0 101.1 1.02l1.95-2.1v4.59z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              Real-time Price Updates
-            </dt>
-            <dd class="text-dark-300 mt-4 flex flex-auto flex-col text-base leading-7">
-              <p class="flex-auto">
-                Get the latest cryptocurrency prices directly from Coinbase API, ensuring you always
-                have accurate data for your portfolio.
-              </p>
-            </dd>
-          </div>
-          <div
-            v-motion
-            :initial="{ opacity: 0, y: 30 }"
-            :visible="{ opacity: 1, y: 0, transition: { duration: 500, delay: 100 } }"
-            class="glass-card shadow-glow-secondary rounded-xl border border-white/10 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
-          >
-            <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
-              <svg
-                class="text-secondary-400 h-5 w-5 flex-none"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              Secure Authentication
-            </dt>
-            <dd class="text-dark-300 mt-4 flex flex-auto flex-col text-base leading-7">
-              <p class="flex-auto">
-                Your portfolio data is protected with secure authentication and authorization,
-                giving you peace of mind.
-              </p>
-            </dd>
-          </div>
-          <div
-            v-motion
-            :initial="{ opacity: 0, y: 30 }"
-            :visible="{ opacity: 1, y: 0, transition: { duration: 500, delay: 200 } }"
-            class="glass-card shadow-glow-purple rounded-xl border border-white/10 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
-          >
-            <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
-              <svg
-                class="h-5 w-5 flex-none text-purple-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  d="M10 3.75a2 2 0 10-4 0 2 2 0 004 0zM17.25 4.5a.75.75 0 000-1.5h-5.5a.75.75 0 000 1.5h5.5zM5 3.75a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5a.75.75 0 01.75.75zM4.25 17a.75.75 0 000-1.5h-1.5a.75.75 0 000 1.5h1.5zM17.25 17a.75.75 0 000-1.5h-5.5a.75.75 0 000 1.5h5.5zM9 10a.75.75 0 01-.75.75h-5.5a.75.75 0 010-1.5h5.5A.75.75 0 019 10zM17.25 10.75a.75.75 0 000-1.5h-1.5a.75.75 0 000 1.5h1.5zM14 10a2 2 0 10-4 0 2 2 0 004 0zM10 16.25a2 2 0 10-4 0 2 2 0 004 0z"
-                />
-              </svg>
-              Transaction History
-            </dt>
-            <dd class="text-dark-300 mt-4 flex flex-auto flex-col text-base leading-7">
-              <p class="flex-auto">
-                Keep track of all your buy and sell transactions with a comprehensive history view
-                and filtering options.
-              </p>
-            </dd>
-          </div>
-        </dl>
-      </div>
-    </div>
-  </div>
-
-  <!-- CTA Section -->
-  <div class="glass-card border-t border-white/10">
-    <div class="px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
-      <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-          Start tracking your crypto assets today
-        </h2>
-        <p class="text-dark-300 mx-auto mt-6 max-w-xl text-lg leading-8">
-          Join thousands of users who trust AssetTrackr to manage their cryptocurrency portfolios.
-        </p>
-        <div class="mt-10 flex items-center justify-center gap-x-6">
-          <RouterLink
-            to="/signup"
-            class="shadow-glow-primary bg-primary-600 hover:bg-primary-500 rounded-md px-3.5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
-          >
-            Get started
-          </RouterLink>
-          <RouterLink
-            to="/login"
-            class="text-dark-200 group text-sm font-semibold leading-6 transition-colors duration-200 hover:text-white"
-          >
-            Login
-            <span
-              aria-hidden="true"
-              class="inline-block transition-transform duration-200 group-hover:translate-x-1"
-              >→</span
+            <h2 id="built-heading" class="font-display text-xl font-bold text-white">
+              How it is built
+            </h2>
+            <p class="text-dark-300 mt-2 text-sm leading-6">
+              A full-stack TypeScript project. The source, tests and design notes are on GitHub.
+            </p>
+            <a
+              href="https://github.com/G-Innes/AssetTrackr"
+              class="text-primary-400 hover:text-primary-300 mt-4 inline-block text-sm font-medium"
+              rel="noopener"
             >
-          </RouterLink>
+              View the source →
+            </a>
+          </div>
+          <dl class="space-y-4 md:col-span-2">
+            <div v-for="[name, detail] in stack" :key="name" class="flex gap-4 text-sm">
+              <dt class="text-dark-400 w-16 shrink-0">{{ name }}</dt>
+              <dd class="text-dark-100">{{ detail }}</dd>
+            </div>
+          </dl>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
+
+    <footer class="text-dark-500 border-t border-white/[0.08] py-6 text-xs">
+      A portfolio project. Prices are indicative and nothing here is financial advice.
+    </footer>
   </div>
 </template>
-
-<style scoped>
-.glass-card {
-  background-color: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-</style>

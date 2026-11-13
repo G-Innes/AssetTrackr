@@ -52,11 +52,12 @@ hours.
 
 ### Account
 
-| Method | Path      | Body                    | Returns                                      |
-| ------ | --------- | ----------------------- | -------------------------------------------- |
-| GET    | `/api/me` |                         | `{ id, username, email, isDemo, createdAt }` |
-| PATCH  | `/api/me` | `{ username?, email? }` | the updated user                             |
-| DELETE | `/api/me` |                         | `204`; also deletes their transactions       |
+| Method | Path               | Body                               | Returns                                      |
+| ------ | ------------------ | ---------------------------------- | -------------------------------------------- |
+| GET    | `/api/me`          |                                    | `{ id, username, email, isDemo, createdAt }` |
+| PATCH  | `/api/me`          | `{ username?, email? }`            | the updated user                             |
+| PUT    | `/api/me/password` | `{ currentPassword, newPassword }` | `204`                                        |
+| DELETE | `/api/me`          |                                    | `204`; also deletes their transactions       |
 
 ### Transactions
 
@@ -90,11 +91,11 @@ hours.
 
 ### Portfolio
 
-| Method | Path                             | Notes                                           |
-| ------ | -------------------------------- | ----------------------------------------------- |
-| GET    | `/api/portfolio`                 | Holdings, valuations and totals                 |
+| Method | Path                             | Notes                                            |
+| ------ | -------------------------------- | ------------------------------------------------ |
+| GET    | `/api/portfolio`                 | Holdings, valuations and totals                  |
 | GET    | `/api/portfolio/history`         | Daily value. `?range=30d\|90d\|1y` (default 90d) |
-| DELETE | `/api/portfolio/assets/:assetId` | Removes the asset and its transactions          |
+| DELETE | `/api/portfolio/assets/:assetId` | Removes the asset and its transactions           |
 
 ```json
 {
@@ -141,10 +142,10 @@ from the ledger and daily closing prices; the last point uses the live price.
 
 ### Market data
 
-| Method | Path                               | Notes                                          |
-| ------ | ---------------------------------- | ---------------------------------------------- |
+| Method | Path                               | Notes                                                       |
+| ------ | ---------------------------------- | ----------------------------------------------------------- |
 | GET    | `/api/market/assets`               | `?q=bit&limit=10` -> `[{ ticker, name, price, change24h }]` |
-| GET    | `/api/market/assets/:ticker/price` | Live price, or a day's close with `?date=2026-03-05` |
+| GET    | `/api/market/assets/:ticker/price` | Live price, or a day's close with `?date=2026-03-05`        |
 
 Prices come from Coinbase's public API through one small interface
 (`src/modules/market/provider.ts`). Responses are cached in memory (quotes for

@@ -1,159 +1,155 @@
 # AssetTrackr
 
-A modern web application for managing cryptocurrency investments. Track buy/sell transactions, view live prices from Coinbase, and monitor your portfolio value in real-time.
+A crypto portfolio tracker. Record your buys and sells and it works out what
+you hold, what it cost, what it is worth now, and how much you have made or
+lost, priced live from Coinbase.
 
-**Live Demo:** [https://asset-trackr-client.vercel.app](https://asset-trackr-client.vercel.app)
+**Live demo:** <https://asset-trackr-client.vercel.app> - press **Try the
+demo** for a ready-made portfolio, no sign-up needed.
 
-## Table of Contents
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Architecture](#architecture)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Development Workflow](#development-workflow)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Future Features](#future-features)
+![The dashboard: total value with a chart of its history, profit figures, allocation and holdings](screenshots/dashboard.png)
 
-## Features
-- Log buy and sell transactions for crypto assets
-- Fetch live prices using the Coinbase API
-- Calculate and display total portfolio value
-- User authentication with JWT
-- Dashboard displaying all assets and current values
-- View and filter transaction history
-- Modern glassmorphism UI with smooth animations
-- Responsive design for all devices
+| Record a trade                               | Transaction history                                  |
+| -------------------------------------------- | ---------------------------------------------------- |
+| ![Trade form](screenshots/trade.png)    | ![Transactions](screenshots/transactions.png)   |
 
-## Technologies Used
+## What it does
 
-### Frontend
-- **Framework:** Vue 3 (Composition API)
-- **Build Tool:** Vite
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **Animations:** @vueuse/motion
-- **State Management:** Pinia
-- **Routing:** Vue Router
+- **Portfolio at a glance** - total value, 24-hour change, a chart of value
+  over 30 days, 90 days or a year, and how the portfolio is split.
+- **Real profit and loss** - average-cost basis per holding, unrealised
+  profit on what you still hold, realised profit on what you have sold.
+- **A proper ledger** - trades can be backdated, edited and deleted. A
+  backdated trade is priced from that day's market close unless you enter
+  your own price.
+- **Every asset Coinbase prices in USD** - searchable by name or ticker.
+- **One-click demo** - each visitor gets a private sample account, deleted
+  after 24 hours.
+- **Accounts** - sign up, log in, change username, email and password, delete
+  the account.
 
-### Backend
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **ORM:** TypeORM
-- **Language:** TypeScript
-- **Authentication:** JWT + bcrypt
-
-### Infrastructure
-- **Database:** PostgreSQL (Neon)
-- **Frontend Hosting:** Vercel
-- **Backend Hosting:** Render
-
-## Architecture
+## How it is built
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   Vue 3 SPA     │────▶│  Express API    │────▶│   PostgreSQL    │
-│   (Vercel)      │     │   (Render)      │     │    (Neon)       │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-                              │
-                              ▼
-                        ┌─────────────────┐
-                        │  Coinbase API   │
-                        └─────────────────┘
+ Vue 3 SPA  ───────▶  Express API  ───────▶  PostgreSQL
+ (client/)            (server/)
+                          │
+                          ▼
+                    Coinbase public API
+                    (cached, behind an interface)
 ```
 
-## Installation
+|          |                                                                      |
+| -------- | -------------------------------------------------------------------- |
+| Client   | Vue 3 (`<script setup>`), TypeScript, Pinia, Vue Router, Tailwind CSS |
+| API      | Node 22, Express, TypeORM, PostgreSQL, zod, JWT, bcrypt              |
+| Tests    | Vitest + Supertest (API, against a real database), Vitest (client), Playwright (end to end) |
+| Tooling  | npm workspaces, ESLint, Prettier, Husky, commitlint, GitHub Actions  |
 
-1. **Clone the repository:**
-    ```bash
-    git clone https://github.com/G-Innes/AssetTrackr.git
-    cd AssetTrackr
-    ```
+### Decisions worth knowing about
 
-2. **Install dependencies:**
-    ```bash
-    npm run install:all
-    ```
+**The transaction ledger is the only source of truth.** Holdings, cost basis
+and profit are never stored; they are replayed from the user's transactions
+on every request. There is no balance column to fall out of step with the
+history, and editing or deleting an old trade simply changes the answer.
 
-3. **Set up environment variables:**
+**The ledger has to make sense on every date.** Because trades can be
+backdated and edited, checking "do you own enough to sell?" against today's
+balance is not enough. Every write replays the asset's whole history and is
+refused if the balance would go negative at any point - for example a
+backdated sale that a later sale was relying on.
 
-   Copy `server/.env.example` to `server/.env` and fill it in. You need a
-   PostgreSQL database; the server creates and upgrades its own tables on start.
-    ```env
-    DATABASE_URL=postgres://postgres:postgres@localhost:5432/assettrackr
-    TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/assettrackr_test
-    JWT_SECRET=a-random-string-of-at-least-32-characters
-    ```
+**Money is never a float.** Quantities and prices are `numeric(36,18)` in
+Postgres, decimal strings over the wire and `decimal.js` values in the
+arithmetic. `0.1 + 0.2` BTC is `0.3`.
 
-4. **Run the application:**
-    ```bash
-    npm run dev
-    ```
+**Concurrent sells cannot oversell.** Writes run in a database transaction
+that takes a row lock on the user, so two simultaneous sells are checked one
+after the other. There is a test that fires eight at once.
 
-## Usage
-- **Homepage:** Landing page with app overview
-- **Signup/Login:** Create an account or authenticate
-- **Dashboard:** View your assets and total portfolio value
-- **Buy/Sell:** Add transactions to update your portfolio
-- **Transactions:** View and filter your transaction history
+**Identity comes from the token, nowhere else.** No route takes a user id
+from the URL or body, so one user cannot read or change another's data by
+editing a request.
 
-## Development Workflow
+**Market data sits behind one interface.** The server, not the browser, talks
+to Coinbase. Responses are cached, simultaneous callers share one upstream
+request, and the last good answer is served if a refresh fails. If prices are
+unavailable the portfolio still loads and says which holdings it could not
+value, rather than showing them as $0. Tests swap in an in-memory provider.
 
-This project uses several tools to ensure code quality:
+**Charts are hand-written SVG.** Two charts did not justify a charting
+library. They have keyboard and hover read-outs, and a colour palette checked
+for colour-blind separation.
 
-- **Husky:** Git hooks for pre-commit validation
-- **lint-staged:** Runs linters on staged files
-- **ESLint:** Code quality standards
-- **Prettier:** Consistent code formatting
-- **TypeScript:** Static type checking
-- **Commitlint:** Conventional commit messages
+More detail, and the full API reference, is in [server/README.md](server/README.md).
 
-### Commands
+### Known limits
+
+- Cost basis uses the average-cost method only (no FIFO/LIFO or tax lots).
+- Everything is in US dollars.
+- Fees and transfers between wallets are not modelled.
+- Sessions are stateless JWTs kept in `localStorage`: simple, but a token
+  stays valid until it expires (one day), even after a password change.
+- Historical charts use daily closing prices, so intraday moves are not shown.
+
+## Running it locally
+
+You need Node 22 and a PostgreSQL server.
 
 ```bash
-# Run development servers (client + server)
+git clone https://github.com/G-Innes/AssetTrackr.git
+cd AssetTrackr
+npm install
+
+cp server/.env.example server/.env   # then set DATABASE_URL
 npm run dev
-
-# Format code
-npm run format
-
-# Lint code
-npm run lint
-
-# Type check
-npm run typecheck
-
-# Build for production
-npm run build
 ```
 
-## Testing
+The client is at <http://localhost:5173> and proxies `/api` to the server on
+port 3000. The server creates and migrates its own tables on start.
+
+The minimum `server/.env`:
+
+```env
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/assettrackr
+TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/assettrackr_test
+```
+
+Set `MARKET_DATA=static` to use fixed prices and work offline.
+
+## Tests and checks
 
 ```bash
-npm test          # client unit tests + API tests (needs TEST_DATABASE_URL)
-npm run test:e2e  # Playwright, against the running app (npm run dev)
+npm test            # API tests (needs TEST_DATABASE_URL) and client unit tests
+npm run lint
+npm run typecheck
+npm run build
+
+# End to end: start the app with fixed prices, then run Playwright
+MARKET_DATA=static npm run dev
+npm run test:e2e
 ```
+
+The API tests run against a real Postgres database, which is wiped on every
+run - point `TEST_DATABASE_URL` at one you do not mind losing. CI runs all of
+the above on every push and pull request.
 
 ## Deployment
 
-### Frontend (Vercel)
-- Automatically deploys from `main` branch
-- Build command: `npm run build`
-- Output directory: `client/dist`
+The client is a static build (`npm run build -w client`, output in
+`client/dist`) hosted on Vercel. The API runs anywhere Node does:
 
-### Backend (Render)
-- Automatically deploys from `main` branch
-- Build command: `npm install --include=dev && npm run build -w server`
-- Start command: `npm start` (applies database migrations, then serves)
+```bash
+npm install --include=dev && npm run build -w server
+npm start            # applies database migrations, then serves
+```
 
-### Environment Variables (Render)
-- `DATABASE_URL` - Neon PostgreSQL connection string
-- `JWT_SECRET` - Secret key for JWT signing (32+ characters)
-- `CLIENT_ORIGIN` - URL of the deployed client, for CORS
-- `NODE_ENV` - Set to `production`
+| Variable        |                                                              |
+| --------------- | ------------------------------------------------------------ |
+| `NODE_ENV`      | `production`                                                 |
+| `DATABASE_URL`  | Postgres connection string                                   |
+| `JWT_SECRET`    | Required in production, at least 32 random characters        |
+| `CLIENT_ORIGIN` | The deployed client's origin(s), comma separated, for CORS   |
+| `DATABASE_SSL`  | Defaults to `true` in production; set `false` for local Postgres |
 
-## Future Features
-- Performance tracking charts
-- Portfolio allocation visualization
-- Cryptocurrency news integration
-- Price alerts and notifications
+The client needs `VITE_API_URL` set to the API's address at build time.

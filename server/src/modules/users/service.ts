@@ -1,7 +1,9 @@
+import bcrypt from 'bcrypt'
 import { QueryFailedError } from 'typeorm'
+import config from '../../config'
 import { dataSource } from '../../database/dataSource'
 import { User } from '../../entities'
-import { conflict, notFound } from '../../utils/errors'
+import { badRequest, conflict, notFound } from '../../utils/errors'
 
 export interface PublicUser {
   id: number
@@ -82,6 +84,28 @@ export async function updateUser(
     rethrowUniqueViolation(error)
   }
   return getUser(userId)
+}
+
+/** Sets a new password, but only for someone who can prove they know the old one. */
+export async function changePassword(
+  userId: number,
+  input: { currentPassword: string; newPassword: string }
+): Promise<void> {
+  const user = await users()
+    .createQueryBuilder('user')
+    .addSelect('user.passwordHash')
+    .where('user.id = :userId', { userId })
+    .getOne()
+  if (!user) throw notFound('User not found')
+
+  const matches = await bcrypt.compare(input.currentPassword, user.passwordHash)
+  if (!matches) throw badRequest('Current password is incorrect')
+
+  const passwordHash = await bcrypt.hash(
+    input.newPassword,
+    config.auth.passwordCost
+  )
+  await users().update({ id: userId }, { passwordHash })
 }
 
 /** Deletes the account; the user's transactions go with it (FK cascade). */

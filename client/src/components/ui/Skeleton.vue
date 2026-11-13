@@ -26,7 +26,7 @@ const roundedClasses = {
 
 <style scoped>
 .skeleton {
-  @apply relative overflow-hidden bg-white/10;
+  @apply relative overflow-hidden bg-white/[0.06];
 }
 
 .skeleton::after {
@@ -35,7 +35,7 @@ const roundedClasses = {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.06) 50%,
     transparent 100%
   );
   animation: shimmer 1.5s infinite;

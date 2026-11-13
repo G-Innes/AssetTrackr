@@ -136,7 +136,7 @@ test('a new user can sign up, trade and review their portfolio', async ({ page }
 
   await test.step('log out and back in', async () => {
     await page.getByRole('button', { name: 'Open user menu' }).click()
-    await page.getByRole('button', { name: 'Sign out' }).click()
+    await page.getByRole('menuitem', { name: 'Sign out' }).click()
     await expect(page).toHaveURL(/\/login$/)
 
     await page.goto('/dashboard')
@@ -169,4 +169,49 @@ test('login shows a clear message for wrong credentials', async ({ page }) => {
   await page.getByRole('button', { name: 'Log in' }).click()
 
   await expect(page.getByTestId('errorMessage')).toHaveText('Invalid credentials')
+})
+
+test('settings: rename, change password and delete the account', async ({ page }) => {
+  const username = `e2e_set_${Date.now().toString(36)}`
+  await page.goto('/signup')
+  await page.getByLabel('Email').fill(`${username}@example.com`)
+  await page.getByLabel('Username').fill(username)
+  await page.getByLabel('Password', { exact: true }).fill('Password123')
+  await page.getByLabel('Confirm Password').fill('Password123')
+  await page.getByRole('button', { name: 'Sign up' }).click()
+  await expect(page).toHaveURL(/\/dashboard$/)
+
+  await page.getByRole('link', { name: 'Settings' }).first().click()
+  await expect(page.getByLabel('Username')).toHaveValue(username)
+
+  await test.step('rename', async () => {
+    await page.getByLabel('Username').fill(`${username}_x`)
+    await page.getByRole('button', { name: 'Save profile' }).click()
+    await expect(page.getByText('Profile updated.')).toBeVisible()
+    await expect(page.getByRole('banner').getByText(`${username}_x`)).toBeVisible()
+  })
+
+  await test.step('change password', async () => {
+    await page.getByLabel('Current password').fill('WrongPassword1')
+    await page.getByLabel('New password', { exact: true }).fill('NewPassword456')
+    await page.getByLabel('Confirm new password').fill('NewPassword456')
+    await page.getByRole('button', { name: 'Change password' }).click()
+    await expect(page.getByText('Current password is incorrect')).toBeVisible()
+
+    await page.getByLabel('Current password').fill('Password123')
+    await page.getByRole('button', { name: 'Change password' }).click()
+    await expect(page.getByText('Password changed.')).toBeVisible()
+  })
+
+  await test.step('delete the account', async () => {
+    await page.getByRole('button', { name: 'Delete my account' }).click()
+    await page.getByRole('dialog').getByRole('button', { name: 'Delete account' }).click()
+    await expect(page).toHaveURL(/\/$/)
+
+    await page.goto('/login')
+    await page.getByLabel('Username or Email').fill(`${username}_x`)
+    await page.getByLabel('Password').fill('NewPassword456')
+    await page.getByRole('button', { name: 'Log in' }).click()
+    await expect(page.getByTestId('errorMessage')).toHaveText('Invalid credentials')
+  })
 })

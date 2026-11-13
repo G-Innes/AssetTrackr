@@ -110,6 +110,51 @@ describe('PATCH /api/me', () => {
   })
 })
 
+describe('PUT /api/me/password', () => {
+  const login = (usernameOrEmail: string, password: string) =>
+    request(app).post('/api/auth/login').send({ usernameOrEmail, password })
+
+  it('changes the password when the current one is given', async () => {
+    const { user, token, password } = await createUser()
+
+    const res = await as(token).put('/api/me/password', {
+      currentPassword: password,
+      newPassword: 'a-brand-new-password',
+    })
+
+    expect(res.status).toBe(204)
+    expect((await login(user.username, password)).status).toBe(401)
+    expect((await login(user.username, 'a-brand-new-password')).status).toBe(
+      200
+    )
+  })
+
+  it('refuses when the current password is wrong', async () => {
+    const { user, token, password } = await createUser()
+
+    const res = await as(token).put('/api/me/password', {
+      currentPassword: 'not-my-password',
+      newPassword: 'a-brand-new-password',
+    })
+
+    expect(res.status).toBe(400)
+    expect(res.body.message).toBe('Current password is incorrect')
+    expect((await login(user.username, password)).status).toBe(200)
+  })
+
+  it('holds the new password to the signup rules', async () => {
+    const { token, password } = await createUser()
+
+    const res = await as(token).put('/api/me/password', {
+      currentPassword: password,
+      newPassword: 'short',
+    })
+
+    expect(res.status).toBe(400)
+    expect(res.body.message).toBe('Password must be at least 8 characters')
+  })
+})
+
 describe('DELETE /api/me', () => {
   it('deletes the account together with its transactions', async () => {
     const { token } = await createUser()

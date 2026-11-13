@@ -3,8 +3,8 @@ import { z } from 'zod'
 import { requireAuth } from '../../middleware/auth'
 import { parse } from '../../middleware/validate'
 import { asyncHandler } from '../../utils/asyncHandler'
-import { emailSchema, usernameSchema } from '../auth/schemas'
-import { deleteUser, getUser, updateUser } from './service'
+import { emailSchema, passwordSchema, usernameSchema } from '../auth/schemas'
+import { changePassword, deleteUser, getUser, updateUser } from './service'
 
 const updateSchema = z
   .object({
@@ -14,6 +14,14 @@ const updateSchema = z
   .refine((body) => body.username !== undefined || body.email !== undefined, {
     message: 'Provide a username or an email to update',
   })
+
+const passwordChangeSchema = z.object({
+  currentPassword: z
+    .string({ error: 'Current password is required' })
+    .min(1, 'Current password is required')
+    .max(72),
+  newPassword: passwordSchema,
+})
 
 const router = Router()
 router.use(requireAuth)
@@ -30,6 +38,15 @@ router.patch(
   asyncHandler(async (req, res) => {
     const changes = parse(updateSchema, req.body)
     res.json(await updateUser(req.userId, changes))
+  })
+)
+
+router.put(
+  '/password',
+  asyncHandler(async (req, res) => {
+    const input = parse(passwordChangeSchema, req.body)
+    await changePassword(req.userId, input)
+    res.status(204).send()
   })
 )
 

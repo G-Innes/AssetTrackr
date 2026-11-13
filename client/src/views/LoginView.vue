@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import PageForm from '../components/PageForm.vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import DemoButton from '@/components/DemoButton.vue'
+import PageForm from '@/components/PageForm.vue'
 import { getErrorMessage } from '@/services/api'
 import { useUserStore } from '@/stores/user'
 
@@ -45,82 +45,55 @@ async function submitLogin() {
 </script>
 
 <template>
-  <!-- Header -->
-  <header class="fixed top-0 z-10 w-full backdrop-blur-sm">
-    <div class="glass-card border-b border-white/10 px-6 py-4">
-      <div class="mx-auto flex items-center justify-between">
-        <router-link to="/" class="text-xl font-bold text-white"> AssetTrackr </router-link>
-      </div>
+  <PageForm heading="Log in" form-label="Login" @submit="submitLogin">
+    <div>
+      <label for="usernameOrEmail" class="field-label">Username or Email</label>
+      <input
+        id="usernameOrEmail"
+        v-model="userForm.usernameOrEmail"
+        type="text"
+        required
+        autocomplete="username"
+        autocapitalize="none"
+        class="field"
+      />
     </div>
-  </header>
 
-  <PageForm heading="Log in to your account" form-label="Login" @submit="submitLogin">
-    <template #default>
-      <div class="mb-4">
-        <label for="usernameOrEmail" class="text-dark-200 mb-2 block text-sm font-medium"
-          >Username or Email</label
-        >
-        <input
-          id="usernameOrEmail"
-          v-model="userForm.usernameOrEmail"
-          type="text"
-          required
-          class="placeholder:text-dark-400 focus:border-primary-500/50 focus:ring-primary-500/20 w-full rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-200 focus:bg-white/10 focus:outline-none focus:ring-2"
-        />
-      </div>
+    <div>
+      <label for="password" class="field-label">Password</label>
+      <input
+        id="password"
+        v-model="userForm.password"
+        type="password"
+        required
+        autocomplete="current-password"
+        class="field"
+      />
+    </div>
 
-      <div class="mb-4">
-        <label for="password" class="text-dark-200 mb-2 block text-sm font-medium">Password</label>
-        <input
-          id="password"
-          v-model="userForm.password"
-          type="password"
-          required
-          autocomplete="current-password"
-          class="placeholder:text-dark-400 focus:border-primary-500/50 focus:ring-primary-500/20 w-full rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-200 focus:bg-white/10 focus:outline-none focus:ring-2"
-        />
-      </div>
+    <p v-if="errorMessage" class="notice-error" role="alert" data-testid="errorMessage">
+      {{ errorMessage }}
+    </p>
 
-      <div
-        v-if="errorMessage"
-        class="bg-danger-600/20 mb-4 rounded-lg p-4 text-white"
-        data-testid="errorMessage"
-      >
-        {{ errorMessage }}
-      </div>
-
-      <div class="grid">
-        <button
-          type="submit"
-          :disabled="isSubmitting"
-          class="shadow-glow-primary bg-primary-600 hover:bg-primary-500 rounded-lg px-5 py-3 text-white transition disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {{ isSubmitting ? 'Logging in…' : 'Log in' }}
-        </button>
-      </div>
-    </template>
+    <button type="submit" :disabled="isSubmitting" class="btn-primary w-full">
+      {{ isSubmitting ? 'Logging in…' : 'Log in' }}
+    </button>
 
     <template #footer>
-      <div class="mt-4 border-t border-white/10 pt-4 text-center">
-        <DemoButton class="btn-quiet w-full" />
-        <p class="text-dark-400 mt-2 text-xs">A sample portfolio, no sign-up needed.</p>
+      <div class="my-5 flex items-center gap-3 text-xs">
+        <span class="h-px flex-1 bg-white/10" />
+        <span class="text-dark-500">or</span>
+        <span class="h-px flex-1 bg-white/10" />
       </div>
-      <div class="text-dark-300 mt-4 text-center text-sm">
-        Not a member?
-        <RouterLink
-          :to="{ name: 'Signup' }"
-          class="text-primary-400 hover:text-primary-300 font-semibold"
-          >Sign up</RouterLink
-        >
-      </div>
+      <DemoButton class="btn-quiet w-full" />
+      <p class="text-dark-500 mt-2 text-center text-xs">A sample portfolio, no sign-up needed.</p>
+
+      <p class="text-dark-400 mt-6 text-center text-sm">
+        No account?
+        <RouterLink :to="{ name: 'Signup' }" class="text-primary-400 hover:text-primary-300">
+          Sign up
+        </RouterLink>
+      </p>
     </template>
   </PageForm>
 </template>
-
-<style scoped>
-.glass-card {
-  background-color: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-</style>

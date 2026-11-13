@@ -122,11 +122,7 @@ onMounted(loadTransactions)
       <Skeleton v-for="i in 6" :key="i" width="100%" height="2.25rem" rounded="md" class="mb-3" />
     </div>
 
-    <div
-      v-else-if="error"
-      class="border-danger-500/30 bg-danger-600/10 rounded-xl border p-6 text-center"
-      role="alert"
-    >
+    <div v-else-if="error" class="notice-error p-6 text-center" role="alert">
       <p class="text-sm text-white">{{ error }}</p>
       <button class="btn-quiet mt-4" @click="loadTransactions">Try again</button>
     </div>
@@ -143,7 +139,7 @@ onMounted(loadTransactions)
       No {{ activeFilter }} transactions.
     </p>
 
-    <div v-else class="panel overflow-x-auto">
+    <div v-else class="panel relative overflow-x-auto">
       <table class="w-full min-w-[44rem] text-sm">
         <thead>
           <tr class="text-dark-400 border-b border-white/5 text-xs">
@@ -223,11 +219,7 @@ onMounted(loadTransactions)
     </div>
 
     <Modal v-if="editing" title="Edit transaction" @close="editing = null">
-      <p
-        v-if="editError"
-        role="alert"
-        class="border-danger-500/30 bg-danger-600/10 text-danger-200 mb-4 rounded-md border px-3 py-2 text-sm"
-      >
+      <p v-if="editError" role="alert" class="notice-error mb-4">
         {{ editError }}
       </p>
       <TradeForm

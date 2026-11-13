@@ -17,14 +17,16 @@ export const emailSchema = z
   .max(254, 'Email is too long')
   .email('Invalid email format')
 
+export const passwordSchema = z
+  .string({ error: 'Password is required' })
+  .min(8, 'Password must be at least 8 characters')
+  // bcrypt silently ignores everything after 72 bytes
+  .max(72, 'Password must be at most 72 characters')
+
 export const signupSchema = z.object({
   username: usernameSchema,
   email: emailSchema,
-  password: z
-    .string({ error: 'Password is required' })
-    .min(8, 'Password must be at least 8 characters')
-    // bcrypt silently ignores everything after 72 bytes
-    .max(72, 'Password must be at most 72 characters'),
+  password: passwordSchema,
 })
 
 export const loginSchema = z.object({

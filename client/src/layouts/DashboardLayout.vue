@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
-import MobileMenu from '@/components/dashboard/MobileMenu.vue'
 import Sidebar from '@/components/dashboard/Sidebar.vue'
 import Header from '@/components/dashboard/Header.vue'
 import { useUserStore } from '@/stores/user'
@@ -11,20 +10,12 @@ onMounted(() => useUserStore().restoreSession())
 </script>
 
 <template>
-  <div class="relative min-h-screen overflow-hidden">
-    <!-- Mobile Navigation Drawer -->
-    <MobileMenu />
-
-    <!-- Desktop Sidebar -->
+  <div class="min-h-screen">
     <Sidebar />
-
-    <!-- Main Content Area -->
-    <div class="flex flex-col lg:pl-72">
-      <!-- Top Navigation -->
+    <div class="lg:pl-60">
       <Header />
-
-      <!-- Page Content -->
-      <main class="flex-1 px-4 py-8 sm:px-6 lg:px-8">
+      <!-- Bottom padding leaves room for the mobile tab bar -->
+      <main class="px-4 pb-24 pt-6 sm:px-6 lg:px-8 lg:pb-12 lg:pt-8">
         <RouterView />
       </main>
     </div>

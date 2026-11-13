@@ -40,11 +40,7 @@ async function handleSubmit(payload: NewTransaction) {
     </div>
 
     <div class="panel p-5 sm:p-6">
-      <p
-        v-if="errorMessage"
-        role="alert"
-        class="border-danger-500/30 bg-danger-600/10 text-danger-200 mb-5 rounded-md border px-3 py-2 text-sm"
-      >
+      <p v-if="errorMessage" role="alert" class="notice-error mb-5">
         {{ errorMessage }}
       </p>
       <TradeForm

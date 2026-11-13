@@ -1,103 +1,41 @@
-/* tailwindcss directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Global background styling - Mesh Gradient */
 @layer base {
-  body {
-    @apply min-h-screen;
-    background-color: #050508;
-    color: white;
+  :root {
+    color-scheme: dark;
+
+    /* Chart colours: a fixed order, checked for colour-blind separation on --chart-surface */
+    --chart-surface: #12151c;
+    --chart-1: #3987e5;
+    --chart-2: #d95926;
+    --chart-3: #199e70;
+    --chart-4: #c98500;
+    --chart-5: #d55181;
+    --chart-other: #6b7280;
+    --chart-grid: rgba(255, 255, 255, 0.07);
+    --chart-axis: #94a3b8;
   }
 
-  /* Ensure the app container takes full height */
-  #app, .app-container {
+  body {
+    @apply bg-canvas text-dark-100 min-h-screen antialiased;
+  }
+
+  #app {
     min-height: 100vh;
   }
-}
 
-/* Mesh gradient background */
-.app-container {
-  position: relative;
-  background:
-    /* Vue green blob - top right */
-    radial-gradient(
-      ellipse 80% 50% at 85% 15%,
-      rgba(66, 184, 131, 0.15) 0%,
-      transparent 50%
-    ),
-    /* Vue green blob - center left */
-    radial-gradient(
-      ellipse 60% 80% at 10% 50%,
-      rgba(66, 184, 131, 0.12) 0%,
-      transparent 50%
-    ),
-    /* Cyan accent - bottom right */
-    radial-gradient(
-      ellipse 50% 50% at 80% 80%,
-      rgba(34, 211, 238, 0.08) 0%,
-      transparent 50%
-    ),
-    /* Vue green accent - top left */
-    radial-gradient(
-      ellipse 70% 60% at 20% 10%,
-      rgba(66, 184, 131, 0.1) 0%,
-      transparent 50%
-    ),
-    /* Base gradient */
-    linear-gradient(
-      135deg,
-      #050508 0%,
-      #0a0a12 25%,
-      #08080f 50%,
-      #0a0a14 75%,
-      #050508 100%
-    );
-  background-attachment: fixed;
-}
-
-/* Global styling */
-@layer utilities {
-  /* Fix for white inputs */
-  input, 
-  input[type="text"], 
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  textarea {
-    background-color: transparent !important;
-    background: transparent !important;
-    color: white !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-  }
-  
-  input:focus,
-  textarea:focus,
-  select:focus {
-    --tw-ring-color: rgba(66, 184, 131, 0.5) !important; /* Using Vue green primary color */
-    --tw-ring-offset-color: transparent !important;
-    --tw-ring-offset-width: 0px !important;
-    --tw-ring-opacity: 1 !important;
-    border-color: rgba(66, 184, 131, 0.5) !important; /* Vue green for borders */
-    outline: none !important;
-    box-shadow: 0 0 0 2px rgba(66, 184, 131, 0.2) !important;
-  }
-  
-  /* Glass effect utility class */
-  .glass-card {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  /* One visible focus style everywhere, for keyboard users only */
+  :focus-visible {
+    @apply outline-primary-500 outline outline-2 outline-offset-2;
   }
 }
 
-/* Building blocks shared by the dashboard pages */
+/* Building blocks shared by every page */
 @layer components {
   .panel {
-    @apply rounded-xl border border-white/[0.08];
-    background-color: #12151c;
+    @apply bg-surface rounded-xl border border-white/[0.08];
   }
 
   .field-label {
@@ -105,8 +43,7 @@
   }
 
   .field {
-    @apply placeholder:text-dark-500 block w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm text-white;
-    color-scheme: dark;
+    @apply placeholder:text-dark-500 focus:border-primary-500 block w-full rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white transition-colors focus:outline-none;
   }
 
   .btn {
@@ -125,21 +62,25 @@
     @apply btn text-dark-200 border border-white/10 hover:bg-white/5 hover:text-white;
   }
 
+  .notice-error {
+    @apply border-danger-500/30 bg-danger-600/10 text-danger-200 rounded-md border px-3 py-2 text-sm;
+  }
+
+  .notice-success {
+    @apply border-success-500/30 bg-success-500/10 text-success-300 rounded-md border px-3 py-2 text-sm;
+  }
+
   /* Columns of figures line up digit under digit */
   .num {
     font-variant-numeric: tabular-nums;
   }
 }
 
-:root {
-  /* Chart colours: a fixed order, checked for colour-blind separation on --chart-surface */
-  --chart-surface: #12151c;
-  --chart-1: #3987e5;
-  --chart-2: #d95926;
-  --chart-3: #199e70;
-  --chart-4: #c98500;
-  --chart-5: #d55181;
-  --chart-other: #6b7280;
-  --chart-grid: rgba(255, 255, 255, 0.07);
-  --chart-axis: #94a3b8;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

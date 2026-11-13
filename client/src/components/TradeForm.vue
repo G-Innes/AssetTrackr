@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import CoinIcon from '@/components/CoinIcon.vue'
 import { api } from '@/services/api'
 import { formatCurrency, formatPercent, toDateInputValue } from '@/utils/format'
 import type { MarketAsset, NewTransaction, Transaction, TransactionType } from '@/types'
@@ -270,7 +271,7 @@ onBeforeUnmount(() => clearTimeout(searchTimer))
           v-if="isOpen && !isEditing"
           id="trade-asset-options"
           role="listbox"
-          class="bg-dark-800 absolute z-20 mt-1 max-h-64 w-full overflow-y-auto rounded-md border border-white/10 py-1 shadow-xl"
+          class="bg-dark-900 absolute z-20 mt-1 max-h-64 w-full overflow-y-auto rounded-md border border-white/10 py-1 shadow-xl"
         >
           <li
             v-for="(asset, index) in results"
@@ -282,6 +283,7 @@ onBeforeUnmount(() => clearTimeout(searchTimer))
             @pointerenter="highlighted = index"
             @mousedown.prevent="choose(asset)"
           >
+            <CoinIcon :ticker="asset.ticker" />
             <span class="w-14 shrink-0 font-semibold text-white">{{ asset.ticker }}</span>
             <span class="text-dark-300 min-w-0 flex-1 truncate">{{ asset.name }}</span>
             <span v-if="asset.price !== null" class="num text-right text-white">

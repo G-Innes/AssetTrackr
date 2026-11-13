@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import Logo from '@/components/Logo.vue'
+
 defineProps<{
   heading: string
   formLabel: string
@@ -10,43 +12,14 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="flex min-h-screen items-center justify-center">
-    <div
-      v-motion
-      :initial="{ opacity: 0, y: 30, scale: 0.95 }"
-      :enter="{ opacity: 1, y: 0, scale: 1, transition: { duration: 500, ease: 'easeOut' } }"
-      class="relative z-10 w-full max-w-md p-6"
-    >
-      <h2
-        v-motion
-        :initial="{ opacity: 0, y: 20 }"
-        :enter="{ opacity: 1, y: 0, transition: { duration: 400, delay: 100 } }"
-        class="font-display mb-6 text-3xl font-bold text-white"
-      >
-        {{ heading }}
-      </h2>
-
-      <div
-        v-motion
-        :initial="{ opacity: 0, y: 20 }"
-        :enter="{ opacity: 1, y: 0, transition: { duration: 400, delay: 200 } }"
-        class="glass-card shadow-glow-white rounded-xl border border-white/10 p-8 transition-all duration-300 hover:border-white/20"
-      >
-        <form class="space-y-6" :aria-label="formLabel" @submit.prevent="$emit('submit')">
-          <slot />
-        </form>
-
-        <slot name="footer" />
-      </div>
+  <div class="flex min-h-screen flex-col items-center justify-center px-4 py-10">
+    <router-link to="/" class="mb-8"><Logo /></router-link>
+    <div class="panel w-full max-w-sm p-6 sm:p-8">
+      <h1 class="font-display mb-6 text-xl font-bold text-white">{{ heading }}</h1>
+      <form class="space-y-4" :aria-label="formLabel" novalidate @submit.prevent="$emit('submit')">
+        <slot />
+      </form>
+      <slot name="footer" />
     </div>
   </div>
 </template>
-
-<style scoped>
-.glass-card {
-  background-color: rgba(255, 255, 255, 0.05) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-</style>

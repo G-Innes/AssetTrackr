@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import AllocationDonut from '@/components/charts/AllocationDonut.vue'
 import ValueChart from '@/components/charts/ValueChart.vue'
+import CoinIcon from '@/components/CoinIcon.vue'
 import { Change, ConfirmDialog, Skeleton } from '@/components/ui'
 import { api, getErrorMessage } from '@/services/api'
 import { usePortfolioStore } from '@/stores/portfolio'
@@ -71,11 +72,7 @@ onMounted(() => store.load())
       </div>
     </div>
 
-    <div
-      v-else-if="error"
-      class="border-danger-500/30 bg-danger-600/10 rounded-xl border p-6 text-center"
-      role="alert"
-    >
+    <div v-else-if="error" class="notice-error p-6 text-center" role="alert">
       <p class="text-sm text-white">{{ error }}</p>
       <button class="btn-quiet mt-4" @click="store.load()">Try again</button>
     </div>
@@ -192,7 +189,8 @@ onMounted(() => store.load())
         <p v-if="!holdings.length" class="text-dark-400 px-5 py-6 text-sm sm:px-6">
           You have sold everything. Your realised profit is shown above.
         </p>
-        <div v-else class="mt-3 overflow-x-auto">
+        <!-- relative: keeps the visually hidden header text inside the scroll area -->
+        <div v-else class="relative mt-3 overflow-x-auto">
           <table class="w-full min-w-[40rem] text-sm">
             <thead>
               <tr class="text-dark-400 border-b border-white/5 text-xs">
@@ -213,8 +211,13 @@ onMounted(() => store.load())
                 data-testid="holding"
               >
                 <th scope="row" class="px-5 py-3 text-left font-normal sm:px-6">
-                  <span class="font-semibold text-white">{{ holding.asset.ticker }}</span>
-                  <span class="text-dark-400 block text-xs">{{ holding.asset.name }}</span>
+                  <span class="flex items-center gap-3">
+                    <CoinIcon :ticker="holding.asset.ticker" />
+                    <span>
+                      <span class="font-semibold text-white">{{ holding.asset.ticker }}</span>
+                      <span class="text-dark-400 block text-xs">{{ holding.asset.name }}</span>
+                    </span>
+                  </span>
                 </th>
                 <td class="px-3 py-3 text-right">
                   <span class="num text-white">{{
